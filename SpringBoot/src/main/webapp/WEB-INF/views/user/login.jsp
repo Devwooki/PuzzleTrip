@@ -37,14 +37,14 @@
                         <div>
                             <label for="name">ID :</label>
                             <span style="float: right;">
-	              <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="saveId"
-                          name="saveId"
-                          value="ok"
-                  ${idck}
-                  />
+                              <input
+                                      class="form-check-input"
+                                      type="checkbox"
+                                      id="saveId"
+                                      name="saveId"
+                                      value="ok"
+                              ${idck}
+                              />
 
                 <label class="form-check-label" for="saveid"> 아이디저장 </label>
                 </span>

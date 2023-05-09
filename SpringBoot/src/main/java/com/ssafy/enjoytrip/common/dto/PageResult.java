@@ -58,25 +58,25 @@ public class PageResult {
 
         StringBuilder sb = new StringBuilder();
         sb.append(
-                "   <ul class=\"pagination  justify-content-center\">\n" +
-                "       <li class=\"page-item\" id=\"first-page\" data-pg=\"1\">\n" +
-                "           <a href=\"#\" class=\"page-link\"><<</a>\n" +
-                "       </li>\n" +
-                "       <li class=\"page-item\" id=\"prev-page\" data-pg=\""+ (this.prev ? (currTab - 1) : 1) +"\">\n" +
-                "           <a href=\"#\" class=\"page-link\"><</a>\n" +
+                "   <ul  justify-content-center\">" +
+                "       <li  id=\"first-page\" data-pg=\"1\"> " +
+                "           <a href=\"#\" class=\"page-link\">처음</a> " +
+                "       </li> " +
+                "       <li id=\"prev-page\" data-pg=\""+ (this.prev ? (currTab - 1) : 1) +"\"> " +
+                "           <a href=\"#\" class=\"page-link\">이전</a> " +
                 "       </li>");
         for(int i = this.startPageRange ; i <= this.endPageRange ; ++i){
                         //"<li class=\"page-item\" data-pg=\"2>");
-            sb.append(" <li class=\"" + "page-item"  + "\"" + "data-pg=\""+i+"\">" +
-                    "       <a href=\"#\" class=\"page-link\">"+ i +"</a>\n" +
+            sb.append(" <li \"" + "data-pg=\""+i+"\">" +
+                    "       <a href=\"#\" class=\"page-link\">"+ i +"</a> " +
                     "   </li>");
         }
-        sb.append("     <li class=\"page-item\" id=\"next-page\" data-pg=\""+ (this.next ? currTab : (currTab + 1)) +"\">\n" +
-                "           <a href=\"#\" class=\"page-link\">></a>\n" +
-                "       </li>\n" +
-                "       <li class=\"page-item\" id=\"last-page\" data-pg=\"" + lastPage +"\">\n" +
-                "           <a href=\"#\" class=\"page-link\">>></a>\n" +
-                "       </li>\n" +
+        sb.append("     <li id=\"next-page\" data-pg=\""+ (this.next ? currTab : (currTab + 1)) +"\"> " +
+                "           <a href=\"#\" class=\"page-link\">다음</a> " +
+                "       </li> " +
+                "       <li id=\"last-page\" data-pg=\"" + lastPage +"\"> " +
+                "           <a href=\"#\" class=\"page-link\">끝</a> " +
+                "       </li> " +
                 "   </ul>");
         listHTML = sb.toString();
     }
