@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import BoardList from "@/components/BoardList.vue";
+import BoardList from "@/components/Board/BoardList.vue";
 
 export default {
     name: "AppBoard",
