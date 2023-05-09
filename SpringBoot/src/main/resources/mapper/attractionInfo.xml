@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.enjoytrip.attraction.model.mapper.AttractionInfoMapper">
+    <!--
+    List<Gugun> selectByAreaCode(String areaCode) throws SQLException;
+    List<AttractionInfo> selectByAreaCodeGugunCode(Map<String, String> paramMap) throws SQLException;
+    -->
+
+    <resultMap id="gugun" type="gugun">
+        <result column="gugun_code" property="gugunCode"></result>
+        <result column="gugun_name" property="gugunName"></result>
+        <result column="sido_code" property="sidoCode"></result>
+    </resultMap>
+
+    <resultMap id="attractionInfo" type="attractionInfo">
+        <result column="content_id" property="contentId"></result>
+        <result column="content_type_id" property="contentTypeId"></result>
+        <result column="title" property="title"></result>
+        <result column="addr1" property="addr1"></result>
+        <result column="zipcode" property="zipCode"></result>
+        <result column="tel" property="tel"></result>
+        <result column="first_image" property="firstImage"></result>
+        <result column="readcount" property="readCount"></result>
+        <result column="sido_code" property="sidoCode"></result>
+        <result column="gugun_code" property="gugunCode"></result>
+        <result column="latitude" property="latitude"></result>
+        <result column="longitude" property="longitude"></result>
+        <result column="recommand" property="recommand"></result>
+    </resultMap>
+
+    <select id="selectByAreaCode" parameterType="string" resultMap="gugun">
+        select * from gugun where sido_code = #{areaCode} order by gugun_code asc;
+    </select>
+
+    <select id="selectByAreaCodeGugunCode" parameterType="map" resultMap="attractionInfo">
+        select * from attraction_info
+        where sido_code = #{areaCode} and gugun_code = #{gugunCode}
+
+        <if test="checked != null">
+            and content_type_id in
+            <foreach item="checkbox" collection="checked" open="(" separator="," close=")">
+                #{checkbox}
+            </foreach>
+        </if>
+        order by readcount desc
+    </select>
+</mapper>
