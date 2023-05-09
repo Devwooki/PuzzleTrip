@@ -1,18 +1,18 @@
 <template>
-    <app-board></app-board>
+    <div>
+        <p>
+            <router-link :to="{name : 'board'}">게시판</router-link>
+        </p>
+        <p>
+            <router-link :to="{name : 'user'}">유저</router-link>
+        </p>
+        <router-view></router-view>
+    </div>
 </template>
 
 <script>
-
-import AppBoard from "@/views/AppBoard.vue";
-
 export default {
     name: 'App',
-    components: {
-        // eslint-disable-next-line vue/no-unused-components
-        AppBoard,
-
-    },
     data() {
         return {
             message: '',
