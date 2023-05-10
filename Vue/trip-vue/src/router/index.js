@@ -1,42 +1,43 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 import AppBoard from "@/views/AppBoard.vue";
 import AppUser from "@/views/AppUser.vue";
 import BoardList from "@/components/Board/BoardList.vue";
 import BoardDetail from "@/components/Board/BoardDetail.vue";
 
-
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/board',
-    name: 'board',
-    component:AppBoard,
-    redirect : '/board/list',
-    children :[
-      {
-        path: 'list',
-        name: 'boardList',
-        component : BoardList,
-      },
-      {
-        path: 'detail',
-        name: 'boardDetail',
-        component : BoardDetail,
-      }
-    ]
-
-
+    path: "/",
+    name: "main",
   },
   {
-    path: '/user',
-    name: 'user',
-    component: AppUser
-  }
-]
+    path: "/board",
+    name: "board",
+    component: AppBoard,
+    redirect: "/board/list",
+    children: [
+      {
+        path: "list",
+        name: "boardList",
+        component: BoardList,
+      },
+      {
+        path: "detail",
+        name: "boardDetail",
+        component: BoardDetail,
+      },
+    ],
+  },
+  {
+    path: "/user",
+    name: "user",
+    component: AppUser,
+  },
+];
 const router = new VueRouter({
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;
