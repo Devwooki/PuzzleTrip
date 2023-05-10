@@ -58,26 +58,23 @@ public class PageResult {
 
         StringBuilder sb = new StringBuilder();
         sb.append(
-                "   <ul  justify-content-center\">" +
-                "       <li  id=\"first-page\" data-pg=\"1\"> " +
-                "           <a href=\"#\" class=\"page-link\">처음</a> " +
-                "       </li> " +
-                "       <li id=\"prev-page\" data-pg=\""+ (this.prev ? (currTab - 1) : 1) +"\"> " +
-                "           <a href=\"#\" class=\"page-link\">이전</a> " +
-                "       </li>");
+            "<input type=\"radio\" id=\"first-page\" name=\"pageList\" value=\"1\" @click=\"getPage\" />"+
+               "<label for=\"first-page\">처음</label>"  +
+            "<input type=\"radio\" id=\"prev-page\" name=\"pageList\" value=\""+(this.prev ? (currTab - 1) : 1)+"\" @click=\"getPage\" />" +
+               "<label for=\"prev-page\">이전</label>"
+        );
         for(int i = this.startPageRange ; i <= this.endPageRange ; ++i){
-                        //"<li class=\"page-item\" data-pg=\"2>");
-            sb.append(" <li \"" + "data-pg=\""+i+"\">" +
-                    "       <a href=\"#\" class=\"page-link\">"+ i +"</a> " +
-                    "   </li>");
+            sb.append(
+                    "<input type=\"radio\" id=\"page"+i+"\" name=\"pageList\" value=\""+ i +"\" @click=\"getPage\" />" +
+                        "<label for=\"page"+i+"\">" + i + "</label>"
+            );
         }
-        sb.append("     <li id=\"next-page\" data-pg=\""+ (this.next ? currTab : (currTab + 1)) +"\"> " +
-                "           <a href=\"#\" class=\"page-link\">다음</a> " +
-                "       </li> " +
-                "       <li id=\"last-page\" data-pg=\"" + lastPage +"\"> " +
-                "           <a href=\"#\" class=\"page-link\">끝</a> " +
-                "       </li> " +
-                "   </ul>");
+        sb.append(
+                "<input type=\"radio\" id=\"next-page\" name=\"pageList\" value=\""+ (this.next ? currTab : (currTab + 1))  +"\" @click=\"getPage\" />" +
+                "<label for=\"next-page\">다음</label>" +
+                "<input type=\"radio\" id=\"last-page\" name=\"pageList\" value=\"" + lastPage + "\" @click=\"getPage\" />" +
+                "<label for=\"last-page\">마지막</label>"
+                );
         listHTML = sb.toString();
     }
 
