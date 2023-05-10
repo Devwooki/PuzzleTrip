@@ -1,7 +1,13 @@
 <template>
 <tr>
     <td>{{board.no}}</td>
-    <td>{{board.title}}</td>
+    <td><router-link :to="{ name : 'boardDetail' ,
+                            params : {
+                                boardType : this.board.typeNo,
+                                boardNo : this.board.no
+                            }
+                            }">{{board.title}}</router-link>
+    </td>
     <td>{{board.userId}}</td>
     <td>{{board.hit}}</td>
     <td>{{board.createdAt}}</td>
@@ -13,7 +19,12 @@ export default {
     name: "BoardListItem",
     props : {
         board : Object
-    }
+    },
+    data(){
+        return {
+
+        }
+    },
 }
 </script>
 

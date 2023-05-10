@@ -35,17 +35,18 @@ export default {
                 saveId : this.saveId,
             }
 
-            fetch("http://localhost:8989/user/login",{
+            fetch("http://localhost:8989/user/login/" + this.saveId,{
+                method : 'POST',
                 headers :{
                     'Content-Type' : 'application/json'
                 },
-                method : 'POST',
-                body : JSON.stringify(sendData)
+                body : JSON.stringify(sendData),
             }).then(response => response.json())
                 .then(data => {
-                    console.log(data)
+                    console.log(data);
+                    //alert(this.userId + "님 환영합니다.")
                 })
-            //alert(this.userId + "님 환영합니다.")
+
         }
     }
 }

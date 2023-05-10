@@ -74,9 +74,9 @@ public class UserController {
 //        }
 //    }
 
-    @PostMapping("login")
+    @PostMapping("login/{saveId}")
     @ResponseBody
-    public ResponseEntity<?> login(@RequestBody User user, @RequestBody String saveId) throws Exception {
+    public ResponseEntity<?> login(@RequestBody User user, @PathVariable("saveId") String saveId) throws Exception {
         logger.debug("Post : login {}, saveId {}", user, saveId);
 
         Map<String, Object> result = new HashMap<>();
