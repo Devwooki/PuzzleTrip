@@ -1,11 +1,7 @@
 <template>
     <div>
-        <p>
-            <router-link :to="{name : 'board'}">게시판</router-link>
-        </p>
-        <p>
-            <router-link :to="{name : 'user'}">유저</router-link>
-        </p>
+        <router-link :to="{name : 'board'}">게시판 | </router-link>
+        <router-link :to="{name : 'user'}">유저 | </router-link>
         <router-view></router-view>
     </div>
 </template>
@@ -13,11 +9,6 @@
 <script>
 export default {
     name: 'App',
-    data() {
-        return {
-            message: '',
-        };
-    },
 };
 </script>
 

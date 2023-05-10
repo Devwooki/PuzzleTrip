@@ -54,17 +54,29 @@ public class BoardController {
         return new ResponseEntity<>(returnData, HttpStatus.OK);
     }
 
+//    @GetMapping("details/{boardType}/{boardNo}")
+//    @ResponseBody
+//    public ResponseEntity<?> boardDetails(@PathVariable("boardType")int boardType,
+//                                      @PathVariable("boardNo") int boardNo) throws Exception {
+//        logger.debug("상세보기 접근 " + boardType + ", " + boardNo);
+//        Map<String, Object> paramMap = new HashMap<>();
+//        paramMap.put("boardType", boardType);
+//        paramMap.put("boardNo", boardNo);
+//
+//        Board result = service.boardDetails(paramMap);
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
     @GetMapping("details/{boardType}/{boardNo}")
     @ResponseBody
-    public ResponseEntity<?> boardDetails(@PathVariable("boardType")int boardType,
-                                      @PathVariable("boardNo") int boardNo) throws Exception {
+    public Board boardDetails(@PathVariable("boardType")int boardType,
+                                          @PathVariable("boardNo") int boardNo) throws Exception {
         logger.debug("상세보기 접근 " + boardType + ", " + boardNo);
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("boardType", boardType);
         paramMap.put("boardNo", boardNo);
 
         Board result = service.boardDetails(paramMap);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return result;
     }
 
     @GetMapping("write")

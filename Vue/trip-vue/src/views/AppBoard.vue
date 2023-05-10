@@ -1,18 +1,14 @@
 <template>
     <div>
         <h2>뷰를 활용한 게시판 불러오기</h2>
-        <board-list></board-list>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
-import BoardList from "@/components/Board/BoardList.vue";
 
 export default {
     name: "AppBoard",
-    components :{
-        BoardList
-    }
 }
 </script>
 

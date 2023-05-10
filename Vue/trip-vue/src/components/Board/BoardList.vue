@@ -25,8 +25,7 @@ import BoardPageList from "@/components/Board/BoardPageList.vue";
 
 export default {
     name: "BoardList",
-    components: {BoardListItem, BoardPageList
-    },
+    components: {BoardListItem, BoardPageList},
     data(){
         return {
             boards : {},
