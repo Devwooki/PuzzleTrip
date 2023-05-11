@@ -14,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/comment")
+@CrossOrigin("*")
 public class CommentController {
 
     private final Logger logger = LoggerFactory.getLogger(CommentController.class);
@@ -32,6 +33,7 @@ public class CommentController {
     @GetMapping("/{boardType}/{boardNo}")
     private List<Comment> listsComment(@PathVariable int boardType,
                                       @PathVariable int boardNo) throws Exception {
+        logger.debug("댓글 가져오기 : boardType {}, boardNo{}", boardType, boardNo);
         logger.debug("boardType {}, boardNo {}", boardType, boardNo );
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("boardType", boardType);

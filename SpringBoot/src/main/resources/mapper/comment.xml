@@ -22,7 +22,7 @@
     <select id="selectComment" parameterType="map" resultType="comment">
         select * from board_comment
         where board_type=#{boardType} and board_no=#{boardNo} and status = 0
-        order by no asc;
+        order by created_at asc;
     </select>
 
     <!--    String selectIdCheck(String id) throws SQLException;-->

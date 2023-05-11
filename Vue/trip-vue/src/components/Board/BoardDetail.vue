@@ -16,12 +16,18 @@
                 <router-link :to="{name : 'board'}">목록</router-link>
             </div>
         </div>
+        <board-comment :boardType="boardType" :boardNo="boardNo"></board-comment>
     </div>
 </template>
 
 <script>
+import BoardComment from "@/components/Board/BoardComment.vue";
+
 export default {
     name: 'BoardDetail',
+    components :{
+        BoardComment
+    },
     data() {
         return {
             board : {},
@@ -36,7 +42,7 @@ export default {
 
         fetch("http://localhost:8989/board/details/"+ this.boardType + "/" + this.boardNo)
             .then(response => response.json())
-            .then(data => this.board= data)
+            .then(data => this.board=data)
 
     }
 };
