@@ -13,7 +13,8 @@
             <div style="padding-top: 15px">
                 <router-link :to="{name : 'boardModify', params :{ boardType : board.typeNo, boardNo : board.no }}">수정</router-link> |
                 <router-link :to="{name : 'boardDelete', params: { boardType : board.typeNo, boardNo : board.no}}">삭제</router-link> |
-                <router-link :to="{name : 'board'}">목록</router-link>
+                <router-link :to="{name : 'board', params: { boardType : board.typeNo}}">목록 | </router-link>
+                <router-link :to="{name : 'boardWrite',  params: { boardType : board.typeNo}}">글쓰기</router-link>
             </div>
         </div>
         <board-comment :boardType="boardType" :boardNo="boardNo"></board-comment>

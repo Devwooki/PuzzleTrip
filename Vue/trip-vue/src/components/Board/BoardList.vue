@@ -21,6 +21,7 @@
                 <tbody>
                 <board-list-item v-for="board in boards" :key="board.no" :board="board"></board-list-item>
                 </tbody>
+                <router-link :to="{name : 'boardWrite',  params: { boardType : boardtype}}">글쓰기</router-link>
             </table>
         </div>
         <board-page-list :pageResult="pageResult" @loadPage="loadPage"></board-page-list>

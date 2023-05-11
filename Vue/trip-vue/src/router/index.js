@@ -4,6 +4,7 @@ import AppBoard from "@/views/AppBoard.vue";
 import AppUser from "@/views/AppUser.vue";
 import BoardList from "@/components/Board/BoardList.vue";
 import BoardDetail from "@/components/Board/BoardDetail.vue";
+import BoardWrite from "@/components/Board/BoardWrite.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes = [
         path: "detail",
         name: "boardDetail",
         component: BoardDetail,
+      },
+      {
+        path: "write",
+        name: "boardWrite",
+        component: BoardWrite,
       },
     ],
   },
