@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+table.table-no-border { border: 0px !important; }
+td.td-txt-right { text-align: right; }
+td.td-wp10 { width: 10%; }
+.input-wp1 { width: 880px !important; }
+.input-wp2 { width: 700px !important; }
+.input-wp3 { width: 600px !important; }
+.input-wp4 { width: 500px !important; }
+.input-wp5 { width: 400px !important; }

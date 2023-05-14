@@ -27,14 +27,19 @@ public class AttractionInfoServiceImpl implements AttractionInfoService {
         /* paramMap : {
 			areaCode : int,
 			gugunCode : int,
-			checked : String[]
+			checked : List<String>
 		}*/
-		System.out.println((String)paramMap.get("checked"));
-		String[] checked = ((String)paramMap.get("checked")).split(" ");
-		System.out.println("@@@@@@@@@@@@@@@" + Arrays.toString(checked) + "," + checked.length + ", checked[0] :" + checked[0]);
-		paramMap.remove("checked");//기존 checked는 문자열이라제거
-		if(checked[0].equals("")) paramMap.put("checked", null); //" "으로 구분된 String배열로 삽입
-		else paramMap.put("checked", checked); //" "으로 구분된 String배열로 삽입
+
+
+        //정리
+        // contentType 선택된게 없으면 모든 지역 관광지 데이터 받아오고
+        // 선택 된게 있으면 선택된 관광지 정보만 받아오게 한다.
+        List<String> contentTypes = (List<String>) paramMap.get("contentTypes");
+
+		if(contentTypes.size() == 0) {
+            paramMap.remove("contentTypes");//기존 checked는 문자열이라제거
+            paramMap.put("contentTypes", null);
+        }
 		return attractionInfoMapper.selectByAreaCodeGugunCode(paramMap);
 	}
 

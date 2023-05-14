@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.board.model.mapper.BoardMapper">
+
+    <resultMap type="board" id="board">
+        <result column="no" property="no"/>
+        <result column="type_no" property="typeNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="hit" property="hit"/>
+        <result column="like_cnt" property="likeCnt"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <sql id="search">
+        <if test="word != null and word != ''">
+            <if test="key == 'title'">
+                and title like concat('%', #{word}, '%')
+            </if>
+            <if test="key != 'subject'">
+                and ${key} = #{word}
+            </if>
+        </if>
+    </sql>
+
+    <select id="selectBoardLists" parameterType="map" resultMap="board">
+        select no, type_no, user_id, title, content, hit, like_cnt, created_at from board
+        where type_no = #{boardType}
+        and status = 0
+        order by no desc
+        limit #{start}, #{page.listAmount}
+    </select>
+
+    <select id="selectBoardCount" parameterType="int" resultType="int">
+        select count(*) from board where type_no = #{boradType} and status = 0
+    </select>
+
+    <select id="selectByBoardNo" parameterType="map" resultType="Board">
+        select * from board where type_no = #{boardType} and no = #{boardNo} and status = 0
+    </select>
+
+    <update id="updateBoardHit" parameterType="map">
+        update board set hit = hit + 1 where type_no = #{boardType} and no = #{boardNo}
+    </update>
+
+    <insert id="insertBoard" parameterType="Board">
+        insert into board (type_no, user_id, title, content) values (#{typeNo}, #{userId}, #{title}, #{content})
+    </insert>
+
+    <update id="updateBoard" parameterType="map">
+        Update board set title = #{title}, content = #{content} where type_no = #{boardType} and no = #{boardNo}
+    </update>
+
+    <delete id="deleteByBoardNo" parameterType="map">
+        Update board set status = 1 where type_no = #{boardType} and no = #{boardNo}
+    </delete>
+
+</mapper>

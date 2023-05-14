@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin("*")
 @Controller
 @RequestMapping("/attraction")
 public class AttractionController {
@@ -43,9 +45,10 @@ public class AttractionController {
         logger.debug("attractionLists : {} ", paramMap);
         String areaCode = (String) paramMap.get("areaCode");
         String gugunCode = (String) paramMap.get("gugunCode");
-        String checked = (String) paramMap.get("checked");
-        logger.debug("attractionLists : {} ", checked);
+        List<String> contentTypes = (List<String>) paramMap.get("contentTypes");
+        logger.debug("attractionLists : {} , size ? : {}", contentTypes, contentTypes.size());
         return service.attractionLists(paramMap);
+        //return null;
     }
 
 
