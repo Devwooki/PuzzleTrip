@@ -37,9 +37,9 @@
         select * from attraction_info
         where sido_code = #{areaCode} and gugun_code = #{gugunCode}
 
-        <if test="checked != null">
+        <if test="contentTypes != null">
             and content_type_id in
-            <foreach item="checkbox" collection="checked" open="(" separator="," close=")">
+            <foreach item="checkbox" collection="contentTypes" open="(" separator="," close=")">
                 #{checkbox}
             </foreach>
         </if>
