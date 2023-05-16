@@ -1,9 +1,9 @@
 package com.ssafy.enjoytrip.controller;
 
 
-import com.ssafy.enjoytrip.board.model.dto.Board;
-import com.ssafy.enjoytrip.board.model.dto.FileInfo;
-import com.ssafy.enjoytrip.board.model.service.BoardService;
+import com.ssafy.enjoytrip.model.board.dto.Board;
+import com.ssafy.enjoytrip.model.board.dto.FileInfo;
+import com.ssafy.enjoytrip.model.board.service.BoardService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,6 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/board")
-@CrossOrigin("*")
 public class BoardController {
     private final Logger logger = LoggerFactory.getLogger(BoardController.class);
     private BoardService service;

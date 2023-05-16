@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.enjoytrip.attraction.model.mapper.AttractionInfoMapper">
+<mapper namespace="com.ssafy.enjoytrip.model.attraction.mapper.AttractionInfoMapper">
     <!--
     List<Gugun> selectByAreaCode(String areaCode) throws SQLException;
     List<AttractionInfo> selectByAreaCodeGugunCode(Map<String, String> paramMap) throws SQLException;

@@ -1,43 +1,122 @@
 package com.ssafy.enjoytrip.controller;
 
-import com.ssafy.enjoytrip.user.model.dto.User;
-import org.apache.tomcat.Jar;
+import com.ssafy.enjoytrip.model.JWT.JwtServiceImpl;
+import com.ssafy.enjoytrip.model.user.dto.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.ssafy.enjoytrip.user.model.service.UserService;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.ssafy.enjoytrip.model.user.service.UserService;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/user")
-@CrossOrigin("*")
 public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
+
+
+
+    @Autowired //JWT토큰을 이용하기에 생성자 주입 방식으로 주입
     private UserService service;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.service = userService;
+    private JwtServiceImpl jwtService;
+
+    //HttpStatus 표기를 위한 final 변수
+    private static final String SUCCESS = "success";
+    private static final String FAIL = "fail";
+
+    @PostMapping("login/")
+    public ResponseEntity<?> login(@RequestBody User user) throws Exception {
+        logger.debug("로그인 하기 : login {}", user);
+
+        //로그인 반환 방식이 ResponseEntity라서 map객체 생성
+        Map<String, Object> result = new HashMap<>();
+        //반환할 때 함께 전달할 status
+        HttpStatus status = null;
+        //체크박스 선택여부 저장
+        //쿠키는 vue쿠키 사용 https://kyounghwan01.github.io/blog/Vue/vue/vue-cookies/
+
+        try{
+            User loginUser = service.getLogin(user);
+            if(loginUser != null){
+                //보안 강화하기 위해 2개의 토큰을 발행한다
+                //accessToken : API 요청에 사용하기 위한 토큰 - 위험도 낮은 작업에 사용
+                //refreshToken : 인증, 접근, 권한 갱신 등 고위험 작업에 사용 - 서버에 저장하고 체크
+                String accessToken = jwtService.createAccessToken("userid", loginUser.getId());// key, data
+                String refreshToken = jwtService.createRefreshToken("userid", loginUser.getPw());// key, data
+
+                //DB에 사용자에게 토큰 부여
+                service.saveRefreshToken(user.getId(), refreshToken);
+
+                //token 정보 출력
+                logger.debug("로그인 accessToken 정보 : {}", accessToken);
+                logger.debug("로그인 refreshToken 정보 : {}", refreshToken);
+
+                //
+                result.put("access-token", accessToken);
+                result.put("refresh-token", refreshToken);
+                result.put("message", SUCCESS);
+
+                //acepted : 202 -> 요청 처리는 완료됬고 응답 대기 상태
+                status = HttpStatus.ACCEPTED;
+            }else {
+                result.put("message", FAIL);
+                status = HttpStatus.ACCEPTED;
+            }
+        }catch(Exception e){
+            logger.error("로그인 실패 {}", e);
+            result.put("message", e.getMessage());
+            //INTERNAL_SERVER_ERROR : 500 -> 서버 내부 오류
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    @GetMapping("logout/{userId}")
+    private ResponseEntity<?> removeToken(@PathVariable("userId") String userId) throws Exception{
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try{
+            service.deleRefreshToken(userId);
+            result.put("message", SUCCESS);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }catch(Exception e){
+            logger.debug("로그아웃 실패 {}", e);
+            result.put("message", e.getMessage());
+            //INTERNAL_SERVER_ERROR : 500 -> 서버 내부 오류
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("login")
-    public String loginForm() {
-        logger.debug("GET : login {}");
-        return "user/login";
+
+    @GetMapping("idCheck/{userId}")
+    public String idCheck(@PathVariable("userId") String id) throws Exception{
+        System.out.println(id + ", " + service.idCheck(id));
+        return service.idCheck(id);
     }
+
+
+    @PostMapping("pwCheck")
+    public ResponseEntity<?> pwCheck(@RequestBody User user) throws Exception {
+        user = service.pwCheck(user);
+        if(user == null) user = new User();
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PostMapping("delete")
+    public void deleteUser(User user) throws Exception{
+        service.deleteUser(user.getId());
+    }
+}
 
 //    @PostMapping("login")
 //    public String login(User user, HttpSession session, RedirectAttributes ra,
@@ -73,78 +152,3 @@ public class UserController {
 //            return "redirect:/";
 //        }
 //    }
-
-    @PostMapping("login/{saveId}")
-    @ResponseBody
-    public ResponseEntity<?> login(@RequestBody User user, @PathVariable("saveId") String saveId) throws Exception {
-        logger.debug("Post : login {}, saveId {}", user, saveId);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("userInfo", service.getLogin(user));
-        result.put("saveId", saveId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-
-    @GetMapping("logout")
-    public String logout(HttpSession session){
-        session.invalidate();
-        return "redirect:/";
-    }
-
-
-    @GetMapping("join")
-    public String joinForm() {
-        return "user/join";
-    }
-
-    @PostMapping("join")
-    public String join(User user) throws Exception {
-        service.join(user);
-        return "redirect:/user/login";
-    }
-
-    @GetMapping("idCheck/{userId}")
-    @ResponseBody
-    public String idCheck(@PathVariable("userId") String id) throws Exception{
-        System.out.println(id + ", " + service.idCheck(id));
-        return service.idCheck(id);
-    }
-
-    @GetMapping("findPw")
-    public String findPwForm(){
-        return "user/findPw";
-    }
-
-    @PostMapping("findPw")
-    public String findPw(User user) throws Exception {
-        service.findPw(user);
-        return "redirect:/user/login";
-    }
-
-    @GetMapping("mypage")
-    public String mypage() throws Exception{
-        return "user/mypage";
-    }
-
-    @PostMapping("pwCheck")
-    @ResponseBody
-    public ResponseEntity<?> pwCheck(@RequestBody User user) throws Exception {
-        user = service.pwCheck(user);
-        if(user == null) user = new User();
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @PostMapping("modify")
-    public String modify(User user) throws Exception{
-        System.out.println(user);
-        service.modifyUser(user);
-        return "index";
-    }
-
-    @PostMapping("delete")
-    public String deleteUser(User user) throws Exception{
-        service.deleteUser(user.getId());
-        return "redirect:/";
-    }
-}

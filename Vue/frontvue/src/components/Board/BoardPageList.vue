@@ -2,7 +2,7 @@
   <!--https://github.com/lokyoung/vuejs-paginate  -->
   <div>
     <paginate
-        :page-count="pageResult.endPageRange"
+        :page-count="this.getPageCount"
         :click-handler="sendPageNo"
         :page-range="5"
         :prev-text="'이전'"
@@ -15,14 +15,12 @@
 <script>
 //npm install vuejs-paginate --save 해서 page라이브러리 설치하기
 import Paginate from 'vuejs-paginate'
+import {mapGetters} from "vuex";
 
 export default {
   name: "BoardPageList",
   components: {
     Paginate
-  },
-  props: {
-    pageResult: Object
   },
   data() {
     return {};
@@ -31,7 +29,9 @@ export default {
     sendPageNo(pageNum) {
       this.$emit("loadPage", pageNum);
     }
-  },
+  },computed : {
+      ...mapGetters('boardStore', ['getPageCount']),
+    }
 };
 </script>
 
