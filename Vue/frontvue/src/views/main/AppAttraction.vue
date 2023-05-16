@@ -80,6 +80,7 @@
       </div>
     </div>
     <button class="findWay" @click="findDirections">길찾기</button>
+    <button class="deletFindWay" @click="deletFindWay">경로삭제</button>
     <div v-if="directionsResult">
       <!-- 결과를 표시하는 HTML 요소들을 추가 -->
       <p>총 거리: {{ directionsResult.totalDistance }}m</p>
@@ -132,13 +133,9 @@ export default {
       zoomControl: {},
 
       //거리 찍기 필요
-      drawingFlag: false, // 선이 그려지고 있는 상태를 가지고 있을 변수
-      moveLine: null, // 선이 그려지고 있을때 마우스 움직임에 따라 그려질 선 객체
-      clickLine: null,  // 마우스로 클릭한 좌표로 그려질 선 객체입니다
-      distanceOverlay: null, // 선이 그려지고 있을때 클릭할 때마다 클릭 지점과 거리를 표시하는 커스텀 오버레이 배열입니다.
-      dots: {},
-
-      directionsResult: null,
+      polyline: null,
+      customOverlay: null,
+      findMarker: null,
     }
   },
   mounted() {
@@ -285,25 +282,35 @@ export default {
       // 요청 바디 데이터
       const requestData = {
         origin: {
-          x: '127.3028094000146',
-          y: '36.355174903129836'
+          x: '127.39357747472238',
+          y: '36.34781591163989'
         },
         destination: {
-          x: '127.3028094000146',
-          y: '36.355174903129836'
+          x: '127.30284083918409',
+          y: '36.35521933653906'
         },
         waypoints: [
           {
             name: 'name0',
-            x: '127.33883814336248',
-            y: '36.35612803814052'
+            x: '127.3855645721133',
+            y: '36.36071080159904'
+          },
+          {
+            name: 'name1',
+            x: '127.38793109858915',
+            y: '36.37507683636454'
           }
         ],
-        priority: 'RECOMMEND',
+        //경로탐색 우선순위 옵션 => (기본값: RECOMMEND) RECOMMEND: 추천 경로 | TIME: 최단 시간 | DISTANCE: 최단 경로
+        priority: 'DISTANCE',
+        //차량 유종 정보 => (기본값: GASOLINE) GASOLINE: 휘발유 | DIESEL: 경유 | LPG: LPG
         car_fuel: 'GASOLINE',
+        //하이패스 장착 여부
         car_hipass: false,
+        //대안 경로 제공 여부
         alternatives: false,
-        road_details: false
+        //상세 도로 정보 제공 여부
+        road_details: true,
       };
 
       // 요청 헤더 설정
@@ -319,89 +326,112 @@ export default {
           let result_code = data.result_code;
           let summary = data.summary;
           let sections = data.sections;
-          console.log(result_code);
-          console.log(summary);
-          console.log(sections[0]);
+          //젠체 코드
+          console.log("전체 : ", data);
+          //경로 탐색 결과 코드
+          console.log("결과코드 : ", result_code);
+          //summary
+          console.log("요약 : ", summary);
+          //구간별 경로 정보
+          console.log("구간별 정보 : ", sections);
+          console.log("길이 : ", sections.length);
+          if (sections.length >= 2) {
+            for (const [idx, section] of sections.entries()) {
+              console.log(sections[0].bound.min_x)
+              console.log("idx번호 ", idx)
+              let {distance, duration, guides: arrays, roads} = section;  //distance : 미터단위, duration : 초 단위
+              let detailRoads = [];
 
-          if (sections[0]) {
-            let {distance, duration, guides: arrays, roads} = sections[0];  //distance : 미터단위, duration : 초 단위
-
-            let detailRoads = [];
-
-            for (const element of roads) {
-              let arg = element;
-              let mini = arg.vertexes;
-              let cursor = 0;
-              while (cursor < mini.length) {
-                let obj = new kakao.maps.LatLng(mini[cursor + 1], mini[cursor]);
-                detailRoads.push(obj);
-                cursor = cursor + 2;
-                if (cursor >= 1000000) break;
+              for (const element of roads) {
+                let arg = element;
+                let mini = arg.vertexes;
+                let cursor = 0;
+                while (cursor < mini.length) {
+                  let obj = new kakao.maps.LatLng(mini[cursor + 1], mini[cursor]);
+                  detailRoads.push(obj);
+                  cursor = cursor + 2;
+                  if (cursor >= 1000000) break;
+                }
               }
+              arrays = arrays.map((arg) => {
+                let {x, y} = arg;
+                if (x && y) {
+                  arg.position = new kakao.maps.LatLng(arg.y, arg.x);
+                }
+                return arg;
+              });
+
+              // 마커 이미지의 이미지 크기 입니다
+              let imageSize = new kakao.maps.Size(40, 45);
+              // 마커 이미지를 생성합니다
+              let image = null;
+              if (idx === 0) image = new kakao.maps.MarkerImage(require('@/assets/marker/start.png'), imageSize);
+              if (idx > 0 && idx < sections.length) image = new kakao.maps.MarkerImage(require('@/assets/marker/waypoint.png'), imageSize);
+   
+
+              //출발지는 start이미지를 가져와 그린다.
+              //경유지는 waypoint이미지를 가져와 그린다.
+              if (idx !== sections.length - 1) {
+                let {title, position} = arrays[0];
+                this.findMarker = new kakao.maps.Marker({
+                  map: this.map, // 마커를 표시할 지도
+                  position,
+                  title: title ? title : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                  image // 마커 이미지
+                });
+              }
+              //도착지는 end이미지를 가져와 그린다.
+              if (idx === sections.length - 1) {
+                let {name, position} = arrays[0];
+                this.findMarker = new kakao.maps.Marker({
+                  map: this.map, // 마커를 표시할 지도
+                  position,
+                  name: name ? name : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                  image// 마커 이미지
+                });
+                let {name: name2, position: position2} = arrays[arrays.length - 1];
+                image = new kakao.maps.MarkerImage(require('@/assets/marker/end.png'), imageSize);
+                this.findMarker = new kakao.maps.Marker({
+                  map: this.map, // 마커를 표시할 지도
+                  position: position2,
+                  name: name2 ? name2 : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                  image // 마커 이미지
+                });
+              }
+              // 지도에 표시할 선을 생성합니다
+              this.polyline = new kakao.maps.Polyline({
+                //path: arrays.map( arg=> arg.position), // 선을 구성하는 좌표배열 입니다
+                path: detailRoads,
+                strokeWeight: 5.5, // 선의 두께 입니다
+                strokeColor: (idx % 2 === 0) ? '#4584F4' : '#536F93', // 선의 색깔입니다
+                strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+                strokeStyle: 'solid' // 선의 스타일입니다
+              });
+
+              // 지도에 선을 표시합니다
+              this.polyline.setMap(this.map);
+              // 지도 중심을 이동 시킵니다
+              this.map.setLevel(7)
+              var moveLatLon = new kakao.maps.LatLng(sections[0].bound.min_y, sections[0].bound.min_x);
+              this.map.panTo(moveLatLon);
+              //글자 찍기
+              this.customOverlay = new kakao.maps.CustomOverlay({
+                position: new kakao.maps.LatLng(37.39243974939504, 125.10972941510435),
+                content: `<div class ="distancelabel">거리, 시간 : ${distance}, ${duration}</div>`
+              });
+
+              // 커스텀 오버레이를 지도에 표시합니다
+              this.customOverlay.setMap(this.map);
             }
-            arrays = arrays.map((arg) => {
-              let {x, y} = arg;
-              if (x && y) {
-                arg.position = new kakao.maps.LatLng(arg.y, arg.x);
-              }
-              return arg;
-            });
-
-            let {title, position} = arrays[0];
-            // 마커 이미지의 이미지 크기 입니다
-            let imageSize = new kakao.maps.Size(24, 35);
-            // 마커 이미지를 생성합니다
-            let image = new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png', imageSize);
-            // 마커를 생성합니다
-/*
-            let marker1 = new kakao.maps.Marker({
-*/
-            new kakao.maps.Marker({
-              map: this.map, // 마커를 표시할 지도
-              position,
-              title: title ? title : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-              image // 마커 이미지
-            });
-
-            let {title: title2, position: position2} = arrays[arrays.length - 1];
-            // 마커 이미지의 이미지 크기 입니다
-            // 마커 이미지를 생성합니다
-            let image2 = new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_drag.png', imageSize);
-            // 마커를 생성합니다
-/*
-            let marker2 = new kakao.maps.Marker({
-*/
-           new kakao.maps.Marker({
-              map: this.map, // 마커를 표시할 지도
-              position: position2,
-              title: title2 ? title2 : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-              image: image2 // 마커 이미지
-            });
-
-            // 지도에 표시할 선을 생성합니다
-            let polyline = new kakao.maps.Polyline({
-              //path: arrays.map( arg=> arg.position), // 선을 구성하는 좌표배열 입니다
-              path: detailRoads,
-              strokeWeight: 5, // 선의 두께 입니다
-              strokeColor: 'red', // 선의 색깔입니다
-              strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-              strokeStyle: 'solid' // 선의 스타일입니다
-            });
-
-            // 지도에 선을 표시합니다
-            polyline.setMap(this.map);
-
-            let customOverlay = new kakao.maps.CustomOverlay({
-              position: new kakao.maps.LatLng(37.39843974939604, 127.10972941510465),
-              content: `<div class ="label">거리, 시간 : ${distance}, ${duration}</div>`
-            });
-
-            // 커스텀 오버레이를 지도에 표시합니다
-            customOverlay.setMap(this.map);
           }
         }).catch(err => {
         console.log(err)
       });
+    },
+    deletFindWay() {
+      this.polyline.setMap(null);
+      this.customOverlay.setMap(null);
+      this.findMarker.setMap(null);
     },
 // makeOverlay(marker){
     //   // console.dir(marker.ca.attributes.summaryImg.nodeValue)
@@ -551,7 +581,6 @@ export default {
 }
 
 /*그리기 버튼*/
-
 .btnLineStart, .btnLineStop {
     border: 1px solid black;
     width: fit-content;

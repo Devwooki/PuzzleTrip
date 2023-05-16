@@ -5,20 +5,18 @@ import store from "./store";
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import axios from "axios";
-/* import the fontawesome core */
+/* import fontawesome  */
 import { library } from '@fortawesome/fontawesome-svg-core'
-
-/* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
-import { faHeart as fasHeart} from '@fortawesome/free-solid-svg-icons'
-import { faHeart as farHeart} from '@fortawesome/free-regular-svg-icons'
+/*import { faHeart as fasHeart} from '@fortawesome/free-solid-svg-icons'
+import { faHeart as farHeart} from '@fortawesome/free-regular-svg-icons'*/
 
 /* add icons to the library */
 library.add(
-  fasHeart,
-  farHeart
+/*  fasHeart,
+  farHeart*/
 )
 
 

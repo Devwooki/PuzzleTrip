@@ -15,7 +15,6 @@
           <router-link :to="{name: 'hotPlace'}">핫플레이스</router-link>
           <router-link :to="{name: 'board'}">게시판</router-link>
           <router-link :to="{name: 'test'}">테스트</router-link>
-          <font-awesome-icon :icon="['fas','heart']"/>
           </div>
       </nav>
     </header>
