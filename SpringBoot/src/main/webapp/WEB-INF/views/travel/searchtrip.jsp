@@ -167,6 +167,15 @@
             //.then((reps) => console.log(reps))
             .then((data) => {
                 console.log(data);
+                // console.log("현재온도 : " + (data.main.temp - 273.15));
+                // console.log("현재습도 : " + data.main.humidity);
+                // console.log("날씨 : " + data.weather[0].main);
+                // console.log("상세날씨설명 : " + data.weather[0].description);
+                // console.log("날씨 이미지 : " + data.weather[0].icon);
+                // console.log("바람   : " + data.wind.speed);
+                // console.log("나라   : " + data.sys.country);
+                // console.log("도시이름  : " + data.name);
+                // console.log("구름  : " + data.clouds.all + "%");
                 let location = (document.getElementById("name").innerText = areaName);
                 let temp = (document.getElementById("temp").innerText = Math.floor(
                     data.main.temp - 273.15

@@ -1,5 +1,13 @@
 package com.ssafy.enjoytrip.common.dto;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
 public class Page {
 
     int pageNo;//페이지 번호 기반 시작 위치
@@ -14,25 +22,5 @@ public class Page {
     public Page(int pageNo, int listAmount) {
         this.pageNo = pageNo;
         this.listAmount = listAmount;
-    }
-    public int getPageNo() {
-        return pageNo;
-    }
-
-    public void setPageNo(int pageNo) {
-        this.pageNo = pageNo;
-    }
-
-    public int getListAmount() {
-        return listAmount;
-    }
-
-    public void setListAmount(int listAmount) {
-        this.listAmount = listAmount;
-    }
-
-    //결국 필요한 것 -> limit를 제한 하기편하게, begin은 있으면 좋고 end는 listAmount로 해결 가능
-    public int getBegin(){
-        return (pageNo-1) * this.listAmount;
     }
 }

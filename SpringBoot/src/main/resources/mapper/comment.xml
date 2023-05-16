@@ -22,7 +22,7 @@
     <select id="selectComment" parameterType="map" resultType="comment">
         select * from board_comment
         where board_type=#{boardType} and board_no=#{boardNo} and status = 0
-        order by no asc;
+        order by created_at asc;
     </select>
 
     <!--    String selectIdCheck(String id) throws SQLException;-->
@@ -37,13 +37,13 @@
     <update id="updateUser" parameterType="map">
         update board_comment
         set content = #{comment.content}
-        where board_type = #{boardType} and board_no=#{boardNp} and no = #{comment.no}
+        where board_type = #{boardType} and board_no=#{boardNo} and no = #{comment.no}
     </update >
 
     <!--    void deleteUser(String userId) throws SQLException;-->
     <update id="deleteComment" parameterType="map">
         update board_comment
         set status = 1
-        where board_type = #{boardType} and board_no=#{boardNp} and no=#{comment.no}
+        where board_type = #{boardType} and board_no=#{boardNo} and no=#{commentNo}
     </update>
 </mapper>

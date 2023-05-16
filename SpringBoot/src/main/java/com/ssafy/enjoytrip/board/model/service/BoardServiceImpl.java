@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.board.model.service;
 
 import com.ssafy.enjoytrip.board.model.dto.Board;
 import com.ssafy.enjoytrip.board.model.dto.Comment;
+import com.ssafy.enjoytrip.board.model.dto.FileInfo;
 import com.ssafy.enjoytrip.board.model.mapper.BoardMapper;
 import com.ssafy.enjoytrip.board.model.mapper.CommentMapper;
 import com.ssafy.enjoytrip.common.dto.Page;
@@ -11,8 +12,13 @@ import com.ssafy.enjoytrip.controller.BoardController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +32,10 @@ public class BoardServiceImpl implements BoardService {
 //    }
     private BoardMapper boardMapper;
     private CommentMapper commentMapper;
-    private final Logger logger = LoggerFactory.getLogger(BoardController.class);
+
+    @Value("${file.path}")
+    private String uploadPath;
+    private final Logger logger = LoggerFactory.getLogger(BoardService.class);
 
     @Autowired
     public BoardServiceImpl(BoardMapper boardMapper, CommentMapper commentMapper) {
@@ -58,24 +67,43 @@ public class BoardServiceImpl implements BoardService {
             boardNo : int
         } */
         boardMapper.updateBoardHit(paramMap);
-        return boardMapper.selectByBoardNo(paramMap);
+        int boardNo = (int) paramMap.get("boardNo");
+        return boardMapper.selectByBoardNo2(boardNo);
     }
     @Override
-    public void writeBoard(Board board) throws Exception {
+    public int writeBoard(Board board) throws Exception {
+        System.out.println("글입력 전 dto : " + board);
+        //게시글 작성
         boardMapper.insertBoard(board);
+        System.out.println("작성 후 dto : " + board);
+        //해당 게시글에 대한 file 정보 업로드
+        List<FileInfo> fileInfos = board.getFileInfos();
+        //controller에서 필터링 했지만 검사 한 번더.
+        //파일 객체가 있을 때만 db에 파일 정보 저장한다.
+        //실제파일은 server의 /update폴더에 존재.
+        if (fileInfos != null && !fileInfos.isEmpty()) {
+            boardMapper.insertFile(board);
+        }
+        return board.getNo();
     }
 
     @Override
-    public void modifyBoard(Map<String, Object> paramMap) throws Exception{
+    public void modifyBoard(Board board) throws Exception{
         /*paramMap {
-            boardType : int
-            boardNo : int
             board : {
+                no : int
+                typeNo : int
                 title : String
                 content : String
+                userId : String
+                fileInfos : List<FileInfo>
             }
         } */
-        boardMapper.updateBoard(paramMap);
+        List<FileInfo> fileInfos = board.getFileInfos();
+        if (fileInfos != null && !fileInfos.isEmpty()) {
+            boardMapper.insertFile(board);
+        }
+        boardMapper.updateBoard(board);
     }
 
     @Override
@@ -84,12 +112,26 @@ public class BoardServiceImpl implements BoardService {
             boardType : int
             boardNo : int
         } */
+
+        //서버에 저장된 실제 파일 삭제
+        List<FileInfo> fileList = boardMapper.fileInfoList((Integer) paramMap.get("boardNo"));
+        for(FileInfo fileInfos : fileList){
+            String file = uploadPath + File.separator + fileInfos.getSaveFolder()
+                    + File.separator + fileInfos.getSaveFile();
+            try{
+                Path filePath = Paths.get(file);
+                Files.delete(filePath);
+                logger.debug("{}삭제 완료", fileInfos.getOriginalFile());
+            }catch(Exception e){
+                logger.debug("{}삭제 실패!!!!", fileInfos.getOriginalFile());
+                e.printStackTrace();
+            }
+        }
+
+        //DB정보 삭제
+        boardMapper.deleteBoardFile(paramMap);
         boardMapper.deleteByBoardNo(paramMap);
     }
-
-
-
-
 
     @Override
     public List<Comment> commentLists(Map<String, Object> paramMap) throws Exception {
@@ -109,6 +151,38 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void deleteComment(Map<String, Object> paramMap) throws Exception {
         commentMapper.deleteComment(paramMap);
+    }
+
+    @Override
+    public List<FileInfo> deleteBoardFileBysFile(Map<String, Object> paramMap) throws Exception {
+        /*
+        "boardNo" : boardNo
+        "sFolder" : sFolder
+        "sFile" : sFile
+        */
+            String file = uploadPath + File.separator + paramMap.get("sFolder")
+                    + File.separator + paramMap.get("sFile");
+            try{
+                Path filePath = Paths.get(file);
+                Files.delete(filePath);
+                logger.debug("삭제 완료");
+            }catch(Exception e){
+                logger.debug("삭제 실패!!!!");
+                e.printStackTrace();
+            }
+
+        boardMapper.deleteBoardFileBysFile(paramMap);
+        return boardMapper.fileInfoList((int)paramMap.get("boardNo"));
+    }
+
+    @Override
+    public void updateBoardLike(Map<String, Object> paramMap) throws Exception {
+        if((boolean)paramMap.get("likeSelect")){
+            boardMapper.insertUserLikeBoard(paramMap);
+        }else{
+            boardMapper.deleteUserLikeBoard(paramMap);
+        }
+        boardMapper.updateBoardLike(paramMap);
     }
 
 
