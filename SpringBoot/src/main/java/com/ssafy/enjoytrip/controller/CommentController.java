@@ -1,8 +1,7 @@
 package com.ssafy.enjoytrip.controller;
 
-import com.ssafy.enjoytrip.board.model.dto.Board;
-import com.ssafy.enjoytrip.board.model.dto.Comment;
-import com.ssafy.enjoytrip.board.model.service.BoardService;
+import com.ssafy.enjoytrip.model.board.dto.Comment;
+import com.ssafy.enjoytrip.model.board.service.BoardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/comment")
-@CrossOrigin("*")
 public class CommentController {
 
     private final Logger logger = LoggerFactory.getLogger(CommentController.class);

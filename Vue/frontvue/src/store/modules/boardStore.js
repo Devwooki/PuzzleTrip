@@ -6,6 +6,7 @@ const boardStore = {
         pageNo : 1,
         boardNo : null,
         comments : [],
+        pageCount : 1,
     },
     getters: { //state의 값을 vueComponent에 전달해주는 역할
         getBoardType(state){
@@ -19,7 +20,11 @@ const boardStore = {
         },
         getComments(state){
             return state.comments
+        },
+        getPageCount(state){
+            return state.pageCount
         }
+
     },
     mutations: {//state 값을 변경하기 위해 사용하는것 -> 직접호출은 불가하고 commit('정의된 이름')으로 호출
         SET_BOARD_TYPE(state, boardType){
@@ -33,6 +38,9 @@ const boardStore = {
         },
         SET_COMMENTS(state, comments){
             state.comments = comments;
+        },
+        SET_PAGE_COUNT(state, pageCount){
+            state.pageCount =pageCount
         }
     },
     actions: { //비동기 작업 결과를 적용할 떄 사용한다

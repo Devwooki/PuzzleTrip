@@ -1,7 +1,6 @@
 package com.ssafy.enjoytrip.controller;
 
 
-import com.ssafy.enjoytrip.board.model.dto.FileInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,10 +14,7 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
-
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/file")
 public class FileDownloadController {

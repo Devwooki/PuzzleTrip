@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.enjoytrip.user.model.mapper.UserMapper">
+<mapper namespace="com.ssafy.enjoytrip.model.user.mapper.UserMapper">
 
 <!--    void insertUser(User user) throws SQLException;-->
     <insert id="insertUser" parameterType="user">
@@ -41,5 +41,25 @@
         update user
         set pw = #{pw}
         where id = #{id}
+    </update>
+
+
+
+    <!-- JWT Update -->
+    <update id="saveRefreshToken" parameterType="map">
+        update user
+        set token = #{token}
+        where id = #{userId}
+    </update>
+
+    <select id="getRefreshToken" parameterType="string" resultType="string">
+        select token from user
+        where id = #{userId}
+    </select>
+
+    <update id="deleteRefreshToken" parameterType="map">
+        update user
+        set token = #{token, jdbcType=VARCHAR}
+        where id = #{userId}
     </update>
 </mapper>
