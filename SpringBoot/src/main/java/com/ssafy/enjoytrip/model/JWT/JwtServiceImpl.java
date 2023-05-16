@@ -16,9 +16,24 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 
+/*
+JWT 구조
+aaaa.bbbb.cccc
+a : 헤더
+ - Type : JWT
+ - alg : 해싱 알고리즘 지정, RSA나 SHA256 + salt키 주로 사용
+b : payload(내용)
+ - 정보를 담을 수 있다. JSON형태,
+ - JSON 내부의 각 key-value를 claim이라 지칭한다
+ 	- 등록된 클레임 : 토큰에 정보를 담기위해 사용, 이름은 이미 정해짐, optional
+ 	- 공개 클레임 : 충돌방지 -> uri형태
+ 	- 비공개 클레임 : 서버 <-> 클라이언트간 협의하에 사용되는 이름
+c : signature(서명)
+ - 헤더 인코딩 값, 정보 인코딩 값을 합친 후 비밀키로 해쉬
+* */
 @Service
 public class JwtServiceImpl implements JwtService {
-
+//https://galid1.tistory.com/755
 	public static final Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
 
 	private static final String SALT = "ssafySecret";
@@ -28,14 +43,14 @@ public class JwtServiceImpl implements JwtService {
 	@Override
 	public <T> String createAccessToken(String key, T data) {
 //		return create(key, data, "access-token", 1000 * 60 * ACCESS_TOKEN_EXPIRE_MINUTES);
-		return create(key, data, "access-token", 1000 * 10 * ACCESS_TOKEN_EXPIRE_MINUTES);
+		return create(key, data, "accessToken", 1000 * 10 * ACCESS_TOKEN_EXPIRE_MINUTES);
 	}
 
 //	AccessToken에 비해 유효기간을 길게...
 	@Override
 	public <T> String createRefreshToken(String key, T data) {
 //		return create(key, data, "refresh-token", 1000 * 60 * 60 * 24 * 7 * REFRESH_TOKEN_EXPIRE_MINUTES);
-		return create(key, data, "refresh-token", 1000 * 30 * ACCESS_TOKEN_EXPIRE_MINUTES);
+		return create(key, data, "refreshToken", 1000 * 30 * ACCESS_TOKEN_EXPIRE_MINUTES);
 	}
 
 	//Token 발급
@@ -86,42 +101,42 @@ public class JwtServiceImpl implements JwtService {
 //			Json Web Signature? 서버에서 인증을 근거로 인증정보를 서버의 private key로 서명 한것을 토큰화 한것
 //			setSigningKey : JWS 서명 검증을 위한  secret key 세팅
 //			parseClaimsJws : 파싱하여 원본 jws 만들기
-			Jws<Claims> claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(jwt);
+			Jws<Claims> claims = Jwts.parser()
+					.setSigningKey(this.generateKey())
+					.parseClaimsJws(jwt);
 //			Claims 는 Map의 구현체 형태
 			logger.debug("claims: {}", claims);
 			return true;
 		} catch (Exception e) {
-//			if (logger.isInfoEnabled()) {
-//				e.printStackTrace();
-//			} else {
 			logger.error(e.getMessage());
-//			}
-//			throw new UnauthorizedException();
-//			개발환경
 			return false;
 		}
 	}
 
+	//토큰 받아서 정보를 해독한다.
 	@Override
 	public Map<String, Object> get(String key) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest();
+
+		//access-token헤더에서 JWT추출
 		String jwt = request.getHeader("access-token");
+
+		//JWT 파싱
 		Jws<Claims> claims = null;
+		//JWS : JWT에 서명(전자서명)을 담은 객체
+		//Calims : JWT페이로드(value)에 저장된 클레임 정보를 담는 객체
 		try {
-			claims = Jwts.parser().setSigningKey(SALT.getBytes("UTF-8")).parseClaimsJws(jwt);
+			//access-token 파싱 후 검증 -> payload를 얻음
+			claims = Jwts.parser()
+					.setSigningKey(SALT.getBytes("UTF-8"))
+					.parseClaimsJws(jwt);
 		} catch (Exception e) {
-//			if (logger.isInfoEnabled()) {
-//				e.printStackTrace();
-//			} else {
 			logger.error(e.getMessage());
-//			}
 			throw new UnAuthorizedException();
-//			개발환경
-//			Map<String,Object> testMap = new HashMap<>();
-//			testMap.put("userid", userid);
-//			return testMap;
 		}
+
+		//claim에 포함된 값 추출
 		Map<String, Object> value = claims.getBody();
 		logger.info("value : {}", value);
 		return value;
