@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@CrossOrigin("*")
 @RequestMapping("/attraction")
 public class AttractionController {
     private final AttractionInfoService service;

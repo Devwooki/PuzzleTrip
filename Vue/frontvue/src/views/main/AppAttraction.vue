@@ -36,18 +36,28 @@
           </v-row>
         </v-container>
         <v-row class="search-checkbox">
-          <v-checkbox v-model="contentTypes" label="관광지" color="orange" value="12"  @change="handleGugunChange" hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="문화시설" color="orange" value="14"  @change="handleGugunChange" hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="축제공연행사" color="orange" value="15"  @change="handleGugunChange" hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="여행코스" color="orange" value="25"  @change="handleGugunChange" hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="레포츠" color="orange" value="28"  @change="handleGugunChange" hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="숙박" color="orange" value="32"  @change="handleGugunChange" hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="쇼핑" color="orange" value="38"  @change="handleGugunChange" hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="음식점" color="orange" value="39"  @change="handleGugunChange" hide-details></v-checkbox>
-          
-          <v-checkbox v-model="checkAllBox" class="allSelectRadio" label="전체 체크 해체" color="blue" @change="toggleSelectAll" hide-details></v-checkbox>
+          <v-checkbox v-model="contentTypes" label="관광지" color="orange" value="12" @change="handleGugunChange"
+                      hide-details></v-checkbox>
+          <v-checkbox v-model="contentTypes" label="문화시설" color="orange" value="14" @change="handleGugunChange"
+                      hide-details></v-checkbox>
+          <v-checkbox v-model="contentTypes" label="축제공연행사" color="orange" value="15" @change="handleGugunChange"
+                      hide-details></v-checkbox>
+          <v-checkbox v-model="contentTypes" label="여행코스" color="orange" value="25" @change="handleGugunChange"
+                      hide-details></v-checkbox>
+          <v-checkbox v-model="contentTypes" label="레포츠" color="orange" value="28" @change="handleGugunChange"
+                      hide-details></v-checkbox>
+          <v-checkbox v-model="contentTypes" label="숙박" color="orange" value="32" @change="handleGugunChange"
+                      hide-details></v-checkbox>
+          <v-checkbox v-model="contentTypes" label="쇼핑" color="orange" value="38" @change="handleGugunChange"
+                      hide-details></v-checkbox>
+          <v-checkbox v-model="contentTypes" label="음식점" color="orange" value="39" @change="handleGugunChange"
+                      hide-details></v-checkbox>
+
+          <v-checkbox v-model="checkAllBox" class="allSelectRadio" label="전체 체크 해체" color="blue"
+                      @change="toggleSelectAll" hide-details></v-checkbox>
         </v-row>
-        
+<!--        <button class="btnLineStart" @click="lineStart">이제 그려</button>-->
+<!--        <button class="btnLineStop" @click="lineStop">그만 그려</button>-->
       </div>
       <div id="weather_wrap">
         <div id="today_weather">오늘의 날씨</div>
@@ -69,13 +79,20 @@
         </div>
       </div>
     </div>
+    <button class="findWay" @click="findDirections">길찾기</button>
+    <div v-if="directionsResult">
+      <!-- 결과를 표시하는 HTML 요소들을 추가 -->
+      <p>총 거리: {{ directionsResult.totalDistance }}m</p>
+      <p>소요 시간: {{ directionsResult.totalTime }}분</p>
+      <!-- ... -->
+    </div>
     <div id="map"></div>
-    <button class="btnLineStart">이제 그려</button>
   </v-app>
 </template>
 
 <script>
 import axios from "axios";
+
 export default {
   // components: {AppWeather},
   name: "KakaoMap",
@@ -116,15 +133,16 @@ export default {
       zoomControl: {},
 
       //거리 찍기 필요
-      drawingFlag: false,
-      moveLine: null,
-      clickLine: null,
-      distanceOverlay: null,
+      drawingFlag: false, // 선이 그려지고 있는 상태를 가지고 있을 변수
+      moveLine: null, // 선이 그려지고 있을때 마우스 움직임에 따라 그려질 선 객체
+      clickLine: null,  // 마우스로 클릭한 좌표로 그려질 선 객체입니다
+      distanceOverlay: null, // 선이 그려지고 있을때 클릭할 때마다 클릭 지점과 거리를 표시하는 커스텀 오버레이 배열입니다.
       dots: {},
+
+      directionsResult: null,
     }
   },
   mounted() {
-
     if (window.kakao && window.kakao.maps) {
       this.initMap();
     } else {
@@ -134,7 +152,7 @@ export default {
       script.onload = () => kakao.maps.load(this.initMap);
       //동적 로딩을 위해 autoload활용
       script.src =
-        "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=0684d7cb3f95de608b3bc5c60dd45733";
+        "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=95684c0a88a9ddfe933ca5737c2da5a4";
       document.head.appendChild(script);
 
     }
@@ -260,7 +278,28 @@ export default {
       for (const element of this.MarkerTmp) {
         element.setMap(null);
       }
+    },
+    findDirections() {
+      axios.post('https://apis-navi.kakaomobility.com/v1/waypoints/directions', request, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `KakaoAK ${REST_API_KEY}`
+        }
+      })
+        .then(response => {
+          // API 요청 성공 시 처리할 로직 작성
+          this.directionsResult = response.data;
+        })
+        .catch(error => {
+          // API 요청 실패 시 처리할 로직 작성
+          console.error(error);
+        });
     }
+
+    // 지도에 클릭 이벤트를 등록
+    // 지도를 클릭하면 선 그리기가 시작됩니다 그려진 선이 있으면 지우고 다시 그리기
+
+
     // makeOverlay(marker){
     //   // console.dir(marker.ca.attributes.summaryImg.nodeValue)
     //   let content = '<div class="wrap">' +
@@ -332,21 +371,24 @@ export default {
     display: flex;
     justify-content: center;
 }
+
 .allSelectRadio {
     font-weight: 900;
 }
+
 /*날씨 정보*/
 #weather_wrap {
-background-color: #8bb9eb;
-color: white;
-min-width: 10rem;
-min-height: 10rem;
-flex: 0 0 13rem;
-margin-left: 1rem;
-margin-bottom: 1rem;
-border-radius: 10px;
-box-shadow: 5px 5px 5px rgb(165, 165, 165);
+    background-color: #8bb9eb;
+    color: white;
+    min-width: 10rem;
+    min-height: 10rem;
+    flex: 0 0 13rem;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px rgb(165, 165, 165);
 }
+
 #today_weather {
     margin-top: 10px;
     font-size: 18px;
@@ -354,6 +396,7 @@ box-shadow: 5px 5px 5px rgb(165, 165, 165);
     font-weight: 600;
 
 }
+
 #weatherimg_wrap {
     display: flex;
     justify-content: center;
@@ -379,9 +422,11 @@ box-shadow: 5px 5px 5px rgb(165, 165, 165);
     font-weight: 500;
     justify-content: center;
 }
+
 #weathertitle {
     line-height: 30px;
 }
+
 #temp {
     margin-left: 10px;
     line-height: 30px;
@@ -403,7 +448,8 @@ box-shadow: 5px 5px 5px rgb(165, 165, 165);
 }
 
 /*그리기 버튼*/
-.btnLineStart {
+
+.btnLineStart, .btnLineStop {
     border: 1px solid black;
     width: fit-content;
 }

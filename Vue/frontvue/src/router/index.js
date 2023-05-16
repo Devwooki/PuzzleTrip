@@ -13,6 +13,7 @@ import BoardDetail from "@/components/Board/BoardDetail.vue";
 import BoardWrite from "@/components/Board/BoardWrite.vue";
 import BoardFileItem from "@/components/Board/BoardFileItem.vue";
 import BoardModify from "@/components/Board/BoardModify.vue";
+import AppTest from "@/views/main/AppTest.vue";
 
 
 
@@ -89,6 +90,11 @@ const routes = [
     name: "announce",
     component: AppAnnounce
   },
+  {
+    path: "/test",
+    name: "test",
+    component: AppTest
+  }
 ];
 
 const router = new VueRouter({

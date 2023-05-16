@@ -44,18 +44,22 @@ html {
     * {
         font-family: 'NanumSquareNeo-Variable';
     }
+
     margin: 0;
     padding: 0;
     height: 100%;
 }
+
 header {
     display: flex;
     justify-content: center;
 
 }
-#header{
+
+#header {
     width: 80%;
 }
+
 #wrap {
     min-height: 100%;
     position: relative;

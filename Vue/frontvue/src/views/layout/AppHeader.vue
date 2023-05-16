@@ -15,6 +15,7 @@
           <router-link :to="{name: 'hotPlace'}">핫플레이스</router-link>
           <router-link :to="{name: 'announce'}">공지사항</router-link>
           <router-link :to="{name: 'board'}">게시판</router-link>
+          <router-link :to="{name: 'test'}">테스트</router-link>
         </div>
       </nav>
     </header>
@@ -49,7 +50,7 @@ header {
 /* 유져 메뉴 */
 #userManu {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin-top: 1rem;
     margin-right: 2rem;
 }
