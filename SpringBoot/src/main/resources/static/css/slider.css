@@ -1,0 +1,130 @@
+/* C */
+/* ========================================================================== */
+.c {
+  min-width: 700px;
+  width: 700px;
+  height: 500px;
+  border-radius: 12px;
+  padding: 20px;
+  padding-bottom: 40px;
+  box-shadow: 0 8px 48px 2px hsla(10 6% 15% / 0.4);
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  position: relative;
+  overflow: hidden;
+  background: hsl(0 0% 90%);
+
+  box-sizing: border-box;
+}
+
+.ci {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: inherit;
+  height: inherit;
+  transform-origin: left 50%;
+
+  background: inherit;
+
+  z-index: var(--z);
+  transition: 0.3s ease-out;
+}
+
+.ci img {
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.ch {
+  position: absolute;
+  top: 70%;
+  left: 4%;
+  transform: translateY(-50%);
+
+  font-size: 2rem;
+  color: hsla(var(--h) var(--s) var(--l) / 0.8);
+  text-shadow: 0 2px 10px hsla(var(--h) var(--s) 10% / 0.3);
+}
+
+input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  z-index: -10;
+}
+
+label {
+  width: 10%;
+  height: 10px;
+  margin-right: 4px;
+  border-radius: 20px;
+
+  background: hsla(0 0% 90% / 0.3);
+  cursor: pointer;
+
+  position: relative;
+  z-index: 10;
+}
+
+label:last-child {
+  margin-right: 0;
+}
+
+input:checked + label {
+  background: linear-gradient(
+    to right,
+    hsla(var(--hue) 80% 70% / 0.7),
+    hsla(calc(var(--hue) + 30) 80% 50% / 0.7)
+  );
+}
+
+input:not(:checked) + label + .ci {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+input:checked + label + .ci ~ .ci {
+  transform: translateX(100%);
+}
+
+input:not(:checked) + label + .ci {
+  transition: 0;
+}
+
+/* ABS */
+/* ========================================================================== */
+.abs-site-link {
+  position: fixed;
+  z-index: 11;
+  bottom: 20px;
+  left: 20px;
+  color: hsla(32 50% 50% / 0.8);
+  font-size: 1.6rem;
+  font-weight: bold;
+  border-bottom: 3px solid currentColor;
+  text-decoration: none;
+  background-color: inherit;
+}
+
+.abs-profiles {
+  position: fixed;
+  z-index: 10;
+  right: 20px;
+  bottom: 23px;
+  opacity: 0.8;
+}
+
+.abs-profiles img {
+  filter: hue-rotate(71deg) brightness(1.1);
+}
+
+.abs-profiles a {
+  display: inline-block;
+  margin-left: 6px;
+}

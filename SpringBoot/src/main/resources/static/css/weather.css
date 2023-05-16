@@ -1,0 +1,73 @@
+#weatherAndStopline {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  height: auto;
+}
+
+#weather_wrap {
+  top: 235px;
+  left: 20px;
+  z-index: 1;
+  background-color: rgb(142, 235, 212);
+  color: white;
+  flex: 0 0 170px;
+  width: 160px;
+  margin-left: 15px;
+  margin-bottom: 15px;
+  border-radius: 20px;
+  box-shadow: 5px 5px 5px rgb(165, 165, 165);
+  font-family: "Malgun Gothic", dotum, "돋움", sans-serif;
+}
+#today_weather {
+  margin-top: 10px;
+  font-size: 25px;
+  text-align: center;
+  font-weight: 600;
+
+}
+#weatherimg_wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: -14px;
+}
+
+#weather-icon {
+  width: 50%;
+}
+
+#name {
+  font-size: 25px;
+  text-align: center;
+  margin-top: -30px;
+  font-weight: 500;
+}
+
+#weatherinfo {
+  display: flex;
+  margin-left: 20px;
+  height: 30px;
+  font-weight: 500;
+}
+#weathertitle {
+  line-height: 30px;
+}
+#temp {
+  margin-left: 10px;
+  line-height: 30px;
+}
+
+.temperature {
+  margin-left: 5px;
+  line-height: 30px;
+}
+
+#hum {
+  margin-left: 10px;
+  line-height: 30px;
+}
+
+.humidity {
+  margin-left: 5px;
+  line-height: 30px;
+}
