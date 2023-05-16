@@ -20,6 +20,9 @@ import java.util.Map;
 public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
+    //HttpStatus 표기를 위한 final 변수
+    private static final String SUCCESS = "success";
+    private static final String FAIL = "fail";
 
 
 
@@ -28,11 +31,14 @@ public class UserController {
     @Autowired
     private JwtServiceImpl jwtService;
 
-    //HttpStatus 표기를 위한 final 변수
-    private static final String SUCCESS = "success";
-    private static final String FAIL = "fail";
+    /* 서버의 토큰 검증 시나리오
+    1. 검증이 필요한(마이페이지, 게시판 글작성, 수정, 삭제, 댓글 등) client요청 header에 token포함
+    2. Spring Interceptor 요청
+    3. 사용자에게 제공된 token과 header의 토큰 일치하는지 체크
+    4. auth0 jwt를 이용해 검증
+    */
 
-    @PostMapping("login/")
+    @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody User user) throws Exception {
         logger.debug("로그인 하기 : login {}", user);
 
@@ -49,8 +55,8 @@ public class UserController {
                 //보안 강화하기 위해 2개의 토큰을 발행한다
                 //accessToken : API 요청에 사용하기 위한 토큰 - 위험도 낮은 작업에 사용
                 //refreshToken : 인증, 접근, 권한 갱신 등 고위험 작업에 사용 - 서버에 저장하고 체크
-                String accessToken = jwtService.createAccessToken("userid", loginUser.getId());// key, data
-                String refreshToken = jwtService.createRefreshToken("userid", loginUser.getPw());// key, data
+                String accessToken = jwtService.createAccessToken("userId", loginUser.getId());// key, data
+                String refreshToken = jwtService.createRefreshToken("userId", loginUser.getId());// key, data
 
                 //DB에 사용자에게 토큰 부여
                 service.saveRefreshToken(user.getId(), refreshToken);
@@ -60,12 +66,13 @@ public class UserController {
                 logger.debug("로그인 refreshToken 정보 : {}", refreshToken);
 
                 //
-                result.put("access-token", accessToken);
-                result.put("refresh-token", refreshToken);
+                result.put("accessToken", accessToken);
+                result.put("refreshToken", refreshToken);
                 result.put("message", SUCCESS);
 
                 //acepted : 202 -> 요청 처리는 완료됬고 응답 대기 상태
                 status = HttpStatus.ACCEPTED;
+                result.put("userInfo", loginUser);
             }else {
                 result.put("message", FAIL);
                 status = HttpStatus.ACCEPTED;

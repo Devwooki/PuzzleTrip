@@ -79,7 +79,7 @@
         </div>
       </div>
     </div>
-    <button class="findWay" @click="findDirections">길찾기</button>
+<!--    <button class="findWay" @click="findDirections">길찾기</button>-->
     <div v-if="directionsResult">
       <!-- 결과를 표시하는 HTML 요소들을 추가 -->
       <p>총 거리: {{ directionsResult.totalDistance }}m</p>
@@ -279,22 +279,22 @@ export default {
         element.setMap(null);
       }
     },
-    findDirections() {
-      axios.post('https://apis-navi.kakaomobility.com/v1/waypoints/directions', request, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `KakaoAK ${REST_API_KEY}`
-        }
-      })
-        .then(response => {
-          // API 요청 성공 시 처리할 로직 작성
-          this.directionsResult = response.data;
-        })
-        .catch(error => {
-          // API 요청 실패 시 처리할 로직 작성
-          console.error(error);
-        });
-    }
+    // findDirections() {
+    //   axios.post('https://apis-navi.kakaomobility.com/v1/waypoints/directions', request, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': `KakaoAK ${REST_API_KEY}`
+    //     }
+    //   })
+    //     .then(response => {
+    //       // API 요청 성공 시 처리할 로직 작성
+    //       this.directionsResult = response.data;
+    //     })
+    //     .catch(error => {
+    //       // API 요청 실패 시 처리할 로직 작성
+    //       console.error(error);
+    //     });
+    // }
 
     // 지도에 클릭 이벤트를 등록
     // 지도를 클릭하면 선 그리기가 시작됩니다 그려진 선이 있으면 지우고 다시 그리기
