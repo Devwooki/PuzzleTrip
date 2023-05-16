@@ -1,2 +1,0 @@
-const serviceKey = "IHMMiT7zfDAzX30lt8UP%2FhV%2B%2F6JwU4nfQT2hG3%2Bbqe06YIZGcJMJg7dGHRS1Ru841LcAwDK0HvMnHVM%2Bw3zmAQ%3D%3D";
-const kakaoMapApiKey = "0684d7cb3f95de608b3bc5c60dd45733";
