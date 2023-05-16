@@ -56,8 +56,8 @@
           <v-checkbox v-model="checkAllBox" class="allSelectRadio" label="전체 체크 해체" color="blue"
                       @change="toggleSelectAll" hide-details></v-checkbox>
         </v-row>
-<!--        <button class="btnLineStart" @click="lineStart">이제 그려</button>-->
-<!--        <button class="btnLineStop" @click="lineStop">그만 그려</button>-->
+        <!--        <button class="btnLineStart" @click="lineStart">이제 그려</button>-->
+        <!--        <button class="btnLineStop" @click="lineStop">그만 그려</button>-->
       </div>
       <div id="weather_wrap">
         <div id="today_weather">오늘의 날씨</div>
@@ -84,7 +84,6 @@
       <!-- 결과를 표시하는 HTML 요소들을 추가 -->
       <p>총 거리: {{ directionsResult.totalDistance }}m</p>
       <p>소요 시간: {{ directionsResult.totalTime }}분</p>
-      <!-- ... -->
     </div>
     <div id="map"></div>
   </v-app>
@@ -280,27 +279,131 @@ export default {
       }
     },
     findDirections() {
-      axios.post('https://apis-navi.kakaomobility.com/v1/waypoints/directions', request, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `KakaoAK ${REST_API_KEY}`
-        }
-      })
+      const apiUrl = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
+      const REST_API_KEY = '42f1b6d378cc81efe4eb31d1b450d8d4'; // 카카오디벨로퍼스에서 발급 받은 API 키 값
+
+      // 요청 바디 데이터
+      const requestData = {
+        origin: {
+          x: '127.3028094000146',
+          y: '36.355174903129836'
+        },
+        destination: {
+          x: '127.3028094000146',
+          y: '36.355174903129836'
+        },
+        waypoints: [
+          {
+            name: 'name0',
+            x: '127.33883814336248',
+            y: '36.35612803814052'
+          }
+        ],
+        priority: 'RECOMMEND',
+        car_fuel: 'GASOLINE',
+        car_hipass: false,
+        alternatives: false,
+        road_details: false
+      };
+
+      // 요청 헤더 설정
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `KakaoAK ${REST_API_KEY}`
+      };
+
+      // Axios를 사용하여 API 호출 수행
+      axios.post(apiUrl, requestData, {headers})
         .then(response => {
-          // API 요청 성공 시 처리할 로직 작성
-          this.directionsResult = response.data;
-        })
-        .catch(error => {
-          // API 요청 실패 시 처리할 로직 작성
-          console.error(error);
-        });
-    }
+          let data = response.data.routes[0];
+          let result_code = data.result_code;
+          let summary = data.summary;
+          let sections = data.sections;
+          console.log(result_code);
+          console.log(summary);
+          console.log(sections[0]);
 
-    // 지도에 클릭 이벤트를 등록
-    // 지도를 클릭하면 선 그리기가 시작됩니다 그려진 선이 있으면 지우고 다시 그리기
+          if (sections[0]) {
+            let {distance, duration, guides: arrays, roads} = sections[0];  //distance : 미터단위, duration : 초 단위
 
+            let detailRoads = [];
 
-    // makeOverlay(marker){
+            for (const element of roads) {
+              let arg = element;
+              let mini = arg.vertexes;
+              let cursor = 0;
+              while (cursor < mini.length) {
+                let obj = new kakao.maps.LatLng(mini[cursor + 1], mini[cursor]);
+                detailRoads.push(obj);
+                cursor = cursor + 2;
+                if (cursor >= 1000000) break;
+              }
+            }
+            arrays = arrays.map((arg) => {
+              let {x, y} = arg;
+              if (x && y) {
+                arg.position = new kakao.maps.LatLng(arg.y, arg.x);
+              }
+              return arg;
+            });
+
+            let {title, position} = arrays[0];
+            // 마커 이미지의 이미지 크기 입니다
+            let imageSize = new kakao.maps.Size(24, 35);
+            // 마커 이미지를 생성합니다
+            let image = new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png', imageSize);
+            // 마커를 생성합니다
+/*
+            let marker1 = new kakao.maps.Marker({
+*/
+            new kakao.maps.Marker({
+              map: this.map, // 마커를 표시할 지도
+              position,
+              title: title ? title : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+              image // 마커 이미지
+            });
+
+            let {title: title2, position: position2} = arrays[arrays.length - 1];
+            // 마커 이미지의 이미지 크기 입니다
+            // 마커 이미지를 생성합니다
+            let image2 = new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_drag.png', imageSize);
+            // 마커를 생성합니다
+/*
+            let marker2 = new kakao.maps.Marker({
+*/
+           new kakao.maps.Marker({
+              map: this.map, // 마커를 표시할 지도
+              position: position2,
+              title: title2 ? title2 : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+              image: image2 // 마커 이미지
+            });
+
+            // 지도에 표시할 선을 생성합니다
+            let polyline = new kakao.maps.Polyline({
+              //path: arrays.map( arg=> arg.position), // 선을 구성하는 좌표배열 입니다
+              path: detailRoads,
+              strokeWeight: 5, // 선의 두께 입니다
+              strokeColor: 'red', // 선의 색깔입니다
+              strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+              strokeStyle: 'solid' // 선의 스타일입니다
+            });
+
+            // 지도에 선을 표시합니다
+            polyline.setMap(this.map);
+
+            let customOverlay = new kakao.maps.CustomOverlay({
+              position: new kakao.maps.LatLng(37.39843974939604, 127.10972941510465),
+              content: `<div class ="label">거리, 시간 : ${distance}, ${duration}</div>`
+            });
+
+            // 커스텀 오버레이를 지도에 표시합니다
+            customOverlay.setMap(this.map);
+          }
+        }).catch(err => {
+        console.log(err)
+      });
+    },
+// makeOverlay(marker){
     //   // console.dir(marker.ca.attributes.summaryImg.nodeValue)
     //   let content = '<div class="wrap">' +
     //     '    		 <div class="info">' +
