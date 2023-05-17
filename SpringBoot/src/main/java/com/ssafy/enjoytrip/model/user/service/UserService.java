@@ -6,6 +6,7 @@ import com.ssafy.enjoytrip.model.user.dto.User;
 public interface UserService {
 	void join(User user) throws Exception;
 	User getLogin(User user) throws Exception;
+	User getUserInfo(String userId) throws Exception;
 	void modifyUser(User user) throws Exception;
 	void findPw(User user) throws Exception;
 	void deleteUser(String userId) throws Exception;
@@ -16,4 +17,6 @@ public interface UserService {
 	void saveRefreshToken(String userId, String refreshToken) throws Exception;
 	Object getRefreshToken(String userId) throws Exception;
 	void deleRefreshToken(String userId) throws Exception;
+
+
 }

@@ -13,6 +13,9 @@ import BoardModify from "@/components/Board/BoardModify.vue";
 import AppTest from "@/views/main/AppTest.vue";
 import AppUser from "@/views/user/AppUser.vue";
 import UserLogin from "@/components/User/UserLogin.vue";
+import UserFindPw from "@/components/User/UserFindPw.vue";
+import UserRegist from "@/components/User/UserRegist.vue";
+import UserViewMyPage from "@/components/User/UserViewMyPage.vue";
 
 
 
@@ -27,7 +30,7 @@ const routes = [
   },
   {
     path: "/user",
-    name: "login",
+    name: "user",
     component: AppUser,
     children : [
       {
@@ -35,6 +38,21 @@ const routes = [
         name: "login",
         component : UserLogin
       },
+      {
+        path: "/findPw",
+        name: "findPw",
+        component : UserFindPw
+      },
+      {
+        path: "/regist",
+        name: "regist",
+        component : UserRegist
+      },
+      {
+        path: "/myPage",
+        name: "myPage",
+        component : UserViewMyPage
+      }
     ]
   },
   {
@@ -72,7 +90,7 @@ const routes = [
             path: "/fileItem",
             name: "boardFileItem",
             component: BoardFileItem,
-          }
+          },
         ]
       },
       {

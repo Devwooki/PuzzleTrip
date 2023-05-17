@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.enjoytrip.model.user.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,9 @@ public class UserController {
     2. Spring Interceptor 요청
     3. 사용자에게 제공된 token과 header의 토큰 일치하는지 체크
     4. auth0 jwt를 이용해 검증
+    
+    시나리오 이해가 안가면 다음 자료 참고
+    https://inpa.tistory.com/entry/WEB-%F0%9F%93%9A-Access-Token-Refresh-Token-%EC%9B%90%EB%A6%AC-feat-JWT
     */
 
     @PostMapping("login")
@@ -58,7 +62,7 @@ public class UserController {
                 String accessToken = jwtService.createAccessToken("userId", loginUser.getId());// key, data
                 String refreshToken = jwtService.createRefreshToken("userId", loginUser.getId());// key, data
 
-                //DB에 사용자에게 토큰 부여
+                //DB에 사용자에게 RefreshToken토큰 부여
                 service.saveRefreshToken(user.getId(), refreshToken);
 
                 //token 정보 출력
@@ -72,7 +76,6 @@ public class UserController {
 
                 //acepted : 202 -> 요청 처리는 완료됬고 응답 대기 상태
                 status = HttpStatus.ACCEPTED;
-                result.put("userInfo", loginUser);
             }else {
                 result.put("message", FAIL);
                 status = HttpStatus.ACCEPTED;
@@ -85,6 +88,65 @@ public class UserController {
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @GetMapping("info/{userId}")
+    private ResponseEntity<?> getUserInfo(@PathVariable("userId") String userId,
+                                          HttpServletRequest req) throws Exception{
+        logger.debug("유저 {}의 정보 조회", userId);
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        //요청 헤더에 accessToken이 담겨있는지 체크
+        if(jwtService.checkToken(req.getHeader("accessToken"))){
+            logger.info("해당 토큰은 사용할 수 있다");
+            try{
+                User userInfo = service.getUserInfo(userId);
+                result.put("userInfo", userInfo);
+                result.put("message", SUCCESS);
+                status = HttpStatus.ACCEPTED;
+            }catch(Exception e){
+                logger.debug("정보 조회 실패 {}", e);
+                result.put("message", FAIL);
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }else{
+            logger.error("사용 불가능한 토큰");
+            result.put("message", FAIL);
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        //db에 접근해서 accessToken이 유효한지 체크
+        return new ResponseEntity<>(result, status);
+    }
+
+    @PostMapping("refresh")
+    private ResponseEntity<?> refreshToken(@RequestBody User user,
+                                           HttpServletRequest req) throws Exception{
+        logger.debug("{} 유저 토큰 재발급", user.getId());
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+
+        //HttpRequest 헤더에서 JWT를 파싱
+        String refToken = req.getHeader("refreshToken");
+
+        //refToken은 aaa.bbb.ccc형태의 JWT
+        if(jwtService.checkToken(refToken)){//토큰에 payload가 존재
+            //db에 저장된 userId의 refreshToken과 파싱해서 얻은 token 비교
+            if(refToken.equals(service.getRefreshToken(user.getId()))){
+                String accessToken = jwtService.createAccessToken("accessToken", user.getId());;
+                logger.debug("{}의 accessToken 재발급{}", user.getId(), accessToken);
+                result.put("accessToken", accessToken);
+                result.put("message", SUCCESS);
+                status = HttpStatus.ACCEPTED;
+            }
+        }else {
+            logger.debug("refreshToken도 사용 불가");
+            result.put("message", FAIL);
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return new ResponseEntity<>(result, status);
+    }
+
     @GetMapping("logout/{userId}")
     private ResponseEntity<?> removeToken(@PathVariable("userId") String userId) throws Exception{
         Map<String, Object> result = new HashMap<>();
@@ -124,38 +186,3 @@ public class UserController {
         service.deleteUser(user.getId());
     }
 }
-
-//    @PostMapping("login")
-//    public String login(User user, HttpSession session, RedirectAttributes ra,
-//                        HttpServletRequest request, HttpServletResponse response,
-//                        @RequestParam(name="saveId", required = false) String saveid) throws Exception {
-//        logger.debug("Post : login {}", user);
-//        User userInfo = service.getLogin(user);
-//        if(userInfo == null){
-//            //에러메시지도 출력시키자
-//            ra.addFlashAttribute("msg", "id와 비밀번호를 확인해주세요");
-//            return "redirect:login";
-//        }else {
-//            //유저 정보 세션에 등록
-//            session.setAttribute("userInfo", userInfo);
-//            //아이디 저장 정보 쿠키 추가
-//            if (saveid != null) {
-//                Cookie loginCookie = new Cookie("idCookie", user.getId());
-//                loginCookie.setMaxAge(60 * 60 * 24 * 7); // 쿠키 유효기간 7일
-//                // 쿠키를 HttpServletResponse 객체에 추가
-//                response.addCookie(loginCookie);
-//            } else {
-//                Cookie cookies[] = request.getCookies();
-//                if (cookies != null) {
-//                    for (Cookie cookie : cookies) {
-//                        if ("idCookie".equals(cookie.getName())) {
-//                            cookie.setMaxAge(0);
-//                            response.addCookie(cookie);
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//            return "redirect:/";
-//        }
-//    }

@@ -15,6 +15,11 @@
         where id=#{id} and pw=#{pw}
     </select>
 
+    <select id="selectUserInfo" parameterType="String" resultType="user">
+        select * from user
+        where id=#{userId}
+    </select>
+
 <!--    String selectIdCheck(String id) throws SQLException;-->
     <select id="selectIdCheck" parameterType="String" resultType="String">
         select id

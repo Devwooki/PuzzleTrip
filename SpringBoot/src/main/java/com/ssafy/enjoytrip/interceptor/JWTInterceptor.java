@@ -28,7 +28,7 @@ public class JWTInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) throws Exception {
         final String token = request.getHeader(HEADER_AUTH);
-        logger.debug("인터셉터 접근도 안하는데?");
+        logger.debug("인터셉터 접근도 안하는데? {}");
         if(token != null && jwtService.checkToken(token)){
             logger.info("토큰 사용 가능 : {}", token);
             return true;

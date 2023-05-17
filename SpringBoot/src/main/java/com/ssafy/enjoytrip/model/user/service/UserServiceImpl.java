@@ -24,6 +24,12 @@ public class UserServiceImpl implements UserService{
 	public User getLogin(User user) throws Exception {
 		return userMapper.selectLogin(user);
 	}
+
+	@Override
+	public User getUserInfo(String userId) throws Exception {
+		return userMapper.selectUserInfo(userId);
+	}
+
 	@Override
 	public void modifyUser(User user) throws Exception {
 		userMapper.updateUser(user);

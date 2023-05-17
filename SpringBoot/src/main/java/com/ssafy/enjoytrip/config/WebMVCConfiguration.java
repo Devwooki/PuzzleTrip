@@ -28,7 +28,8 @@ public class WebMVCConfiguration implements WebMvcConfigurer {
     //SpringMVC구성 요소를 구성하고 커스터마이징하기 위한 인터페이스
     //@SpringBootApplication와 함께 사용함
     private Logger logeer = LoggerFactory.getLogger(WebMVCConfiguration.class);
-    private final List<String> jwtExclude = Arrays.asList("/user/login/**","/attraction/*");
+    private final List<String> jwtExclude = Arrays.asList("/user/**","/attraction/**", "/board/**", "/comment/**", "/file/**");
+    //제외할 하위 모든 경로는 /**, 제외할 첫 번째 하위경로는 /* 주의
     private final List<String> jwtCheck = Arrays.asList("/board/*", "/admin");
 
     @Autowired

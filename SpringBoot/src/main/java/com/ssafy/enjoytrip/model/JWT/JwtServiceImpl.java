@@ -42,15 +42,15 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public <T> String createAccessToken(String key, T data) {
-//		return create(key, data, "access-token", 1000 * 60 * ACCESS_TOKEN_EXPIRE_MINUTES);
-		return create(key, data, "accessToken", 1000 * 10 * ACCESS_TOKEN_EXPIRE_MINUTES);
+		return create(key, data, "accessToken", 1000 * 60 * ACCESS_TOKEN_EXPIRE_MINUTES);
+//테스트용 짧은시간		return create(key, data, "accessToken", 1000 * 10 * ACCESS_TOKEN_EXPIRE_MINUTES);
 	}
 
 //	AccessToken에 비해 유효기간을 길게...
 	@Override
 	public <T> String createRefreshToken(String key, T data) {
-//		return create(key, data, "refresh-token", 1000 * 60 * 60 * 24 * 7 * REFRESH_TOKEN_EXPIRE_MINUTES);
-		return create(key, data, "refreshToken", 1000 * 30 * ACCESS_TOKEN_EXPIRE_MINUTES);
+		return create(key, data, "refreshToken", 1000 * 60 * 60 * 24 * 7 * REFRESH_TOKEN_EXPIRE_MINUTES);
+//테스트용 짧은시간		return create(key, data, "refreshToken", 1000 * 30 * ACCESS_TOKEN_EXPIRE_MINUTES);
 	}
 
 	//Token 발급
@@ -62,18 +62,28 @@ public class JwtServiceImpl implements JwtService {
 	 * jwt 토큰의 구성 : header+payload+signature
 	 */
 	@Override
-	public <T> String create(String key, T data, String subject, long expire) {
-		String jwt = Jwts.builder()
+	public <T> String create(String key, T data, String tokenName, long expire) {
+		// Payload 설정 : 생성일 (IssuedAt), 유효기간 (Expiration),
+		// 토큰 제목 (Subject), 데이터 (Claim) 등 정보 세팅.
+		Claims claims = Jwts.claims()
+				// 토큰 제목 설정 ex) access-token, refresh-token
+				.setSubject(tokenName)
+				// 생성일 설정
+				.setIssuedAt(new Date())
+				// 만료일 설정 (유효기간)
+				.setExpiration(new Date(System.currentTimeMillis() + expire));
+
+		// 저장할 data의 key, value
+		claims.put(key, data);
+
+		String jwt = Jwts.builder() //토큰이 만들어진다. 토큰에는 {{헤더.페이로드.시그니처}}형태
 				// Header 설정 : 토큰의 타입, 해쉬 알고리즘 정보 세팅.
 				.setHeaderParam("typ", "JWT")
-				.setHeaderParam("regDate", System.currentTimeMillis()) // 생성 시간
-				// Payload 설정 : 유효기간(Expiration), 토큰 제목 (Subject), 데이터 (Claim) 등 정보 세팅.
-				.setExpiration(new Date(System.currentTimeMillis() + expire)) // 토큰 유효기간
-				.setSubject(subject) // 토큰 제목 설정 ex) access-token, refresh-token
-				.claim(key, data) // 저장할 데이터
+				.setClaims(claims)
 				// Signature 설정 : secret key를 활용한 암호화.
-				.signWith(SignatureAlgorithm.HS256, this.generateKey())
+				.signWith(SignatureAlgorithm.HS256, this.generateKey())//SALT값으로 서명 생성
 				.compact(); // 직렬화 처리.
+
 		return jwt;
 	}
 
@@ -82,7 +92,7 @@ public class JwtServiceImpl implements JwtService {
 		byte[] key = null;
 		try {
 			// charset 설정 안하면 사용자 플랫폼의 기본 인코딩 설정으로 인코딩 됨.
-			key = SALT.getBytes("UTF-8");
+			key = SALT.getBytes("UTF-8");//인코딩키
 		} catch (UnsupportedEncodingException e) {
 			if (logger.isInfoEnabled()) {
 				e.printStackTrace();
@@ -120,7 +130,7 @@ public class JwtServiceImpl implements JwtService {
 				.getRequest();
 
 		//access-token헤더에서 JWT추출
-		String jwt = request.getHeader("access-token");
+		String jwt = request.getHeader("accessToken");
 
 		//JWT 파싱
 		Jws<Claims> claims = null;
