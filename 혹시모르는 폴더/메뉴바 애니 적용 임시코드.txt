@@ -10,41 +10,30 @@
           <router-link :to="{name: 'logout'}">로그아웃</router-link>
         </div>
         <div id="mainManu">
-          <div class="button">
-            <p class="btnText">여행지</p>
-            <div class="btnTwo">
-              <router-link :to="{name: 'attraction'}">
-                <p class="btnText2" >고르기</p>
-              </router-link>
-            </div>
-          </div>
-            <div class="button">
-              <p class="btnText">나만의</p>
-              <div class="btnTwo">
-                <router-link :to="{name: 'myPlace'}">
-                  <p class="btnText2" >여행지</p>
-                </router-link>
-              </div>
-            </div>
-          <div class="button">
-            <p class="btnText">우리의</p>
-            <div class="btnTwo">
-              <router-link :to="{name: 'hotPlace'}">
-                <p class="btnText2" >여행지</p>
-              </router-link>
-            </div>
-          </div>
-          <div class="button">
-            <p class="btnText">게시판</p>
-            <div class="btnTwo">
-              <router-link :to="{name: 'board'}">
-                <p class="btnText2" >구경하기</p>
-              </router-link>
-            </div>
-          </div>
+          <router-link :to="{name: 'attraction'}">여행지</router-link>
+          <router-link :to="{name: 'myPlace'}">나의 여행지</router-link>
+          <router-link :to="{name: 'hotPlace'}">핫플레이스</router-link>
+          <router-link :to="{name: 'board'}">게시판</router-link>
+          <router-link :to="{name: 'test'}">테스트</router-link>
         </div>
       </nav>
+      <div id="holder">
 
+        <div class="button">
+          <p class="btnText">READY?</p>
+          <div class="btnTwo">
+            <p class="btnText2">GO!</p>
+          </div>
+        </div>
+
+        <div class="button">
+          <p class="btnText">CANCEL</p>
+          <div class="btnTwo">
+            <p class="btnText2">X</p>
+          </div>
+        </div>
+
+      </div>
     </header>
   </div>
 </template>
@@ -82,7 +71,7 @@ header {
     margin-right: 2rem;
 }
 
-a {
+#userManu a {
     text-decoration: none;
     margin-right: 2rem;
     font-size: 1rem;
@@ -92,10 +81,21 @@ a {
 /* 메인 메뉴 */
 #mainManu {
     display: flex;
-    margin-left: 4rem;
+    margin-left: 3rem;
     margin-top: 1rem;
 }
+
+#mainManu a {
+    margin-right: 5rem;
+    color: #000000;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+}
 /* 링크 효과 */
+#mainManu a:hover  {
+    color: #b98918 !important;
+}
 #userManu a:hover  {
     color: #086ba8 !important;
 }
@@ -105,14 +105,28 @@ div li {
 
 
 
-/*메뉴 버튼 효과*/
+
+
+#holder{
+    display: flex;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    background: white;
+    padding: 10px;
+    width: 1200px;
+    margin: 0 auto;
+    top: 50%;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.25);
+    border-radius: 2px;
+}
 .button {
     background: #3D4C53;
-    margin-right: 3rem;
-    width : 120px;
-    height : 40px;
-    text-align : center;
+    margin : 20px auto;
+    width : 200px;
+    height : 50px;
     overflow: hidden;
+    text-align : center;
     transition : .2s;
     cursor : pointer;
     border-radius: 5px;
@@ -120,25 +134,30 @@ div li {
 }
 .btnTwo {
     position : relative;
-    width : 120px;
-    margin-top: -40px;
+    width : 200px;
+    height : 100px;
+    margin-top: -100px;
     padding-top: 2px;
     background : #26A69A;
-    left : -150px;
-    transition : .2s;
+    left : -250px;
+    transition : .3s;
 }
 .btnText {
     color : white;
-    transition : .2s;
-    line-height: 40px;
+    transition : .3s;
+    line-height: 50px;
 
 }
 .btnText2 {
-    margin-top : 7px;
+    margin-top : 63px;
+    margin-right : -130px;
     color : #FFF;
 }
 .button:hover .btnTwo{ /*When hovering over .button change .btnTwo*/
-    left: 0;
+    left: -130px;
+}
+.button:hover .btnText{ /*When hovering over .button change .btnText*/
+    margin-left : 65px;
 }
 .button:active { /*Clicked and held*/
     box-shadow: 0px 5px 6px rgba(0,0,0,0.3);

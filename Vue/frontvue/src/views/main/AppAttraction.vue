@@ -8,30 +8,25 @@
               <v-select
                   v-model="areaCode"
                   :items="sido"
-                  menu-props="auto"
-                  label="시도선택"
-                  hide-details
-                  prepend-icon="mdi-map"
+                  label="시도 선택"
+                  outlined
                   item-text="name"
                   item-value="value"
                   item-eng="eng"
                   @change="handleSidoChange"
-                  single-line>
-              </v-select>
+              ></v-select>
             </v-col>
             <v-col>
               <v-select
                   v-model="gugunCode"
                   :items="gugun"
-                  menu-props="auto"
-                  label="구군선택"
-                  hide-details
-                  prepend-icon="mdi-map"
+                  label="구군 선택"
+                  outlined
                   item-text="gugunName"
                   item-value="gugunCode"
+                  item-eng="eng"
                   @change="handleGugunChange"
-                  single-line>
-              </v-select>
+              ></v-select>
             </v-col>
           </v-row>
         </v-container>
@@ -56,8 +51,6 @@
           <v-checkbox v-model="checkAllBox" class="allSelectRadio" label="전체 체크 해체" color="blue"
                       @change="toggleSelectAll" hide-details></v-checkbox>
         </v-row>
-        <!--        <button class="btnLineStart" @click="lineStart">이제 그려</button>-->
-        <!--        <button class="btnLineStop" @click="lineStop">그만 그려</button>-->
       </div>
       <div id="weather_wrap">
         <div id="today_weather">오늘의 날씨</div>
@@ -80,12 +73,7 @@
       </div>
     </div>
     <button class="findWay" @click="findDirections">길찾기</button>
-    <button class="deletFindWay" @click="deletFindWay">경로삭제</button>
-    <div v-if="directionsResult">
-      <!-- 결과를 표시하는 HTML 요소들을 추가 -->
-      <p>총 거리: {{ directionsResult.totalDistance }}m</p>
-      <p>소요 시간: {{ directionsResult.totalTime }}분</p>
-    </div>
+    <button class="deletFindWay" @click="deletFindWay">초기화</button>
     <div id="map"></div>
   </v-app>
 </template>
@@ -133,9 +121,12 @@ export default {
       zoomControl: {},
 
       //거리 찍기 필요
-      polyline: null,
-      customOverlay: null,
-      findMarker: null,
+      polyline: "",
+      polylineArray: [],
+      customOverlay: "",
+      customOverlayArray: [],
+      findMarker: "",
+      findMarkerArray: []
     }
   },
   mounted() {
@@ -170,6 +161,8 @@ export default {
       this.map = new kakao.maps.Map(this.container, options);
       this.map.addControl(this.mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
       this.map.addControl(this.zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+
     },
     handleSidoChange() {
       axios.get("http://localhost:8989/attraction/" + this.areaCode)
@@ -207,6 +200,7 @@ export default {
       }
     },
     handleGugunChange() {
+      this.deletFindWay()
       const sendData = {
         areaCode: this.areaCode,
         gugunCode: this.gugunCode,
@@ -264,6 +258,8 @@ export default {
         marker.ca.setAttribute("summaryImg", position.image);
         this.MarkerTmp.push(marker)
         this.map.setLevel(5)
+
+        this.makeOverlay(marker);
       })
       const halfIndex = Math.floor(this.MarkerTmp.length / 2);
       const halfMarker = this.MarkerTmp[halfIndex];
@@ -276,6 +272,8 @@ export default {
       }
     },
     findDirections() {
+      this.DestroyedMarker()
+      this.deletFindWay();
       const apiUrl = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
       const REST_API_KEY = '42f1b6d378cc81efe4eb31d1b450d8d4'; // 카카오디벨로퍼스에서 발급 받은 API 키 값
 
@@ -334,11 +332,8 @@ export default {
           console.log("요약 : ", summary);
           //구간별 경로 정보
           console.log("구간별 정보 : ", sections);
-          console.log("길이 : ", sections.length);
-          if (sections.length >= 2) {
+          if (sections.length >= 1) {
             for (const [idx, section] of sections.entries()) {
-              console.log(sections[0].bound.min_x)
-              console.log("idx번호 ", idx)
               let {distance, duration, guides: arrays, roads} = section;  //distance : 미터단위, duration : 초 단위
               let detailRoads = [];
 
@@ -367,7 +362,7 @@ export default {
               let image = null;
               if (idx === 0) image = new kakao.maps.MarkerImage(require('@/assets/marker/start.png'), imageSize);
               if (idx > 0 && idx < sections.length) image = new kakao.maps.MarkerImage(require('@/assets/marker/waypoint.png'), imageSize);
-   
+
 
               //출발지는 start이미지를 가져와 그린다.
               //경유지는 waypoint이미지를 가져와 그린다.
@@ -379,6 +374,7 @@ export default {
                   title: title ? title : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
                   image // 마커 이미지
                 });
+                this.findMarkerArray.push(this.findMarker);
               }
               //도착지는 end이미지를 가져와 그린다.
               if (idx === sections.length - 1) {
@@ -389,6 +385,7 @@ export default {
                   name: name ? name : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
                   image// 마커 이미지
                 });
+                this.findMarkerArray.push(this.findMarker);
                 let {name: name2, position: position2} = arrays[arrays.length - 1];
                 image = new kakao.maps.MarkerImage(require('@/assets/marker/end.png'), imageSize);
                 this.findMarker = new kakao.maps.Marker({
@@ -397,17 +394,20 @@ export default {
                   name: name2 ? name2 : '', // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
                   image // 마커 이미지
                 });
+                this.findMarkerArray.push(this.findMarker);
               }
+              //배열에 마커 이미지 객체 추가
               // 지도에 표시할 선을 생성합니다
               this.polyline = new kakao.maps.Polyline({
                 //path: arrays.map( arg=> arg.position), // 선을 구성하는 좌표배열 입니다
                 path: detailRoads,
-                strokeWeight: 5.5, // 선의 두께 입니다
+                strokeWeight: 5, // 선의 두께 입니다
                 strokeColor: (idx % 2 === 0) ? '#4584F4' : '#536F93', // 선의 색깔입니다
                 strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
                 strokeStyle: 'solid' // 선의 스타일입니다
               });
-
+              // 배열에 선 객체 추가
+              this.polylineArray.push(this.polyline);
               // 지도에 선을 표시합니다
               this.polyline.setMap(this.map);
               // 지도 중심을 이동 시킵니다
@@ -417,64 +417,81 @@ export default {
               //글자 찍기
               this.customOverlay = new kakao.maps.CustomOverlay({
                 position: new kakao.maps.LatLng(37.39243974939504, 125.10972941510435),
-                content: `<div class ="distancelabel">거리, 시간 : ${distance}, ${duration}</div>`
+                content: `<div class ="distancelabel">거리: ${distance}, 시간 : ${duration}</div>`
               });
-
+              // 배열에 커스텀오버레이 객체 추가
+              this.customOverlayArray.push(this.customOverlay);
               // 커스텀 오버레이를 지도에 표시합니다
               this.customOverlay.setMap(this.map);
+
             }
           }
         }).catch(err => {
         console.log(err)
       });
     },
-    deletFindWay() {
-      this.polyline.setMap(null);
-      this.customOverlay.setMap(null);
-      this.findMarker.setMap(null);
-    },
-// makeOverlay(marker){
-    //   // console.dir(marker.ca.attributes.summaryImg.nodeValue)
-    //   let content = '<div class="wrap">' +
-    //     '    		 <div class="info">' +
-    //     '        		<div class="body">' +
-    //     '            	   <div class="img">' +
-    //     '                     <img src="' + marker.ca.attributes.summaryImg.nodeValue + '">' +
-    //     '                  </div>' +
-    //     '                  <div class="desc">' +
-    //     '     		          <div class="title">' + marker.ca.name +
-    //     //'            <div class="close" onclick="closeOverlay()" title="닫기"></div>' +
-    //     '                     </div>' + //title
-    //     '                     <div class="ellipsis">'+ marker.ca.attributes.innertext.nodeValue +
-    //     '                        <div class="jibun ellipsis"></div>' +
-    //     '                        <div class="link">' +
-    //     '						    <a href="https://www.kakaocorp.com/main" target="_blank">키워드 검색은 준비중입니다.</a>' +
-    //     '       		         </div>' + //link
-    //     '		               </div>' + //ellipsis
-    //     '                  </div>' + //desc
-    //     '               </div>' + //body
-    //     '           </div>' + //info
-    //     '        </div>'; //wrap
-    //   var overlay = new kakao.maps.CustomOverlay({
-    //     content: content,
-    //     map: this.map,
-    //     position: marker.getPosition(),
-    //     clickable : true,
-    //   });
-    //   overlay.setVisible(false);
-    //
-    //   kakao.maps.event.addListener(marker, 'click', function() {
-    //     if(overlay.getVisible())
-    //       overlay.setVisible(false)
-    //     else overlay.setVisible(true)
-    //   });
-    // },
+    makeOverlay(marker) {
+      let content = ` <div class="wrap">
+                         <div class="info">
+                           <div class="body">
+                             <div class="img">
+                               <img src="${marker.ca.attributes.summaryimg.nodeValue}">
+                             </div>
+                             <div class="desc">
+                                <div class="title">${marker.ca.name}
+                                  <div class="close" onclick="closeOverlay()" title="닫기"></div>
+                                </div>
+                                <div class="ellipsis">${marker.ca.attributes.innertext.nodeValue}
+                                  <div class="jibun ellipsis"></div>
+                                  <div class="link">
+                                    <a href="https://www.kakaocorp.com/main" target="_blank">키워드 검색은 준비중입니다.</a>
+                                  </div>
+                                </div>
+                             </div>
 
+                           </div>
+                        </div>
+                      </div>`
+      var overlay = new kakao.maps.CustomOverlay({
+        content: content,
+        map: this.map,
+        position: marker.getPosition(),
+        clickable: true,
+      });
+      overlay.setVisible(false);
+      console.log(marker.getPosition());
+
+      kakao.maps.event.addListener(marker, 'click', function () {
+        if (overlay.getVisible())
+          overlay.setVisible(false)
+        else overlay.setVisible(true)
+      });
+    },
+    deletFindWay() {
+      //선 삭제
+      this.polylineArray.forEach(function (polyline) {
+        polyline.setMap(null);
+      });
+      this.polylineArray = [];
+      //오버레이 삭제
+      this.customOverlayArray.forEach(function (customOverlay) {
+        customOverlay.setMap(null);
+      });
+      this.customOverlay = [];
+      //마커 이미지 삭제
+      this.findMarkerArray.forEach(function (findMarker) {
+        findMarker.setMap(null);
+      });
+
+      // 배열 비우기
+      this.findMarkerArray = [];
+
+    },
   }
 }
 </script>
 
-<style scoped>
+<style>
 #map {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -580,9 +597,75 @@ export default {
     line-height: 30px;
 }
 
-/*그리기 버튼*/
-.btnLineStart, .btnLineStop {
+/* 지도 카드 */
+.wrap {
+    position: absolute;
+    left: -135px;
+    bottom: 40px;
+    height: 250px;
+    margin: 10px;
+    width: 250px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px;
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+.wrap * {
+    padding: 0;
+    margin: 0;
+}
+
+.body {
+    position: relative;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.info .img {
+    height: 150px;
+    overflow: hidden;
+}
+
+.img img {
+    width: 100%;
+    height: 110%;
+    border-radius: 10px;
+}
+
+.info .desc {
+    margin-top: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+    position: relative;
+}
+
+.desc .ellipsis {
+    font-size: 12px;
+}
+
+.desc .title {
+    font-weight: bold;
+    overflow: hidden;
+}
+
+.desc .addinfo {
     border: 1px solid black;
-    width: fit-content;
+    text-align: center;
+    color: #5085bb;
+}
+
+.link {
+    height: 20px;
+    line-height: 10px;
+}
+
+.link a {
+    display: block;
+    color: #5085bb;
+    text-decoration: none;
+    position: relative;
+    top: 5px;
+    text-align: center;
 }
 </style>

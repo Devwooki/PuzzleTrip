@@ -4,13 +4,22 @@
       <header>
         <app-header id="header"></app-header>
       </header>
-      <v-divider></v-divider>
       <div id="content-wrap">
         <router-view id="main"></router-view>
       </div>
     </div>
     <app-footer id="footer"></app-footer>
+
+
+
+      <div class="button">
+        <p class="btnText">CANCEL</p>
+        <div class="btnTwo">
+          <p class="btnText2">X</p>
+        </div>
+      </div>
   </div>
+
 </template>
 
 <script>
@@ -20,7 +29,9 @@ import AppFooter from "@/views/layout/AppFooter.vue";
 
 export default {
   name: "App",
-  components: {AppHeader, AppFooter},
+  components: {
+    AppHeader, AppFooter
+  },
 };
 </script>
 
@@ -76,4 +87,6 @@ header {
 (absolute - > relative) transform: translatY(- 100 %);
     height: 5rem;
 }
+
+
 </style>
