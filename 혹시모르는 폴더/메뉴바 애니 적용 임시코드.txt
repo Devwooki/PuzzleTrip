@@ -1,0 +1,168 @@
+<template>
+  <div id="containerTop">
+    <header>
+      <div id="logoDiv">
+        <router-link :to="{name: 'home'}"><img :src="require('@/assets/logo.png')" alt="logo" id="mainLogo"></router-link>
+      </div>
+      <nav id="containerMid">
+        <div id="userManu">
+          <router-link :to="{name: 'login'}">로그인</router-link>
+          <router-link :to="{name: 'logout'}">로그아웃</router-link>
+        </div>
+        <div id="mainManu">
+          <router-link :to="{name: 'attraction'}">여행지</router-link>
+          <router-link :to="{name: 'myPlace'}">나의 여행지</router-link>
+          <router-link :to="{name: 'hotPlace'}">핫플레이스</router-link>
+          <router-link :to="{name: 'board'}">게시판</router-link>
+          <router-link :to="{name: 'test'}">테스트</router-link>
+        </div>
+      </nav>
+      <div id="holder">
+
+        <div class="button">
+          <p class="btnText">READY?</p>
+          <div class="btnTwo">
+            <p class="btnText2">GO!</p>
+          </div>
+        </div>
+
+        <div class="button">
+          <p class="btnText">CANCEL</p>
+          <div class="btnTwo">
+            <p class="btnText2">X</p>
+          </div>
+        </div>
+
+      </div>
+    </header>
+  </div>
+</template>
+
+<style scoped>
+#containerTop {
+    display: flex;
+    justify-content: center;
+    height: 7.5rem;
+}
+
+#containerMid {
+    width: 100%;
+}
+
+header {
+    margin: 0 20px;
+    display: flex;
+}
+
+#logoDiv {
+    display: flex;
+    align-items: center;
+}
+
+#mainLogo {
+    width: 40%;
+}
+
+/* 유져 메뉴 */
+#userManu {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    margin-right: 2rem;
+}
+
+#userManu a {
+    text-decoration: none;
+    margin-right: 2rem;
+    font-size: 1rem;
+    color: #919696;
+}
+
+/* 메인 메뉴 */
+#mainManu {
+    display: flex;
+    margin-left: 3rem;
+    margin-top: 1rem;
+}
+
+#mainManu a {
+    margin-right: 5rem;
+    color: #000000;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+}
+/* 링크 효과 */
+#mainManu a:hover  {
+    color: #b98918 !important;
+}
+#userManu a:hover  {
+    color: #086ba8 !important;
+}
+div li {
+    list-style: none;
+}
+
+
+
+
+
+#holder{
+    display: flex;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    background: white;
+    padding: 10px;
+    width: 1200px;
+    margin: 0 auto;
+    top: 50%;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.25);
+    border-radius: 2px;
+}
+.button {
+    background: #3D4C53;
+    margin : 20px auto;
+    width : 200px;
+    height : 50px;
+    overflow: hidden;
+    text-align : center;
+    transition : .2s;
+    cursor : pointer;
+    border-radius: 5px;
+    box-shadow: 0px 1px 2px rgba(0,0,0,.2);
+}
+.btnTwo {
+    position : relative;
+    width : 200px;
+    height : 100px;
+    margin-top: -100px;
+    padding-top: 2px;
+    background : #26A69A;
+    left : -250px;
+    transition : .3s;
+}
+.btnText {
+    color : white;
+    transition : .3s;
+    line-height: 50px;
+
+}
+.btnText2 {
+    margin-top : 63px;
+    margin-right : -130px;
+    color : #FFF;
+}
+.button:hover .btnTwo{ /*When hovering over .button change .btnTwo*/
+    left: -130px;
+}
+.button:hover .btnText{ /*When hovering over .button change .btnText*/
+    margin-left : 65px;
+}
+.button:active { /*Clicked and held*/
+    box-shadow: 0px 5px 6px rgba(0,0,0,0.3);
+}
+</style>
+<script setup>
+</script>
+

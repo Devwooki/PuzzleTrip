@@ -1,9 +1,9 @@
 <template>
     <v-card flat tile class="mainCard">
-      <v-window v-model="onboarding" reverse>
+      <v-window v-model="onboarding">
         <v-window-item v-for="n in length" :key="`card-${n}`">
-          <v-card color="grey">
-            <v-row align="center" class="fill-height" justify="center">
+          <v-card color="red">
+            <v-row>
               <img :src="require(`@/assets/mainSlice/${n}.jpg`)">
             </v-row>
           </v-card>
@@ -58,13 +58,10 @@ export default {
 <style scoped>
 img {
     width: 100%;
-    height: 70rem;
-}
-.mainCard {
+    height: 900px;
 }
 .v-card-actions {
     margin-top: -3rem;
     justify-content: center;
 }
-
 </style>
