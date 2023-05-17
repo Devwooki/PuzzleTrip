@@ -6,6 +6,7 @@
           <v-row>
             <v-col>
               <v-select
+                  class="sidoSel"
                   v-model="areaCode"
                   :items="sido"
                   label="시도 선택"
@@ -18,6 +19,7 @@
             </v-col>
             <v-col>
               <v-select
+                  class="gugunSel"
                   v-model="gugunCode"
                   :items="gugun"
                   label="구군 선택"
@@ -28,6 +30,8 @@
                   @change="handleGugunChange"
               ></v-select>
             </v-col>
+            <v-btn class="findWay" @click="findDirections">길찾기</v-btn>
+            <v-btn class="deletFindWay" @click="deletFindWay">초기화</v-btn>
           </v-row>
         </v-container>
         <v-row class="search-checkbox">
@@ -72,8 +76,7 @@
         </div>
       </div>
     </div>
-    <button class="findWay" @click="findDirections">길찾기</button>
-    <button class="deletFindWay" @click="deletFindWay">초기화</button>
+
     <div id="map"></div>
   </v-app>
 </template>
@@ -492,16 +495,34 @@ export default {
 </script>
 
 <style>
+@font-face {
+    font-family: 'SEBANG_Gothic_Bold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+* {
+    font-family: 'SEBANG_Gothic_Bold';
+}
 #map {
-    margin-left: 1rem;
-    margin-right: 1rem;
-    height: 60rem;
+    height: 900px;
+    z-index: 2;
 }
 
 /*지역 선택*/
 .location-sel {
     margin: 1rem 1rem 0 1rem;
     width: 30rem;
+}
+
+.sidoSel, .gugunSel {
+    width: 200px;
+}
+
+.col {
+    flex-basis: 0;
+    flex-grow: unset !important;
+    max-width: 100%;
 }
 
 /*테마선택*/
@@ -520,6 +541,8 @@ export default {
 .locaAndThemeAndWeaher {
     display: flex;
     justify-content: center;
+    background-color: snow;
+    padding-top: 20px;
 }
 
 .allSelectRadio {
@@ -533,10 +556,10 @@ export default {
     min-width: 10rem;
     min-height: 10rem;
     flex: 0 0 13rem;
-    margin-left: 1rem;
+    margin-left: 2rem;
     margin-bottom: 1rem;
     border-radius: 10px;
-    box-shadow: 5px 5px 5px rgb(165, 165, 165);
+    box-shadow: 3px 3px 3px rgb(165, 165, 165);
 }
 
 #today_weather {

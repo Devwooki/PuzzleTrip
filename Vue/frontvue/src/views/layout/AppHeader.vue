@@ -2,7 +2,9 @@
   <div id="containerTop">
     <header>
       <div id="logoDiv">
-        <router-link :to="{name: 'home'}"><img :src="require('@/assets/logo.png')" alt="logo" id="mainLogo"></router-link>
+        <router-link :to="{name: 'home'}">
+          <img :src="require('@/assets/logo.png')" alt="logo" id="mainLogo">
+        </router-link>
       </div>
       <nav id="containerMid">
         <div id="userManu">
@@ -14,23 +16,23 @@
             <p class="btnText">여행지</p>
             <div class="btnTwo">
               <router-link :to="{name: 'attraction'}">
-                <p class="btnText2" >고르기</p>
+                <p class="btnText2">고르기</p>
               </router-link>
             </div>
           </div>
-            <div class="button">
-              <p class="btnText">나만의</p>
-              <div class="btnTwo">
-                <router-link :to="{name: 'myPlace'}">
-                  <p class="btnText2" >여행지</p>
-                </router-link>
-              </div>
+          <div class="button">
+            <p class="btnText">나만의</p>
+            <div class="btnTwo">
+              <router-link :to="{name: 'myPlace'}">
+                <p class="btnText2">여행지</p>
+              </router-link>
             </div>
+          </div>
           <div class="button">
             <p class="btnText">우리의</p>
             <div class="btnTwo">
               <router-link :to="{name: 'hotPlace'}">
-                <p class="btnText2" >여행지</p>
+                <p class="btnText2">여행지</p>
               </router-link>
             </div>
           </div>
@@ -38,7 +40,7 @@
             <p class="btnText">게시판</p>
             <div class="btnTwo">
               <router-link :to="{name: 'board'}">
-                <p class="btnText2" >구경하기</p>
+                <p class="btnText2">구경하기</p>
               </router-link>
             </div>
           </div>
@@ -61,17 +63,18 @@
 }
 
 header {
-    margin: 0 20px;
     display: flex;
+    background-color: #F3EED9;
 }
 
 #logoDiv {
     display: flex;
     align-items: center;
+    margin-left: 300px;
 }
 
 #mainLogo {
-    width: 40%;
+    width: 56%;
 }
 
 /* 유져 메뉴 */
@@ -85,7 +88,13 @@ header {
 a {
     text-decoration: none;
     margin-right: 2rem;
-    font-size: 1rem;
+    font-size: 15px;
+    color: #919696;
+}
+
+p {
+    text-decoration: none;
+    font-size: 20px;
     color: #919696;
 }
 
@@ -95,53 +104,59 @@ a {
     margin-left: 4rem;
     margin-top: 1rem;
 }
+
 /* 링크 효과 */
-#userManu a:hover  {
+#userManu a:hover {
     color: #086ba8 !important;
 }
+
 div li {
     list-style: none;
 }
 
 
-
 /*메뉴 버튼 효과*/
 .button {
-    background: #3D4C53;
+    font-weight: 900;
+    background: #F3EED9;
     margin-right: 3rem;
-    width : 120px;
-    height : 40px;
-    text-align : center;
+    width: 120px;
+    height: 40px;
+    text-align: center;
     overflow: hidden;
-    transition : .2s;
-    cursor : pointer;
+    transition: .2s;
+    cursor: pointer;
     border-radius: 5px;
-    box-shadow: 0px 1px 2px rgba(0,0,0,.2);
 }
+
 .btnTwo {
-    position : relative;
-    width : 120px;
+    position: relative;
+    width: 120px;
     margin-top: -40px;
     padding-top: 2px;
-    background : #26A69A;
-    left : -150px;
-    transition : .2s;
+    background: #7D9600;
+    left: -150px;
+    transition: .2s;
 }
+
 .btnText {
-    color : white;
-    transition : .2s;
+    color: #574141;
+    transition: .2s;
     line-height: 40px;
 
 }
+
 .btnText2 {
-    margin-top : 7px;
-    color : #FFF;
+    margin-top: 7px;
+    color: #FFF;
 }
-.button:hover .btnTwo{ /*When hovering over .button change .btnTwo*/
+
+.button:hover .btnTwo { /*When hovering over .button change .btnTwo*/
     left: 0;
 }
+
 .button:active { /*Clicked and held*/
-    box-shadow: 0px 5px 6px rgba(0,0,0,0.3);
+    box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.3);
 }
 </style>
 <script setup>

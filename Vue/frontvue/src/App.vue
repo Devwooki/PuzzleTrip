@@ -4,20 +4,11 @@
       <header>
         <app-header id="header"></app-header>
       </header>
-      <div id="content-wrap">
+      <div id="contentWrap">
         <router-view id="main"></router-view>
       </div>
     </div>
     <app-footer id="footer"></app-footer>
-
-
-
-      <div class="button">
-        <p class="btnText">CANCEL</p>
-        <div class="btnTwo">
-          <p class="btnText2">X</p>
-        </div>
-      </div>
   </div>
 
 </template>
@@ -37,6 +28,19 @@ export default {
 
 <!--전역 스타일-->
 <style>
+@font-face {
+    font-family: 'SEBANG_Gothic_Bold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+html {
+    font-family: 'SEBANG_Gothic_Bold';
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
 body {
     margin: 0;
 }
@@ -44,48 +48,43 @@ body {
 
 <!--지역스타일-->
 <style scoped>
-@font-face {
-    font-family: 'NanumSquareNeo-Variable';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-}
 
-html {
-    * {
-        font-family: 'NanumSquareNeo-Variable';
-    }
-
-    margin: 0;
-    padding: 0;
-    height: 100%;
-}
 
 header {
+    height: 110px;
     display: flex;
     justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
 
+#contentWrap {
+    margin-top: 110px;
 }
 
 #header {
-    width: 80%;
+    width: 100%;
 }
 
 #wrap {
     min-height: 100%;
     position: relative;
-    padding-bottom: 70px;
 }
 
 #main {
     padding: 0;
     margin-top: 1rem;
+    min-height: 650px;
 }
 
 #footer {
     position: relative;
 (absolute - > relative) transform: translatY(- 100 %);
     height: 5rem;
+
 }
 
 
