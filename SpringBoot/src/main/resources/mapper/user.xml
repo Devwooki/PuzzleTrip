@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.enjoytrip.model.user.mapper.UserMapper">
 
-<!--    void insertUser(User user) throws SQLException;-->
+    <!--    void insertUser(User user) throws SQLException;-->
     <insert id="insertInitUserProfile" parameterType="user">
         insert into user_profile (user_id)
         values (#{id})
@@ -14,45 +14,60 @@
         values (#{id}, #{pw}, #{name}, #{email}, #{emailDomain})
     </insert>
 
-<!--    User selectLogin(User user) throws SQLException;-->
+    <!--    User selectLogin(User user) throws SQLException;-->
     <select id="selectLogin" parameterType="user" resultType="user">
-        select * from user
-        where id=#{id} and pw=#{pw}
+        select *
+        from user
+        where id = #{id}
+          and pw = #{pw}
     </select>
 
     <select id="selectUserInfo" parameterType="String" resultType="user">
-        select * from user
-        where id=#{userId}
+        SELECT u.id, u.pw, u.name, u.email, u.email_domain, u.type,
+               p.save_folder AS 'profile.saveFolder',
+               p.original_file AS 'profile.originalFile',
+               p.save_file AS 'profile.saveFile'
+        FROM user u JOIN user_profile p
+            ON u.id = p.user_id
+        WHERE u.id = #{id}
     </select>
 
-<!--    String selectIdCheck(String id) throws SQLException;-->
+    <!--    String selectIdCheck(String id) throws SQLException;-->
     <select id="selectIdCheck" parameterType="String" resultType="String">
         select id
         from user
-        where id=#{id}
+        where id = #{id}
     </select>
 
 
-<!--    void updateUser(User user) throws SQLException;-->
+    <!--    void updateUser(User user) throws SQLException;-->
     <update id="updateUser" parameterType="user">
         update user
-        set pw = #{pw}, name = #{name}, email = #{email}, email_domain = #{emailDomain}
+        set pw           = #{pw},
+            name         = #{name},
+            email        = #{email},
+            email_domain = #{emailDomain}
         where id = #{id}
-    </update >
-
-<!--    void deleteUser(String userId) throws SQLException;-->
-    <delete id="deleteUser" parameterType="String">
-        delete from user
-        where id = #{id}
-    </delete>
-
-<!--    void updateUserPw(User user) throws SQLException;-->
+    </update>
+    <!--    void updateUserProfile(User user) throws SQLException;-->
+    <update id="updateUserProfile" parameterType="user">
+        update user_profile
+        set save_folder=#{profile.saveFolder}, save_file=#{profile.saveFile}, original_file=#{profile.originalFile}
+        where user_id = #{id}
+    </update>
+    <!--    void updateUserPw(User user) throws SQLException;-->
     <update id="updateUserPw" parameterType="user">
         update user
         set pw = #{pw}
         where id = #{id}
     </update>
 
+    <!--    void deleteUser(String userId) throws SQLException;-->
+    <delete id="deleteUser" parameterType="String">
+        delete
+        from user
+        where id = #{id}
+    </delete>
 
 
     <!-- JWT Update -->
@@ -63,7 +78,8 @@
     </update>
 
     <select id="getRefreshToken" parameterType="string" resultType="string">
-        select token from user
+        select token
+        from user
         where id = #{userId}
     </select>
 
@@ -72,4 +88,9 @@
         set token = #{token, jdbcType=VARCHAR}
         where id = #{userId}
     </update>
+
+    <select id="selectUserProfile" parameterType="string" resultType="fileInfo">
+        select * from user_profile
+        where user_id = #{id}
+    </select>
 </mapper>

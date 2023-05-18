@@ -6,8 +6,11 @@
                     <h1>회원가입</h1>
                     <span>사용하시는 이메일을 입력해주세요.</span>
                     <input type="text" placeholder="Name"/>
-                    <input type="email" placeholder="ID"/>
+                    <input type="text" placeholder="ID"/>
                     <input type="password" placeholder="Password"/>
+                    <input type="email" placeholder="Email"/>
+                    <span>프로필 이미지를 선택해 주세요.</span>
+                    <input name="profile" type="file" accept="image/jpeg, image/png, image/gif, .jpg" @change="onFileChange" placeholder="Profile Img"/>
                     <button type="button">Sign Up</button>
                 </form>
             </div>
@@ -15,8 +18,9 @@
                 <form action="#">
                     <h1>로그인</h1>
                     <span>가입하신 정보를 입력해주세요.</span>
-                    <input ref="inputId" type="email"  placeholder="ID" id="userId" name="userId" v-model="user.id"/>
-                    <input ref="inputPw" type="password" placeholder="Password" id="userPw" name="userPw" v-model="user.pw"/>
+                    <input ref="inputId" type="email" placeholder="ID" id="userId" name="userId" v-model="user.id"/>
+                    <input ref="inputPw" type="password" placeholder="Password" id="userPw" name="userPw"
+                           v-model="user.pw"/>
                     <div class="saveId">
                         <span class="saveIdSpan">아이디 저장</span>
                         <input type="checkbox" id="saveId" name="saveId" v-model="saveId" @change="removeUserIdCookie"/>
@@ -30,7 +34,7 @@
                     <div class="overlay-panel overlay-left">
                         <h1>반가워요!</h1>
                         <p>저희 Puzzle Trip과 여행을 떠나볼까요?</p>
-                        <button class="ghost" id="signIn" >로그인하러 가기</button>
+                        <button class="ghost" id="signIn">로그인하러 가기</button>
                     </div>
                     <div class="overlay-panel overlay-right">
                         <h1>오랜만이에요!</h1>
@@ -46,11 +50,12 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
+
 export default {
     name: "UserLogin",
     data() {
         return {
-            user : {
+            user: {
                 id: "",
                 pw: "",
             },
@@ -72,26 +77,34 @@ export default {
             let token = sessionStorage.getItem("accessToken")
 
             //로그인 성공하면 쿠키정보도 저장한다.
-            if(this.getIsLogin){
+            if (this.getIsLogin) {
                 await this.getUserInfo(token)
-                if(this.saveId){
+                if (this.saveId) {
                     this.$cookies.set("saveId", this.saveId)
                     this.$cookies.set("userId", this.user.id)
                 }
-                await this.$router.push({name : "home"})
-            }else{
+                await this.$router.push({name: "home"})
+            } else {
                 //로그인 실패할 경우 입력값을 초기화하고 focus를 위치시킨다.
                 alert("아이디 혹은 비밀번호를 확인해 주세요.")
-                this.user.id = ""
-                this.user.pw = ""
-                this.$refs.inputId.focus()
+
+                if (this.$cookies.get("userId") != null) {
+                    this.user.id = this.$cookies.get("userId");
+                    this.user.pw = ""
+                    this.$refs.inputPw.focus()
+                } else {
+                    this.user.id = ""
+                    this.user.pw = ""
+                    this.$refs.inputId.focus()
+                }
+
             }
 
         },
         removeUserIdCookie() {
             console.log(this.saveId)
             //체크를 해제하면 쿠키를 제거한다.
-            if(!this.saveId){
+            if (!this.saveId) {
                 this.$cookies.remove("userId")
                 this.$cookies.remove("saveId")
             }
@@ -118,7 +131,7 @@ export default {
             this.saveId = true;
             this.user.id = this.$cookies.get("userId")
             this.$refs.inputPw.focus()
-        }else{
+        } else {
             this.saveId = false;
             this.$refs.inputId.focus()
         }
@@ -141,9 +154,11 @@ export default {
     padding: 0;
     width: 20px;
 }
+
 #login-div {
     margin-top: 200px;
 }
+
 /*내가 바꾼거 끝*/
 
 

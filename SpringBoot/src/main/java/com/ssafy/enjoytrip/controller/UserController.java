@@ -174,7 +174,8 @@ public class UserController {
     }
 
     @PutMapping("modify")
-    private String modifyBoard(@RequestParam Map<String, Object> map, @RequestParam(value = "files", required = false) MultipartFile mFile) throws Exception {
+    private ResponseEntity<?> modifyUser(@RequestParam Map<String, Object> map,
+                                         @RequestParam(value = "files", required = false) MultipartFile[] mFile) throws Exception {
         logger.debug("유저 수정 접근 {}, 수정파일 정보 {}", map, mFile);
         //Board 정보입력
         User user = new User();
@@ -194,13 +195,17 @@ public class UserController {
 
             //폴더가 존재하지 않으면 생성
             if (!folder.exists()) {
-                folder.mkdir();
-                logger.debug("@@@@@@경로에 폴더 생성@@@@@@@@ : {}", saveFolder);
+                boolean created = folder.mkdirs();
+                if(created){
+                    logger.debug("폴더 생성 성공");
+                }else{
+                    logger.debug("폴더 생성 실패");
+                }
             }
 
             //파일 리스트 객체 만들어서 db에 저장하자!
             FileInfo fileInfo = new FileInfo();
-            String originalFileName = mFile.getOriginalFilename(); //진짜 파일 명 저장
+            String originalFileName = mFile[0].getOriginalFilename(); //진짜 파일 명 저장
 
             if (!originalFileName.isEmpty()) { //파일명이 유효(빈 문자열이 아닐 때)할 때 업로드를 진행함
                 String saveFileName = UUID.randomUUID().toString() //기존 파일명.확장자 -> UUID.확장자로 변경
@@ -208,19 +213,28 @@ public class UserController {
 
                 fileInfo.setOriginalFile(originalFileName);
                 fileInfo.setSaveFile(saveFileName);
-                fileInfo.setSaveFolder(user.getId()); //저장한 폴더는 업로드 날짜로 변경
-                logger.debug("원본 파일 이름 : {}, 실제 저장 파일 이름 : {}", mFile.getOriginalFilename(), saveFileName);
+                fileInfo.setSaveFolder(saveFolder); //파일 경로 지정
+                logger.debug("원본 파일 이름 : {}, 실제 저장 파일 이름 : {}", mFile[0].getOriginalFilename(), saveFileName);
 
                 //MultipartFile mFile를 File 객체로 변환해 서버에 저장하는 메서드
                 //첫번째 파라미터 경로에 두 번째 파라미터 명으로 저장한다.
-                mFile.transferTo(new File(folder, saveFileName));
+                mFile[0].transferTo(new File(folder, saveFileName));
 
             }
             user.setProfile(fileInfo); //fileInfo 리스트를 boarddto에 저장
+        }else{//업로드한 파일이 없으면 userInfo의 프로필은 그대로 유지되어야한다.
+            user.setProfile(service.getUserProfile(user));
         }
+        //유저 정보 수정했으니 내보낸다
         service.modifyUser(user);
 
-        return String.valueOf(board.getNo());
+
+        Map<String, Object> result = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+
+        result.put("userInfo", user);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("idCheck/{userId}")

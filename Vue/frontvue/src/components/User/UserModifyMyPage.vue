@@ -76,7 +76,7 @@ export default {
             nowPw : '',
             newPw : '',
             checkNewPw : '',
-            profileImg :'',
+            profileImg :{},
 
             pwType : 'password',
             showPw : false,
@@ -91,8 +91,9 @@ export default {
     methods: {
         ...mapActions('userStore', ['userLogout']),
         onFileChange(event){
-            console.log(event.target)
-            //this.profileImg = event.tager.file
+            console.log(event.target.files)
+            this.profileImg = event.target.files
+            console.log(typeof this.profileImg)
         },
         isChangePw() {
             this.changePw = !this.changePw;
@@ -109,7 +110,6 @@ export default {
             if (this.checkNowPw) {
                 this.userInfo.pw = this.newPw
             }
-            console.log(this.userInfo)
 
             const formData = new FormData();
             formData.append('id', this.userInfo.id);
@@ -117,15 +117,18 @@ export default {
             formData.append('name', this.userInfo.name);
             formData.append('email', this.userInfo.email);
             formData.append('emailDomain', this.userInfo.emailDomain);
-            formData.append('files', this.profileImg)
+            formData.append('files', this.profileImg[0])
+
             const response = await axios.put('user/modify', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-
-            this.$store.commit('userStore/CHANGE_USER_INFO', response.data)
-            await this.$router.push({name: 'userMyPage'})
+            console.log("@@@유저 정보 업데이트")
+            console.log(response.data)
+            this.$store.commit('userStore/CHANGE_USER_INFO', response.data.userInfo)
+            console.log(this.checkUserInfo)
+            //await this.$router.push({name: 'userMyPage'})
         },
         selectDomain() {
             if (this.selectedDomain === 'self') {
@@ -153,7 +156,6 @@ export default {
         checkValidNewPw(){
             if (this.newPw === this.checkNewPw) {
                 this.message2 = '';
-                event.target.setAttribute("readonly", true)
 
             } else {
                 this.message2 = '새로운 비밀번호를 확인해주세요.';
