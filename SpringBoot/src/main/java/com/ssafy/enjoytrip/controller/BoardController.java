@@ -20,7 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/board")
 public class BoardController {
     private final Logger logger = LoggerFactory.getLogger(BoardController.class);

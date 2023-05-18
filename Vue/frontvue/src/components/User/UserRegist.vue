@@ -1,10 +1,12 @@
 <template>
+  <div>
 
+  </div>
 </template>
 
 <script>
 export default {
-    name: "UserSignIn"
+    name: "userRegist"
 }
 </script>
 

@@ -11,6 +11,7 @@ import java.util.Map;
 public interface UserMapper {
 	void insertUser(User user) throws SQLException;
 	User selectLogin(User user) throws SQLException;
+	User selectUserInfo(String userId) throws SQLException;
 	String selectIdCheck(String id) throws SQLException;
 	void updateUser(User user) throws SQLException;
 	void deleteUser(String userId) throws SQLException;
@@ -19,4 +20,6 @@ public interface UserMapper {
 	void saveRefreshToken(Map<String, String> map) throws SQLException;
 	Object getRefreshToken(String userId) throws SQLException;
 	void deleteRefreshToken(Map<String, String> map) throws SQLException;
+
+
 }

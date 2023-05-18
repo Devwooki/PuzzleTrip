@@ -25,6 +25,7 @@ export default {
   },
   methods: {
     async commentDelete() {
+        //추후 해당 내용 boardStore의 action에서 비동기 처리하도록 수정
       console.dir(this.comment)
       const response = await axios.delete(`/comment/${this.getBoardType}/${this.getBoardNo}/${this.comment.no}`)
       console.log(response)

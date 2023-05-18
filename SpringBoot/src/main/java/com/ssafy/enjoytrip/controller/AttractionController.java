@@ -14,7 +14,6 @@ import java.util.Map;
 
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/attraction")
 public class AttractionController {
     private final AttractionInfoService service;

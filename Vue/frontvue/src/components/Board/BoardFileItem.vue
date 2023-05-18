@@ -1,7 +1,7 @@
 <template>
   <ul>
-    <li v-for="fileInfo in fileInfos" :key="fileInfo">
-      <label> 파일명 : {{ fileInfo.originalFile }}</label>
+    <li v-for="(fileInfo, index) in fileInfos" :key="index">
+      <label> {{index +1}}번 파일명 : {{ fileInfo.originalFile }}</label>
       <input type="hidden">
       <button @click="downloadFile(fileInfo)">다운로드</button>
     </li>

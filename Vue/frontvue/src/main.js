@@ -15,8 +15,8 @@ import { faHeart as farHeart} from '@fortawesome/free-regular-svg-icons'*/
 
 /* add icons to the library */
 library.add(
-  /*  fasHeart,
-    farHeart*/
+    /*  fasHeart,
+      farHeart*/
 )
 
 

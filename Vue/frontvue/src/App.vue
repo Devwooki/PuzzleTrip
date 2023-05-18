@@ -1,15 +1,15 @@
 <template id="root">
-  <div id="app">
-    <div id="wrap">
-      <header>
-        <app-header id="header"></app-header>
-      </header>
-      <div id="contentWrap">
-        <router-view id="main"></router-view>
-      </div>
+    <div id="app">
+        <div id="wrap">
+            <header>
+                <app-header id="header"></app-header>
+            </header>
+            <div id="contentWrap">
+                <router-view id="main"></router-view>
+            </div>
+        </div>
+        <app-footer id="footer"></app-footer>
     </div>
-    <app-footer id="footer"></app-footer>
-  </div>
 
 </template>
 
@@ -19,10 +19,10 @@ import AppHeader from "@/views/layout/AppHeader.vue";
 import AppFooter from "@/views/layout/AppFooter.vue";
 
 export default {
-  name: "App",
-  components: {
-    AppHeader, AppFooter
-  },
+    name: "App",
+    components: {
+        AppHeader, AppFooter
+    },
 };
 </script>
 

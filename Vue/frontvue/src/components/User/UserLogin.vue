@@ -1,100 +1,122 @@
 <template>
-  <div id="login-div">
-    <!--    <label>아이디 저장?</label>
-        <input type="checkbox" id="saveId" name="saveId" v-model="saveId"/>
-        <label>아이디</label>
-        <input type="text" id="userId" name="userId" v-model="userId"/>
-        <br>
-        <label>비밀번호</label>
-        <input type="password" id="userId" name="userId" v-model="userPw"/>
-        <br>
-        <button id="loginBtn" @click="login">로그인</button>-->
-    <div class="container" id="container">
-      <div class="form-container sign-up-container">
-        <form action="#">
-          <h1>회원가입</h1>
-          <span>사용하시는 이메일을 입력해주세요.</span>
-          <input type="text" placeholder="Name"/>
-          <input type="email" placeholder="ID"/>
-          <input type="password" placeholder="Password"/>
-          <button>Sign Up</button>
-        </form>
-      </div>
-      <div class="form-container sign-in-container">
-        <form action="#">
-          <h1>로그인</h1>
-          <span>가입하신 정보를 입력해주세요.</span>
-          <input type="email" placeholder="ID"     id="userId" name="userId" v-model="userPw"/>
-          <input type="password" placeholder="Password"      id="userId" name="userId" v-model="userPw"/>
-          <div class="saveId">
-            <span class="saveIdSpan">아이디 저장</span>
-            <input type="checkbox"       id="saveId" name="saveId" v-model="saveId"/>
-          </div>
-          <a href="#">비밀번호를 잊어버리셨나요?</a>
-          <button      id="loginBtn" @click="login">로그인</button>
-        </form>
-      </div>
-      <div class="overlay-container">
-        <div class="overlay">
-          <div class="overlay-panel overlay-left">
-            <h1>반가워요!</h1>
-            <p>저희 Puzzle Trip과 여행을 떠나볼까요?</p>
-            <button class="ghost" id="signIn">로그인하러 가기</button>
-          </div>
-          <div class="overlay-panel overlay-right">
-            <h1>오랜만이에요!</h1>
-            <p>오늘은 어디로 떠나실 계획이신가요?</p>
-            <button class="ghost" id="signUp">가입하러 가기</button>
-          </div>
+    <div id="login-div">
+        <div class="container" id="container">
+            <div class="form-container sign-up-container">
+                <form action="#">
+                    <h1>회원가입</h1>
+                    <span>사용하시는 이메일을 입력해주세요.</span>
+                    <input type="text" placeholder="Name"/>
+                    <input type="email" placeholder="ID"/>
+                    <input type="password" placeholder="Password"/>
+                    <button type="button">Sign Up</button>
+                </form>
+            </div>
+            <div class="form-container sign-in-container">
+                <form action="#">
+                    <h1>로그인</h1>
+                    <span>가입하신 정보를 입력해주세요.</span>
+                    <input ref="inputId" type="email"  placeholder="ID" id="userId" name="userId" v-model="user.id"/>
+                    <input ref="inputPw" type="password" placeholder="Password" id="userPw" name="userPw" v-model="user.pw"/>
+                    <div class="saveId">
+                        <span class="saveIdSpan">아이디 저장</span>
+                        <input type="checkbox" id="saveId" name="saveId" v-model="saveId"/>
+                    </div>
+                    <router-link :to="{name : 'findPw'}">비밀번호를 잊어버리셨나요?</router-link>
+                    <button type="button" id="loginBtn" @click="login">로그인</button>
+                </form>
+            </div>
+            <div class="overlay-container">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-left">
+                        <h1>반가워요!</h1>
+                        <p>저희 Puzzle Trip과 여행을 떠나볼까요?</p>
+                        <button class="ghost" id="signIn" >로그인하러 가기</button>
+                    </div>
+                    <div class="overlay-panel overlay-right">
+                        <h1>오랜만이에요!</h1>
+                        <p>오늘은 어디로 떠나실 계획이신가요?</p>
+                        <button class="ghost" id="signUp">가입하러 가기</button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
 </template>
 
 <script>
-import axios from "@/util/axios";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
-  name: "UserLogin",
-  data() {
-    return {
-      userId: "",
-      userPw: "",
-      saveId: "",
+    name: "UserLogin",
+    data() {
+        return {
+            user : {
+                id: "",
+                pw: "",
+            },
+            saveId: "",
+        }
+    },
+    computed: {
+        ...mapGetters('userStore', ['getIsLogin', 'getIsLoginError', 'checkToken'])
+    },
+    methods: {
+        ...mapActions('userStore', ['confirm', 'getUserInfo']),
+
+        //https://zakelstorm.tistory.com/141 참고
+        //로그인 : DB에접근해 유저 정보가 유효한지 체크 및
+        //getUserInfo
+        async login() {
+            //로그인 결과 store에 저장
+            //await this.$store.dispatch('userStore/login', this.user)
+            await this.confirm(this.user)
+            let token = sessionStorage.getItem("accessToken")
+
+            //로그인 성공하면 쿠키정보도 저장한다.
+            if(this.getIsLogin){
+                await this.getUserInfo(token)
+                if(this.saveId){
+                    this.$cookies.set("saveId", this.saveId)
+                    this.$cookies.set("userId", this.user.id)
+                }
+                await this.$router.push({name : "home"})
+            }else{
+                //로그인 실패할 경우 입력값을 초기화하고 focus를 위치시킨다.
+                alert("아이디 혹은 비밀번호를 확인해 주세요.")
+                this.user.id = ""
+                this.user.pw = ""
+                this.$refs.inputId.focus()
+            }
+
+        },
+        removeUserIdCookie() {
+            console.log(this.saveId)
+            //체크를 해제하면 쿠키를 제거한다.
+            if(!this.saveId){
+                this.$cookies.remove("userId")
+                this.$cookies.remove("saveId")
+            }
+
+        },
+    },
+
+    mounted() {
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
     }
-  },
-  methods: {
-    async login() {
-      const response = axios.post(`user/login/${this.saveId}`, {
-        id: this.userId,
-        pw: this.userPw,
-      });
-      console.log(response.data)
-
-      if (response.data != null)
-        this.$router.push({name: 'home'})
-
-    }
-  },
-  mounted() {
-    const signUpButton = document.getElementById('signUp');
-    const signInButton = document.getElementById('signIn');
-    const container = document.getElementById('container');
-
-    signUpButton.addEventListener('click', () => {
-      container.classList.add("right-panel-active");
-    });
-
-    signInButton.addEventListener('click', () => {
-      container.classList.remove("right-panel-active");
-    });
-  }
 }
 
 </script>
-
 <style scoped>
 /*내가 바꾼거 */
 .saveId {
