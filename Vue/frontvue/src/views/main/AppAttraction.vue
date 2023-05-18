@@ -141,8 +141,12 @@ export default {
       startLoc: {},
       mapTypeControl: {},
       zoomControl: {},
-      //지도 카드 배열
-      mapInfoCard: [],
+      //마커 배열
+      MarkerTmp: [],
+      indexofMarker: [],
+      //오버레이 배열
+      overlayArray: [],
+      overlayIndex: [],
       //거리 찍기 필요
       polyline: "",
       polylineArray: [],
@@ -201,6 +205,7 @@ export default {
         "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=95684c0a88a9ddfe933ca5737c2da5a4";
       document.head.appendChild(script);
     }
+
   },
   methods: {
     initMap() {
@@ -290,8 +295,7 @@ export default {
           address: position.addr1,
         })
       })
-      this.MarkerTmp = [];
-      positions.forEach((position) => {
+      positions.forEach((position, index) => {
         let imageSrc = require(`@/assets/marker/marker${position.contentType}.png`);
         let imageSize = new kakao.maps.Size(35, 35);
         let markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
@@ -308,7 +312,11 @@ export default {
         marker.ca.setAttribute("summaryImg", position.image);
         this.MarkerTmp.push(marker)
         this.map.setLevel(5)
-        this.makeOverlay(marker);
+
+
+        this.makeOverlay(marker, index);
+
+
       })
       const halfIndex = Math.floor(this.MarkerTmp.length / 2);
       const halfMarker = this.MarkerTmp[halfIndex];
@@ -466,9 +474,9 @@ export default {
         console.log(err)
       });
     },
-    makeOverlay(marker) {
+    makeOverlay(marker, index) {
 
-      let content = `<div class="wrap">
+      let content = `<div class="wrap" data-index="${index}">
                          <div class="info">
                            <div class="body">
                              <div class="img">
@@ -490,24 +498,41 @@ export default {
                         </div>
                       </div>
                    `;
-
+      /*var overlay = new kakao.maps.CustomOverlay({
+        content: content,
+        map: this.map,
+        position: marker.getPosition(),
+        clickable: true,
+        visible: false,
+      });*/
       var overlay = new kakao.maps.CustomOverlay({
         content: content,
         map: this.map,
         position: marker.getPosition(),
         clickable: true,
       });
-      this.mapInfoCard.push(overlay);
-      overlay.setVisible(false);
-
+      overlay.setVisible(false)
+      this.overlayArray.push(overlay)
       let vueIns = this;
+
       kakao.maps.event.addListener(marker, 'click', function () {
         if (overlay.getVisible()) {
           overlay.setVisible(false)
-        }
-        else {
+
+          const targetNumber = index; // 삭제하고자 하는 특정 번호
+
+          for (let i = vueIns.overlayArray.length - 1; i >= 0; i--) {
+            const overlay = vueIns.overlayArray[i];
+            if (overlay.number == targetNumber) {
+              vueIns.overlayArray.splice(i, 1);
+            }
+          }
+          console.log(vueIns.overlayIndex)
+
+        } else {
           overlay.setVisible(true)
-          console.dir(marker.ca.attributes)
+          vueIns.overlayIndex.push(index)
+          console.log(vueIns.overlayIndex)
 
           document.getElementById("findWayBtnStart").onclick = () => {
             overlay.setVisible(false)
@@ -518,18 +543,22 @@ export default {
             vueIns.findDirections(marker, event.target.id);
           }
           document.getElementById("closeBtn").onclick = () => {
-            console.log("버튼누름")
-            console.log(this.mapInfoCard)
-            vueIns.deleteAllCard();
+            let wrap = event.target.parentNode.parentNode.parentNode;
+            let dataIndex = parseInt(wrap.getAttribute('data-index'));
+            console.log(dataIndex);
+            vueIns.aaaaa(overlay);
           }
         }
       });
     },
-    deleteAllCard() {
-      console.log("메소드 들어옴")
-      console.log(this.mapInfoCard)
-      this.mapInfoCard = [];
+    aaaaa() {
+      if (!this.overlayArray[1].getVisible()) {
+        this.overlayArray[1].setVisible(true)
+      } else {
+        this.overlayArray[1].setVisible(false)
+      }
     },
+
     deletFindWay() {
       //선 삭제
       this.polylineArray.forEach(function (polyline) {
