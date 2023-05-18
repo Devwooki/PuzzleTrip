@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import com.ssafy.enjoytrip.model.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
