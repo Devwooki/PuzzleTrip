@@ -52,7 +52,7 @@ public class WebMVCConfiguration implements WebMvcConfigurer {
                 .allowedOrigins("*")//모든 도메인으로 부터 접속을 허용한다.
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")//혀용할 HTTP메소드 선택
                 .allowedHeaders("*")//모든 헤더에 대해서 허용
-                .maxAge(1800);
+                .maxAge(3600);
 
         //https://yeonyeon.tistory.com/257
         //https://yeonyeon.tistory.com/236

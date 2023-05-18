@@ -35,6 +35,7 @@
                     <div class="overlay-panel overlay-right">
                         <h1>오랜만이에요!</h1>
                         <p>오늘은 어디로 떠나실 계획이신가요?</p>
+                        <p>혹시 계정이 없으신가요?</p>
                         <button class="ghost" id="signUp">가입하러 가기</button>
                     </div>
                 </div>
