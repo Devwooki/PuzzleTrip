@@ -47,6 +47,9 @@ const userStore = {
             //axios header에 토큰을 default값으로 추가해준다.
             // axios.defaults.headers.common['authToken'] = `Bearer ${data.userInfo.accesssToken}`
         },
+        CHANGE_USER_INFO(state, userInfo){
+            state.userInfo = userInfo;
+        }
     },
     actions: { //비동기 작업 결과를 적용할 떄 사용한다
         // commit : 현재 store의 뮤테이션을 호출하는 객체, 해당 뮤테이션을 통해 state변경 가능
@@ -61,6 +64,7 @@ const userStore = {
                         message :
                         refreshToken :
                     }*/
+                    console.log(data)
                     if (data.message === "success") {
                         let accessToken = data.accessToken
                         let refreshToken = data.refreshToken

@@ -16,6 +16,8 @@ import UserLogin from "@/components/User/UserLogin.vue";
 import UserFindPw from "@/components/User/UserFindPw.vue";
 import UserRegist from "@/components/User/UserRegist.vue";
 import UserViewMyPage from "@/components/User/UserViewMyPage.vue";
+import UserModifyMyPage from "@/components/User/UserModifyMyPage.vue";
+
 
 
 
@@ -34,24 +36,29 @@ const routes = [
     component: AppUser,
     children : [
       {
-        path: "/login",
-        name: "login",
+        path: "login",
+        name: "userLogin",
         component : UserLogin
       },
       {
-        path: "/findPw",
-        name: "findPw",
+        path: "findPw",
+        name: "userFindPw",
         component : UserFindPw
       },
       {
-        path: "/regist",
-        name: "regist",
+        path: "regist",
+        name: "userRegist",
         component : UserRegist
       },
       {
-        path: "/myPage",
-        name: "myPage",
+        path: "myPage",
+        name: "userMyPage",
         component : UserViewMyPage
+      },
+      {
+        path: "modify",
+        name: "userModify",
+        component : UserModifyMyPage
       }
     ]
   },

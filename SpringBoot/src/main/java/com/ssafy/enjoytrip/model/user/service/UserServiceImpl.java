@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void join(User user) throws Exception {
 		userMapper.insertUser(user);
+		userMapper.insertInitUserProfile(user);
 	}
 	@Override
 	public User getLogin(User user) throws Exception {

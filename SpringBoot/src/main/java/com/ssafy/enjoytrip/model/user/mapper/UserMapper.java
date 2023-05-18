@@ -22,4 +22,5 @@ public interface UserMapper {
 	void deleteRefreshToken(Map<String, String> map) throws SQLException;
 
 
+    void insertInitUserProfile(User user) throws SQLException;
 }

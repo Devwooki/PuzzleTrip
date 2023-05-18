@@ -19,7 +19,7 @@
                     <input ref="inputPw" type="password" placeholder="Password" id="userPw" name="userPw" v-model="user.pw"/>
                     <div class="saveId">
                         <span class="saveIdSpan">아이디 저장</span>
-                        <input type="checkbox" id="saveId" name="saveId" v-model="saveId"/>
+                        <input type="checkbox" id="saveId" name="saveId" v-model="saveId" @change="removeUserIdCookie"/>
                     </div>
                     <router-link :to="{name : 'findPw'}">비밀번호를 잊어버리셨나요?</router-link>
                     <button type="button" id="loginBtn" @click="login">로그인</button>
@@ -46,7 +46,6 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
-
 export default {
     name: "UserLogin",
     data() {
@@ -63,7 +62,6 @@ export default {
     },
     methods: {
         ...mapActions('userStore', ['confirm', 'getUserInfo']),
-
         //https://zakelstorm.tistory.com/141 참고
         //로그인 : DB에접근해 유저 정보가 유효한지 체크 및
         //getUserInfo
@@ -113,6 +111,17 @@ export default {
         signInButton.addEventListener('click', () => {
             container.classList.remove("right-panel-active");
         });
+
+        //컴포넌트 생성시 쿠키 체크 해서 input창에 값을 지정한다
+        //저장된 쿠키가 있으면 브라우저에 불러온다.
+        if (this.$cookies.get("saveId")) {
+            this.saveId = true;
+            this.user.id = this.$cookies.get("userId")
+            this.$refs.inputPw.focus()
+        }else{
+            this.saveId = false;
+            this.$refs.inputId.focus()
+        }
     }
 }
 

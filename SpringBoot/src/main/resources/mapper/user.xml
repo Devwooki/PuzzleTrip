@@ -4,6 +4,11 @@
 <mapper namespace="com.ssafy.enjoytrip.model.user.mapper.UserMapper">
 
 <!--    void insertUser(User user) throws SQLException;-->
+    <insert id="insertInitUserProfile" parameterType="user">
+        insert into user_profile (user_id)
+        values (#{id})
+    </insert>
+
     <insert id="insertUser" parameterType="user">
         insert into user(id, pw, name, email, email_domain)
         values (#{id}, #{pw}, #{name}, #{email}, #{emailDomain})
