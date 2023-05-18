@@ -49,23 +49,31 @@
           <a href="" title="Button fade orange" class="button btnFade btnOrange">초기화</a>
         </div>
         <v-row class="search-checkbox">
-          <v-checkbox v-model="contentTypes" label="관광지" color="orange" value="12" @change="handleGugunChange"
+          <v-checkbox class="searchCh" v-model="contentTypes" label="관광지" color="orange" value="12"
+                      @change="handleGugunChange"
                       hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="문화시설" color="orange" value="14" @change="handleGugunChange"
+          <v-checkbox class="searchCh" v-model="contentTypes" label="문화시설" color="orange" value="14"
+                      @change="handleGugunChange"
                       hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="축제공연행사" color="orange" value="15" @change="handleGugunChange"
+          <v-checkbox class="searchCh" v-model="contentTypes" label="축제공연행사" color="orange" value="15"
+                      @change="handleGugunChange"
                       hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="여행코스" color="orange" value="25" @change="handleGugunChange"
+          <v-checkbox class="searchCh" v-model="contentTypes" label="여행코스" color="orange" value="25"
+                      @change="handleGugunChange"
                       hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="레포츠" color="orange" value="28" @change="handleGugunChange"
+          <v-checkbox class="searchCh" v-model="contentTypes" label="레포츠" color="orange" value="28"
+                      @change="handleGugunChange"
                       hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="숙박" color="orange" value="32" @change="handleGugunChange"
+          <v-checkbox class="searchCh" v-model="contentTypes" label="숙박" color="orange" value="32"
+                      @change="handleGugunChange"
                       hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="쇼핑" color="orange" value="38" @change="handleGugunChange"
+          <v-checkbox class="searchCh" v-model="contentTypes" label="쇼핑" color="orange" value="38"
+                      @change="handleGugunChange"
                       hide-details></v-checkbox>
-          <v-checkbox v-model="contentTypes" label="음식점" color="orange" value="39" @change="handleGugunChange"
+          <v-checkbox class="searchCh" v-model="contentTypes" label="음식점" color="orange" value="39"
+                      @change="handleGugunChange"
                       hide-details></v-checkbox>
-          <v-checkbox v-model="checkAllBox" class="allSelectRadio" label="전체 체크 해체" color="blue"
+          <v-checkbox v-model="checkAllBox" class="allSelectRadio searchCh" label="전체 체크 해제" color="blue"
                       @change="toggleSelectAll" hide-details></v-checkbox>
         </v-row>
       </div>
@@ -133,6 +141,8 @@ export default {
       startLoc: {},
       mapTypeControl: {},
       zoomControl: {},
+      //지도 카드 배열
+      mapInfoCard: [],
       //거리 찍기 필요
       polyline: "",
       polylineArray: [],
@@ -316,7 +326,7 @@ export default {
         this.requestData.origin.x = `${marker.getPosition().La}`;
         this.requestData.origin.y = `${marker.getPosition().Ma}`;
         this.startPoint = marker.ca.attributes.innertext.value
-        
+
         if (this.requestData.origin.x !== 0 && this.requestData.origin.y !== 0 &&
           this.requestData.destination.x !== 0 && this.requestData.destination.y !== 0) {
           this.findWayGo(this.requestData);
@@ -352,17 +362,17 @@ export default {
       axios.post(apiUrl, requestData, {headers})
         .then(response => {
           let data = response.data.routes[0];
-/*          let result_code = data.result_code;
-          let summary = data.summary;*/
+          /*          let result_code = data.result_code;
+                    let summary = data.summary;*/
           let sections = data.sections;
           //젠체 코드
-/*          console.log("전체 : ", data);
-          //경로 탐색 결과 코드
-          console.log("결과코드 : ", result_code);
-          //summary
-          console.log("요약 : ", summary);
-          //구간별 경로 정보
-          console.log("구간별 정보 : ", sections);*/
+          /*          console.log("전체 : ", data);
+                    //경로 탐색 결과 코드
+                    console.log("결과코드 : ", result_code);
+                    //summary
+                    console.log("요약 : ", summary);
+                    //구간별 경로 정보
+                    console.log("구간별 정보 : ", sections);*/
           if (sections.length >= 1) {
             for (const [idx, section] of sections.entries()) {
               let {distance, duration, guides: arrays, roads} = section;  //distance : 미터단위, duration : 초 단위
@@ -457,6 +467,7 @@ export default {
       });
     },
     makeOverlay(marker) {
+
       let content = `<div class="wrap">
                          <div class="info">
                            <div class="body">
@@ -465,16 +476,16 @@ export default {
                              </div>
                              <div class="desc">
                                 <div class="title">${marker.ca.name}</div>
-                                <button class="findWay" id="findWayBtnStart">출발</button>
-                                <button class="findWay" id="findWayBtnEnd">도착</button>
                                 <div class="ellipsis">
-                                    ${marker.ca.attributes.innertext.nodeValue}
+                                  ${marker.ca.attributes.innertext.nodeValue}
                                   <div class="jibun ellipsis"></div>
-                                  <div class="link">
-                                    <a href="https://www.kakaocorp.com/main" target="_blank">키워드 검색은 준비중입니다.</a>
-                                  </div>
                                 </div>
                              </div>
+                             <div>
+                              <button class="findWay" id="findWayBtnStart">출발</button>
+                              <button class="findWay" id="findWayBtnEnd">도착</button><br>
+                             </div>
+                              <button class="findWay" id="closeBtn">닫기</button>
                            </div>
                         </div>
                       </div>
@@ -486,24 +497,38 @@ export default {
         position: marker.getPosition(),
         clickable: true,
       });
+      this.mapInfoCard.push(overlay);
       overlay.setVisible(false);
 
       let vueIns = this;
       kakao.maps.event.addListener(marker, 'click', function () {
-        if (overlay.getVisible())
+        if (overlay.getVisible()) {
           overlay.setVisible(false)
+        }
         else {
           overlay.setVisible(true)
+          console.dir(marker.ca.attributes)
+
           document.getElementById("findWayBtnStart").onclick = () => {
-            vueIns.findDirections(marker, event.target.id);
             overlay.setVisible(false)
-          },
-            document.getElementById("findWayBtnEnd").onclick = () => {
-              vueIns.findDirections(marker, event.target.id);
-              overlay.setVisible(false)
-            }
+            vueIns.findDirections(marker, event.target.id);
+          }
+          document.getElementById("findWayBtnEnd").onclick = () => {
+            overlay.setVisible(false)
+            vueIns.findDirections(marker, event.target.id);
+          }
+          document.getElementById("closeBtn").onclick = () => {
+            console.log("버튼누름")
+            console.log(this.mapInfoCard)
+            vueIns.deleteAllCard();
+          }
         }
       });
+    },
+    deleteAllCard() {
+      console.log("메소드 들어옴")
+      console.log(this.mapInfoCard)
+      this.mapInfoCard = [];
     },
     deletFindWay() {
       //선 삭제
@@ -631,6 +656,10 @@ export default {
     font-weight: 900;
 }
 
+.searchCh {
+    margin-right: 10px;
+}
+
 /*날씨 정보*/
 #weather_wrap {
     background-color: #8bb9eb;
@@ -704,15 +733,15 @@ export default {
 /* 지도 카드 */
 .wrap {
     position: absolute;
-    left: -135px;
+    left: -145px;
     bottom: 40px;
-    height: 250px;
+    height: 280px;
     margin: 10px;
-    width: 250px;
+    width: 280px;
     border-radius: 10px;
     box-shadow: 0 0 8px;
-    background-color: #ffffff;
     overflow: hidden;
+    background-color: #fff;
 }
 
 .wrap * {
@@ -720,10 +749,24 @@ export default {
     margin: 0;
 }
 
+#findWayBtnStart {
+    color: #FF8E01;
+    margin: 12px 0 0 100px;
+}
+
+#findWayBtnEnd {
+    color: cornflowerblue;
+    margin-left: 10px;
+}
+
+#closeBtn {
+    margin: 12px 0 0 120px;
+}
+
 .body {
     position: relative;
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: snow;
 }
 
 .info .img {
