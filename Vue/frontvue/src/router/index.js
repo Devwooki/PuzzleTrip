@@ -10,7 +10,6 @@ import BoardDetail from "@/components/Board/BoardDetail.vue";
 import BoardWrite from "@/components/Board/BoardWrite.vue";
 import BoardFileItem from "@/components/Board/BoardFileItem.vue";
 import BoardModify from "@/components/Board/BoardModify.vue";
-import AppTest from "@/views/main/AppTest.vue";
 import AppUser from "@/views/user/AppUser.vue";
 import UserLogin from "@/components/User/UserLogin.vue";
 import UserFindPw from "@/components/User/UserFindPw.vue";
@@ -35,7 +34,7 @@ const routes = [
     children : [
       {
         path: "/login",
-        name: "login",
+        name: "userLogin",
         component : UserLogin
       },
       {
@@ -105,12 +104,6 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/test",
-    name: "test",
-    component: AppTest
-  }
-
 ];
 
 const router = new VueRouter({

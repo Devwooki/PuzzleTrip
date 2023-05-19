@@ -25,7 +25,8 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
 
-Vue.use(Vuetify)
+Vue.use(Vuetify);
+
 Vue.prototype.$http = axios
 
 new Vue({
