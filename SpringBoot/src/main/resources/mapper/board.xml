@@ -53,9 +53,6 @@
           and b.status = 0
     </select>
 
-<!--    <resultMap type="board" id="viewBoard" extends="boardMap">-->
-<!--        <collection property="fileInfos" column="board_no" javaType="list" ofType="fileInfo" select="fileInfoList"/>-->
-<!--    </resultMap>-->
 
     <select id="fileInfoList" parameterType="int" resultMap="fileMap">
         select save_folder, original_file, save_file

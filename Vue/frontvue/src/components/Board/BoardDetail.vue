@@ -28,7 +28,7 @@
 
     <div style="padding-top: 15px">
       <router-link :to="{name : 'boardModify'}">수정 |</router-link>
-      <a @click="beforeRemove"> 삭제 |</a>
+      <a v-if="board.userId === checkUserInfo.id" @click="beforeRemove"> 삭제 |</a>
       <router-link :to="{name : 'board'}"> 목록 |</router-link>
       <router-link :to="{name : 'boardWrite'}">글쓰기</router-link>
     </div>
@@ -64,6 +64,8 @@ export default {
     this.board = response.data
     console.log(this.board)
     this.likeCnt = this.board.likeCnt
+      console.log("##########좀 떠라")
+      console.log(this.checkUserInfo)
   },
   methods: {
     async beforeRemove() {
@@ -88,7 +90,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('boardStore', ['getBoardType', 'getPageNo', 'getBoardNo'])
+    ...mapGetters('boardStore', ['getBoardType', 'getPageNo', 'getBoardNo']),
+      ...mapGetters('userStore', ['checkUserInfo'])
   }
 }
 </script>

@@ -1,30 +1,37 @@
 <template>
     <div>
-        <h1>게시판 리스트 출력</h1>
         <div>
-            <ul>
-                <li class="active" value="2" @click="initBoard">자유게시판 : 2</li>
-                <li value="1" @click="initBoard">공지사항 : 1</li>
+            <ul class="board-type">
+                <li :class="{ boardactive: selected === 2 }" value="2" @click="initBoard">자유게시판 : 2</li>
+                <li :class="{ boardactive: selected === 1 }" value="1" @click="initBoard">공지사항 : 1</li>
             </ul>
         </div>
         <div>
-            <p>지금 게시판 상태 : {{ this.getBoardType }}</p>
             <p>총 게시글 수 : {{ pageResult.totalBoard }}개</p>
-            <table>
-                <thead>
-                <th>번호</th>
-                <th>제목</th>
-                <th>글쓴이</th>
-                <th>조회수</th>
-                <th>추천수</th>
-                <th>등록일</th>
-                </thead>
-                <tbody>
-                <board-list-item v-for="board in boards" :key="board.no" :board="board"></board-list-item>
-                </tbody>
+            <div id="board-list">
+                <div class="container">
+                    <table class="board-table">
+                        <thead>
+                        <tr>
+                            <th class="th-num">번호</th>
+                            <th class="th-title">제목</th>
+                            <th class="th-writer">글쓴이</th>
+                            <th class="th-hit">조회수</th>
+                            <th class="th-like-cnt">추천수</th>
+                            <th class="th-date">등록일</th>
+                        </tr>
+                        </thead>
 
-                <router-link :to="{name : 'boardWrite'}">글쓰기</router-link>
-            </table>
+                        <tbody>
+                        <board-list-item v-for="board in boards" :key="board.no" :board="board"></board-list-item>
+                        </tbody>
+
+                    </table>
+
+                    <router-link class="custom-btn btn-15" :to="{name : 'boardWrite'}">글쓰기</router-link>
+
+                </div>
+            </div>
         </div>
         <board-page-list @loadPage="loadPage"></board-page-list>
     </div>
@@ -44,15 +51,17 @@ export default {
     },
     data() {
         return {
+            selected: 2,
             boards: {},
             pageResult: {},
         };
     },
     methods: {
         initBoard(event) {
+
             this.$store.commit('boardStore/SET_BOARD_TYPE', event.target.value);
             this.$store.commit('boardStore/SET_PAGE_NO', 1);
-            this.pageNo = 1;
+            this.selected = event.target.value;
             this.getBoardData();
         },
         loadPage(pageNum) {
@@ -82,4 +91,154 @@ export default {
 </script>
 
 <style scoped>
+* {
+    list-style: none;
+    text-decoration: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.board-type {
+    display: flex;
+    justify-content: center;
+}
+
+.board-type li {
+    margin: 0px 5px 0;
+    padding: 5px 100px 5px;
+    font-size: 27px;
+}
+
+.board-type li:hover {
+    background-color: #7D9600;
+    color: #FFF;
+}
+.board-type li:active {
+    top: 2px;
+}
+
+.boardactive {
+    border-bottom: 4px solid #7D9600;
+    font-weight: bold;
+}
+
+
+.board-table {
+    font-size: 13px;
+    width: 100%;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.board-table tr {
+    text-align: center;
+}
+
+.board-table .th-num {
+    width: 10%;
+    text-align: center;
+}
+
+.board-table .th-title {
+    width: 50%;
+}
+
+.board-table .th-writer {
+    width: 10%;
+}
+
+.board-table .th-hit {
+    width: 5%;
+}
+
+.board-table .th-like-cnt {
+    width: 5%;
+}
+
+.board-table .th-date {
+    width: 20%;
+}
+
+.board-table th, .board-table td {
+    padding: 14px 0;
+}
+
+.board-table tbody td {
+    border-top: 1px solid #e7e7e7;
+    text-align: center;
+}
+
+.board-table tbody th {
+    padding-left: 28px;
+    padding-right: 14px;
+    border-top: 1px solid #e7e7e7;
+    text-align: left;
+}
+
+p {
+    width: 90%;
+    text-align: right;
+    margin: 1rem 0;
+}
+
+a {
+    margin: 20px;
+    outline: none;
+    text-align: center;
+}
+.custom-btn {
+    width: 130px;
+    height: 40px;
+    padding: 10px 25px;
+    border: 2px solid #000;
+    font-weight: 500;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+/* 15 */
+.btn-15 {
+    background: #626262;
+    color: #fff;
+    z-index: 1;
+    border-radius: 5px;
+}
+.btn-15:after {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    background: #e0e5ec;
+    transition: all 0.2s ease;
+}
+.btn-15:hover {
+    color: #626262;
+}
+.btn-15:hover:after {
+    left: 0;
+    width: 100%;
+}
+.btn-15:active {
+    top: 2px;
+}
+/* reset */
+
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 0
+}
+
 </style>

@@ -57,6 +57,8 @@ export default {
         formData.append('files', this.files[i]);
       }
 
+        console.log("파일 전송전에 파일정보 출력")
+      console.log(this.files)
       axios.post("board/write", formData, {
           headers: {
             'Content-Type': 'multipart/form-data'

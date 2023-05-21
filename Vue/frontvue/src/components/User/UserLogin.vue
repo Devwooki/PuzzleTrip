@@ -4,25 +4,37 @@
             <div class="form-container sign-up-container">
                 <form action="#">
                     <h1>회원가입</h1>
-                    <span>사용하시는 이메일을 입력해주세요.</span>
-                    <input type="text" placeholder="Name"/>
-                    <input type="email" placeholder="ID"/>
-                    <input type="password" placeholder="Password"/>
-                    <button type="button">Sign Up</button>
+                    <span>사용하시는 아이디를 입력해주세요.</span>
+                    <input ref="regId" type="text" placeholder="ID" v-model="registerInfo.id"/>
+                    <input ref="regName" type="text" placeholder="Name" v-model="registerInfo.name"/>
+                    <input ref="regPw" :type="pwType" placeholder="Password" v-model="registerInfo.pw"/>
+                    <input ref="regCheckPw" :type="pwType"  placeholder="Check Password" v-model="registerInfo.checkPw"/>
+                    <span @click="changePwType">비밀번호 표시</span>
+                    <input ref="regEmail" type="email" placeholder="Email" v-model="registerInfo.email"/>
+
+                    <!-- 이메일 인증은 추후 진행
+                    <button type="button" @click="sendIsValid">본인 인증</button>
+                    <input type="text" v-if="showInput" placeholder="인증번호 입력" v-model="inputNum" @Input="checkVaildEmail">
+                    -->
+
+                    <span>프로필 이미지를 선택해 주세요.</span>
+                    <input name="profile" type="file" accept="image/jpeg, image/png, image/gif, .jpg" @change="onFileChange"/>
+                    <button type="button" @click="signUp">Sign Up</button>
                 </form>
             </div>
             <div class="form-container sign-in-container">
                 <form action="#">
                     <h1>로그인</h1>
                     <span>가입하신 정보를 입력해주세요.</span>
-                    <input ref="inputId" type="email"  placeholder="ID" id="userId" name="userId" v-model="user.id"/>
-                    <input ref="inputPw" type="password" placeholder="Password" id="userPw" name="userPw" v-model="user.pw"/>
+                    <input ref="inputId" type="email" placeholder="ID" id="userId" name="userId" v-model="user.id"/>
+                    <input ref="inputPw" type="password" placeholder="Password" id="userPw" name="userPw"
+                           v-model="user.pw"/>
                     <div class="saveId">
                         <span class="saveIdSpan">아이디 저장</span>
-                        <input type="checkbox" id="saveId" name="saveId" v-model="saveId"/>
+                        <input type="checkbox" id="saveId" name="saveId" v-model="saveId" @change="removeUserIdCookie"/>
                     </div>
-                    <router-link :to="{name : 'findPw'}">비밀번호를 잊어버리셨나요?</router-link>
-                    <button type="button" id="loginBtn" @click="login">로그인</button>
+                    <!--                    <router-link :to="{name : 'findPw'}">비밀번호를 잊어버리셨나요?</router-link>-->
+                    <button type="button" id="loginBtn" @click="signIn">Sign in</button>
                 </form>
             </div>
             <div class="overlay-container">
@@ -30,7 +42,7 @@
                     <div class="overlay-panel overlay-left">
                         <h1>반가워요!</h1>
                         <p>저희 Puzzle Trip과 여행을 떠나볼까요?</p>
-                        <button class="ghost" id="signIn" >로그인하러 가기</button>
+                        <button class="ghost" id="signIn">로그인하러 가기</button>
                     </div>
                     <div class="overlay-panel overlay-right">
                         <h1>오랜만이에요!</h1>
@@ -43,20 +55,41 @@
         </div>
     </div>
 
+
 </template>
 
 <script>
 import {mapActions, mapGetters} from "vuex";
+import axios from "@/util/axios";
+// import axios from "@/util/axios";
 
 export default {
     name: "UserLogin",
     data() {
         return {
-            user : {
-                id: "",
-                pw: "",
+            //회원가입을 위한 요소
+            registerInfo: {
+                id: '',
+                pw: '',
+                checkPw : '',
+                name: '',
+                email: '',
+                profileImg : {},
+            },
+            pwType : "password" ,
+
+            //로그인 위한 요소
+            user: {
+                id: '',
+                pw: '',
             },
             saveId: "",
+
+
+            // 이메일 인증을 위한 변수
+            // showInput : false,
+            // inputNum : '',
+            // checkNum : false,
         }
     },
     computed: {
@@ -64,43 +97,120 @@ export default {
     },
     methods: {
         ...mapActions('userStore', ['confirm', 'getUserInfo']),
+        changePwType(){
+            this.showPw = !this.showPw;
+            this.pwType = this.showPw ? 'text' : 'password';
+            console.log(this.pwType)
+        },
+        onFileChange(event) {
+            this.registerInfo.profileImg = event.target.files;
+            console.log(this.files);
+        },
 
         //https://zakelstorm.tistory.com/141 참고
         //로그인 : DB에접근해 유저 정보가 유효한지 체크 및
         //getUserInfo
-        async login() {
+        async signIn() {
             //로그인 결과 store에 저장
             //await this.$store.dispatch('userStore/login', this.user)
             await this.confirm(this.user)
             let token = sessionStorage.getItem("accessToken")
 
             //로그인 성공하면 쿠키정보도 저장한다.
-            if(this.getIsLogin){
+            if (this.getIsLogin) {
                 await this.getUserInfo(token)
-                if(this.saveId){
+
+                if (this.saveId) {
                     this.$cookies.set("saveId", this.saveId)
                     this.$cookies.set("userId", this.user.id)
                 }
-                await this.$router.push({name : "home"})
-            }else{
+                console.log("router push 전")
+                this.$router.push({name: 'home'})
+                console.log("router push 후")
+            } else {
                 //로그인 실패할 경우 입력값을 초기화하고 focus를 위치시킨다.
                 alert("아이디 혹은 비밀번호를 확인해 주세요.")
                 this.user.id = ""
                 this.user.pw = ""
                 this.$refs.inputId.focus()
             }
-
         },
+        async signUp() {
+            console.log("유저 회원가입")
+            console.log(this.registerInfo)
+
+            const emailRegex = /^([a-zA-Z0-9_-]+)@([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/;
+            const emailValid = emailRegex.test(this.registerInfo.email);
+
+            if (this.registerInfo.id.trim() === '') {
+                alert('아이디를 입력해주세요.');
+                this.$refs.regId.focus();
+                return;
+            } else if (this.registerInfo.name.trim() === '') {
+                alert('이름을 입력해주세요.');
+                this.$refs.regName.focus();
+                return;
+            } else if (this.registerInfo.pw.trim() === '') {
+                alert('비밀번호를 입력해주세요.');
+                this.$refs.regPw.focus();
+                return;
+            } else if (this.registerInfo.pw.trim() !== this.registerInfo.checkPw.trim()) {
+                alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                this.$refs.regCheckPw.focus();
+                return;
+            } else if (this.registerInfo.email.trim() === '') {
+                alert('이메일을 입력해주세요.');
+                this.$refs.regEmail.focus();
+                return;
+            } else if (!emailValid) {
+                alert('이메일 형식이 올바르지 않습니다.');
+                this.$refs.regEmail.focus();
+                return;
+            } else {
+
+                const formData = new FormData();
+                formData.append('id', this.registerInfo.id);
+                formData.append('pw', this.registerInfo.pw);
+                formData.append('name', this.registerInfo.name);
+                formData.append('email', this.registerInfo.email);
+                formData.append('files', this.registerInfo.profileImg[0])
+
+                await axios.post(`user/regist`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+
+            }
+        },
+
+        // async sendIsValid(){
+        //     this.sendIsValid = true;
+        //     const response = await axios.get(`user/checkVaildEmail/${this.registerInfo.email}`)
+        //     console.log(response);
+        //   //this.checkNum = response.data;
+        // },
+        // checkVaildEmail(){
+        //     const maxLength = 6;
+        //     if(this.inputNum.length > maxLength){
+        //         this.inputNum = this.inputNum.slice(0, maxLength);
+        //         alert("글자수를 초과했습니다.")
+        //     }
+        //
+        //     if(this.checkNum === this.inputNum){
+        //
+        //     }
+        // },
         removeUserIdCookie() {
             console.log(this.saveId)
             //체크를 해제하면 쿠키를 제거한다.
-            if(!this.saveId){
+            if (!this.saveId) {
                 this.$cookies.remove("userId")
                 this.$cookies.remove("saveId")
             }
-
         },
     },
+
 
     mounted() {
         const signUpButton = document.getElementById('signUp');
@@ -114,6 +224,19 @@ export default {
         signInButton.addEventListener('click', () => {
             container.classList.remove("right-panel-active");
         });
+    },
+
+    created() {
+        //컴포넌트 생성시 쿠키 체크 해서 input창에 값을 지정한다
+        //저장된 쿠키가 있으면 브라우저에 불러온다.
+        if (this.$cookies.get("saveId")) {
+            this.saveId = true;
+            this.user.id = this.$cookies.get("userId")
+            this.$refs.inputPw.focus()
+        } else {
+            this.saveId = false;
+            this.$refs.inputId.focus()
+        }
     }
 }
 
@@ -133,9 +256,11 @@ export default {
     padding: 0;
     width: 20px;
 }
+
 #login-div {
     margin-top: 200px;
 }
+
 /*내가 바꾼거 끝*/
 
 
