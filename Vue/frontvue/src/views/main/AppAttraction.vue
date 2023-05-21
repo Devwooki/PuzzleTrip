@@ -97,13 +97,27 @@
         </div>
       </div>
     </div>
-    <div id="map"></div>
+    <div class="mainContent">
+      <app-left-bar
+          class="leftContent"
+          :selectedSido="selectedSido"
+          :selectedGugun="selectedGugun"
+          :startPoint="startPoint"
+          :endPoint="endPoint"
+      ></app-left-bar>
+      <div id="map" ></div>
+      <app-right-bar class="rightContent" :map="map" :markers="positions"></app-right-bar>
+    </div>
   </v-app>
 </template>
 <script>
 import axios from "axios";
+import AppLeftBar from "@/components/Attraction/AppleftBar.vue";
+import AppRightBar from "@/components/Attraction/ApprightBar.vue";
+
 export default {
   name: "KakaoMap",
+  components: {AppRightBar, AppLeftBar},
   data() {
     return {
       map: null,
@@ -133,6 +147,13 @@ export default {
         {name: '경남', value: '36', eng: 'gyeongsangnam-do'}
       ],
       gugun: [],
+      //컴포넌트로 데이터 전달하기
+      selectedSido: '',
+      selectedGugun: '',
+      positions: [],
+      //길찾기
+      startPoint: "출발지를 선택해주세요",
+      endPoint: "도착지를 선택해주세요",
       //마커생성에 필요한 변수
       container: {},
       startLoc: {},
@@ -147,9 +168,7 @@ export default {
       customOverlayArray: [],
       findMarker: "",
       findMarkerArray: [],
-      //길찾기
-      startPoint: "출발지를 선택해주세요",
-      endPoint: "도착지를 선택해주세요",
+
       requestData: {
         origin: {
           x: 0,
@@ -218,6 +237,7 @@ export default {
       this.map.addControl(this.zoomControl, kakao.maps.ControlPosition.RIGHT);
     },
     handleSidoChange() {
+      this.selectedSido = this.sido.find((item) => item.value === this.areaCode)?.name || '';
       this.gugunCode = '0';
       axios.get("http://localhost:8989/attraction/" + this.areaCode)
         .then(response => {
@@ -255,6 +275,7 @@ export default {
       }
     },
     handleGugunChange() {
+      this.selectedGugun = this.gugun.find((item) => item.gugunCode === this.gugunCode)?.gugunName || '';
       const sendData = {
         areaCode: this.areaCode,
         gugunCode: this.gugunCode,
@@ -276,12 +297,12 @@ export default {
       }
     },
     drawMarker: function (markers) {
-      let positions = [];
+      this.positions = [];
       markers.forEach((position) => {
         let image = "";
         if (position.firstImage === "" || position.firstImage === "") image = require('@/assets/marker/noimage.png')
         else image = position.firstImage;
-        positions.push({
+        this.positions.push({
           title: position.title,
           latlng: new kakao.maps.LatLng(position.latitude, position.longitude),
           image: image,
@@ -290,7 +311,7 @@ export default {
           address: position.addr1,
         })
       })
-      positions.forEach((position) => {
+      this.positions.forEach((position) => {
         let imageSrc = require(`@/assets/marker/marker${position.contentType}.png`);
         let imageSize = new kakao.maps.Size(35, 35);
         let markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
@@ -306,7 +327,7 @@ export default {
         marker.ca.setAttribute("innerText", position.address);
         marker.ca.setAttribute("summaryImg", position.image);
         this.MarkerTmp.push(marker)
-        this.map.setLevel(5)
+        this.map.setLevel(6)
         this.makeOverlay(marker);
 
       })
@@ -362,17 +383,17 @@ export default {
       axios.post(apiUrl, requestData, {headers})
         .then(response => {
           let data = response.data.routes[0];
-          /*          let result_code = data.result_code;
-                    let summary = data.summary;*/
+                    let result_code = data.result_code;
+                    let summary = data.summary;
           let sections = data.sections;
           //젠체 코드
-          /*          console.log("전체 : ", data);
+                    console.log("전체 : ", data);
                     //경로 탐색 결과 코드
                     console.log("결과코드 : ", result_code);
                     //summary
                     console.log("요약 : ", summary);
                     //구간별 경로 정보
-                    console.log("구간별 정보 : ", sections);*/
+                    console.log("구간별 정보 : ", sections);
           if (sections.length >= 1) {
             for (const [idx, section] of sections.entries()) {
               let {distance, duration, guides: arrays, roads} = section;  //distance : 미터단위, duration : 초 단위
@@ -515,6 +536,7 @@ export default {
 
       kakao.maps.event.addListener(marker, "click", () => {
         this.findDirections(marker, "findWayBtnStart"); // 추가 정보 전달
+        console.log(marker.getPosition())
       });
       kakao.maps.event.addListener(marker, 'rightclick', () => {
         this.findDirections(marker, "findWayBtnEnd");
@@ -539,7 +561,7 @@ export default {
       this.findMarkerArray = [];
 
     },
-    deletFindWayBtn() {
+/*    deletFindWayBtn() {
       //값 삭제
       this.requestData.origin.x = 0;
       this.requestData.origin.y = 0;
@@ -567,13 +589,33 @@ export default {
       if (this.MarkerTmp) {
         this.DestroyedMarker()
       }
-    },
+    },*/
 
   }
 }
 </script>
 
 <style>
+.mainContent {
+    display: flex;
+    justify-content: space-between;
+}
+.leftContent {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    width: 17%;
+    height: 900px;
+    z-index: 4;
+}
+
+.rightContent {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    width: 17%;
+    height: 900px;
+    z-index: 4;
+}
+
 @font-face {
     font-family: 'SEBANG_Gothic_Bold';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
@@ -586,7 +628,7 @@ export default {
 }
 
 #map {
-    width: 50%;
+    width: 70%;
     height: 900px;
     z-index: 2;
 }
@@ -613,6 +655,7 @@ export default {
 .findWayTextArea .v-input__slot {
     width: 300px !important;
 }
+
 .sidoCol {
     flex-basis: 0;
     flex-grow: unset !important;
@@ -837,9 +880,11 @@ a.button {
 .btnFade.btnOrange:hover {
     background: #FF8E01;
 }
+
 .mapAndCal {
     display: flex;
 }
+
 .cal {
     width: 50%;
 }

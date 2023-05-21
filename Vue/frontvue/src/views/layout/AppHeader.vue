@@ -1,86 +1,88 @@
 <template>
-    <div id="containerTop">
-        <header>
-            <div id="logoDiv">
-                <router-link :to="{name: 'home'}">
-                    <img :src="require('@/assets/logo.png')" alt="logo" id="mainLogo">
-                </router-link>
+  <div id="containerTop">
+    <header>
+      <div id="logoDiv">
+        <router-link :to="{name: 'home'}">
+          <img :src="require('@/assets/logo.png')" alt="logo" id="mainLogo">
+        </router-link>
+      </div>
+      <nav id="containerMid">
+        <div id="userManu">
+          <router-link v-if="userInfo === null" :to="{name: 'userLogin'}">로그인</router-link>
+          <div v-if="userInfo">
+            <router-link :to="{name : 'myPage'}" title="마이페이지로">{{ userInfo.name }}</router-link>
+            님 반갑습니다.
+            <a @click.prevent="logout">로그아웃</a>
+          </div>
+        </div>
+        <div id="mainManu">
+          <div class="button">
+            <p class="btnText">여행지</p>
+            <div class="btnTwo">
+              <router-link :to="{name: 'attraction'}">
+                <p class="btnText2">고르기</p>
+              </router-link>
             </div>
-            <nav id="containerMid">
-                <div id="userManu">
-                    <router-link v-if="userInfo === null" :to="{name: 'userLogin'}">로그인</router-link>
-                    <div v-if="userInfo">
-                        <router-link :to="{name : 'myPage'}" title="마이페이지로">{{ userInfo.name }}</router-link>님 반갑습니다.
-                        <a @click.prevent="logout">로그아웃</a>
-                    </div>
-                </div>
-                <div id="mainManu">
-                    <div class="button">
-                        <p class="btnText">여행지</p>
-                        <div class="btnTwo">
-                            <router-link :to="{name: 'attraction'}">
-                                <p class="btnText2">고르기</p>
-                            </router-link>
-                        </div>
-                    </div>
-                    <div class="button">
-                        <p class="btnText">나만의</p>
-                        <div class="btnTwo">
-                            <router-link :to="{name: 'myPlace'}">
-                                <p class="btnText2">여행지</p>
-                            </router-link>
-                        </div>
-                    </div>
-                    <div class="button">
-                        <p class="btnText">우리의</p>
-                        <div class="btnTwo">
-                            <router-link :to="{name: 'hotPlace'}">
-                                <p class="btnText2">여행지</p>
-                            </router-link>
-                        </div>
-                    </div>
-                    <div class="button">
-                        <p class="btnText">게시판</p>
-                        <div class="btnTwo">
-                            <router-link :to="{name: 'board'}">
-                                <p class="btnText2">구경하기</p>
-                            </router-link>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header>
-    </div>
+          </div>
+          <div class="button">
+            <p class="btnText">나만의</p>
+            <div class="btnTwo">
+              <router-link :to="{name: 'myPlace'}">
+                <p class="btnText2">여행지</p>
+              </router-link>
+            </div>
+          </div>
+          <div class="button">
+            <p class="btnText">우리의</p>
+            <div class="btnTwo">
+              <router-link :to="{name: 'hotPlace'}">
+                <p class="btnText2">여행지</p>
+              </router-link>
+            </div>
+          </div>
+          <div class="button">
+            <p class="btnText">게시판</p>
+            <div class="btnTwo">
+              <router-link :to="{name: 'board'}">
+                <p class="btnText2">구경하기</p>
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+  </div>
 </template>
 
 <script>
 import {mapActions, mapGetters, mapState} from "vuex";
+
 export default {
-    name: 'appHeader',
-    components: {},
-    data() {
-        return {
-            message: '',
-        };
-    },
-    created() {
-    },
-    computed :{
-        ...mapState('userStore', ["isLogin", "userInfo"]),
-        ...mapGetters('userStore',["checkUserInfo"]),
-    },
-    methods: {
-        ...mapActions('userStore', ['userLogout']),
-        logout(){
-            console.log(this.checkUserInfo);
-            //store에 있는 logout 실행
-            this.userLogout()
-            sessionStorage.removeItem("refreshToken");
-            sessionStorage.removeItem("accessToken");
-            //다른 페이지에서 로그아웃 누를 시 메인으로 이동
-            if(this.$route.path != "/") this.$router.push({name : 'home'})
-        }
-    },
+  name: 'appHeader',
+  components: {},
+  data() {
+    return {
+      message: '',
+    };
+  },
+  created() {
+  },
+  computed: {
+    ...mapState('userStore', ["isLogin", "userInfo"]),
+    ...mapGetters('userStore', ["checkUserInfo"]),
+  },
+  methods: {
+    ...mapActions('userStore', ['userLogout']),
+    logout() {
+      console.log(this.checkUserInfo);
+      //store에 있는 logout 실행
+      this.userLogout()
+      sessionStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("accessToken");
+      //다른 페이지에서 로그아웃 누를 시 메인으로 이동
+      if (this.$route.path != "/") this.$router.push({name: 'home'})
+    }
+  },
 };
 </script>
 
