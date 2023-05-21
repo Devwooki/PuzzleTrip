@@ -24,7 +24,7 @@
             </v-text-field>
         </v-col>
         <div class="moveLoc">
-
+            <v-btn @click="showPlan">목록 출력</v-btn>
         </div>
     </div>
 </template>
@@ -62,12 +62,19 @@ export default {
     //     },
     // },
     computed: {
-        ...mapGetters('attractionStore', ['getLeftSelectedSido', 'getLeftSelectedGugun', 'getLeftStartPoint', 'getLeftEndPoint']),
+        ...mapGetters('attractionStore', ['getLeftSelectedSido', 'getLeftSelectedGugun',
+                                          'getLeftStartPoint', 'getLeftEndPoint',
+                                            'getAttractionList']),
         dateRangeText() {
             return this.dates.join(' ~ ')
         },
     },
-    methods: {},
+    methods: {
+        showPlan(){
+            console.log("추가한 여향지 목록 보여준다")
+            console.log(this.getAttractionList)
+        }
+    },
 };
 </script>
 
