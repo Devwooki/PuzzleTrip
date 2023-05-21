@@ -188,7 +188,7 @@ div li {
 .button:hover .btnTwo { /*When hovering over .button change .btnTwo*/
     left: 0;
 }
-
+/**/
 .button:active { /*Clicked and held*/
     box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.3);
 }
