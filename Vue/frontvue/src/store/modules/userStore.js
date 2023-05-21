@@ -97,6 +97,7 @@ const userStore = {
                 .then(({data}) => {
                     if (data.message === "success") {
                         commit("SET_USER_INFO", data.userInfo);
+                        console.log(data)
                     } else {
                         console.log("해당 토큰과 일치하는 유저정보 없음");
                     }
@@ -107,6 +108,7 @@ const userStore = {
                     commit("SET_IS_VALID_TOKEN", false);
                     await dispatch("tokenRegeneration");
                 })
+            console.log("getUserInfo 종료")
         },
 
         async tokenRegeneration({commit, state}){

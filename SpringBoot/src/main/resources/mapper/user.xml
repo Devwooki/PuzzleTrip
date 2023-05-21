@@ -10,8 +10,8 @@
     </insert>
 
     <insert id="insertUser" parameterType="user">
-        insert into user(id, pw, name, email, email_domain)
-        values (#{id}, #{pw}, #{name}, #{email}, #{emailDomain})
+        insert into user(id, pw, name, email)
+        values (#{id}, #{pw}, #{name}, #{email})
     </insert>
 
     <!--    User selectLogin(User user) throws SQLException;-->
@@ -23,9 +23,8 @@
     </select>
 
     <select id="selectUserInfo" parameterType="String" resultType="user">
-        SELECT u.id, u.pw, u.name, u.email, u.email_domain, u.type,
+        SELECT u.id, u.pw, u.name, u.email, u.type,
                p.save_folder AS 'profile.saveFolder',
-               p.original_file AS 'profile.originalFile',
                p.save_file AS 'profile.saveFile'
         FROM user u JOIN user_profile p
             ON u.id = p.user_id
@@ -43,16 +42,15 @@
     <!--    void updateUser(User user) throws SQLException;-->
     <update id="updateUser" parameterType="user">
         update user
-        set pw           = #{pw},
-            name         = #{name},
-            email        = #{email},
-            email_domain = #{emailDomain}
+        set pw = #{pw},
+            name = #{name},
+            email = #{email}
         where id = #{id}
     </update>
     <!--    void updateUserProfile(User user) throws SQLException;-->
     <update id="updateUserProfile" parameterType="user">
         update user_profile
-        set save_folder=#{profile.saveFolder}, save_file=#{profile.saveFile}, original_file=#{profile.originalFile}
+        set save_folder=#{profile.saveFolder}, save_file=#{profile.saveFile}
         where user_id = #{id}
     </update>
     <!--    void updateUserPw(User user) throws SQLException;-->

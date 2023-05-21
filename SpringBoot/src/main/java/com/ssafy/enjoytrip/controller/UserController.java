@@ -14,9 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ssafy.enjoytrip.model.user.service.UserService;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -30,8 +34,8 @@ public class UserController {
     private static final String FAIL = "fail";
 
 
-    @Value("${file.path}") //application.properties에서 지정한 값을 얻어올 수 있다. 그냥 문자열 쓰면 문자열로 저장됨
-    private String uploadPath;
+    @Value("${profile.path}") //application.properties에서 지정한 값을 얻어올 수 있다. 그냥 문자열 쓰면 문자열로 저장됨
+    private String profilePath;
 
     @Autowired //JWT토큰을 이용하기에 생성자 주입 방식으로 주입
     private UserService service;
@@ -47,6 +51,54 @@ public class UserController {
     시나리오 이해가 안가면 다음 자료 참고
     https://inpa.tistory.com/entry/WEB-%F0%9F%93%9A-Access-Token-Refresh-Token-%EC%9B%90%EB%A6%AC-feat-JWT
     */
+
+    @PostMapping("regist")
+    public void registUser(@RequestParam Map<String, Object> map,
+                           @RequestParam(value = "files", required = false) MultipartFile mFile ) throws Exception{
+        logger.debug("유저 회원가입 : {} + {}", map, mFile);
+
+        User user = new User();
+        user.setId((String) map.get("id"));
+        user.setPw((String) map.get("pw"));
+        user.setName((String) map.get("name"));
+        user.setEmail((String) map.get("email"));
+
+        //프로필도 함께 업로드 할 경우 프로필 이미지 업로드
+        if (mFile != null) {
+            String saveFolder = profilePath + File.separator + user.getId(); //실제 저장할 경로
+
+            logger.debug("저장할 폴더 경로 : {}", saveFolder);
+            File folder = new File(saveFolder);
+
+            //폴더가 존재하지 않으면 생성
+            if (!folder.exists()) {
+                boolean created = folder.mkdirs();
+                if (created) {
+                    logger.debug("폴더 생성 성공");
+                } else {
+                    logger.debug("폴더 생성 실패");
+                }
+            }
+            //파일 리스트 객체 만들어서 db에 저장하자!
+            FileInfo fileInfo = new FileInfo();
+            String originalFileName = mFile.getOriginalFilename(); //진짜 파일 명 저장
+
+            if (!originalFileName.isEmpty()) { //파일명이 유효(빈 문자열이 아닐 때)할 때 업로드를 진행함
+                String saveFileName = UUID.randomUUID().toString()
+                        + originalFileName.substring(originalFileName.lastIndexOf('.'));
+
+                fileInfo.setSaveFile(saveFileName);
+                fileInfo.setSaveFolder(user.getId()); //파일 경로 지정
+                //MultipartFile mFile를 File 객체로 변환해 서버에 저장하는 메서드
+                //첫번째 파라미터 경로에 두 번째 파라미터 명으로 저장한다.
+                mFile.transferTo(new File(folder, saveFileName));
+            }
+            user.setProfile(fileInfo); //fileInfo 리스트를 boarddto에 저장
+            logger.debug(user.getProfile().toString());
+        }
+
+        service.joinUser(user);
+    }
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody User user) throws Exception {
@@ -107,6 +159,16 @@ public class UserController {
             logger.info("해당 토큰은 사용할 수 있다");
             try {
                 User userInfo = service.getUserInfo(userId);
+
+                FileInfo profileInfo = userInfo.getProfile();
+                if(profileInfo == null){
+                    logger.debug("profile이 없는 사용자 {}, {}", userInfo.getId() , userInfo.getProfile());
+                    profileInfo = new FileInfo();
+                    profileInfo.setSaveFile("noimage.png");
+                    userInfo.setProfile(profileInfo);
+                    logger.debug("noImage 추가 {}", userInfo.getProfile());
+                }
+
                 result.put("userInfo", userInfo);
                 result.put("message", SUCCESS);
                 status = HttpStatus.ACCEPTED;
@@ -175,7 +237,7 @@ public class UserController {
 
     @PutMapping("modify")
     private ResponseEntity<?> modifyUser(@RequestParam Map<String, Object> map,
-                                         @RequestParam(value = "files", required = false) MultipartFile[] mFile) throws Exception {
+                                         @RequestParam(value = "files", required = false) MultipartFile mFile) throws Exception {
         logger.debug("유저 수정 접근 {}, 수정파일 정보 {}", map, mFile);
         //Board 정보입력
         User user = new User();
@@ -183,45 +245,39 @@ public class UserController {
         user.setPw((String) map.get("pw"));
         user.setName((String) map.get("name"));
         user.setEmail((String) map.get("email"));
-        user.setEmailDomain((String) map.get("emailDomain"));
 
-        //파일 정보 로드 후 게시글에 업로드된 파일 정보 추가히기(setFileInfo)
+        //프로필도 함께 업로드 할 경우 프로필 이미지 업로드
         if (mFile != null) {
-            String realPath = uploadPath + File.separator + "user"; //실제 저장할 경로
-            String saveFolder = realPath + File.separator + user.getId(); //OS구분받지 않고 파일 업로드를 구현하고자 File.sepaerator 사용
-            logger.debug("저장할 폴더 경로 : {}", saveFolder);
+            String saveFolder = profilePath + File.separator + user.getId(); //실제 저장할 경로
 
+            logger.debug("저장할 폴더 경로 : {}", saveFolder);
             File folder = new File(saveFolder);
 
             //폴더가 존재하지 않으면 생성
             if (!folder.exists()) {
                 boolean created = folder.mkdirs();
-                if(created){
+                if (created) {
                     logger.debug("폴더 생성 성공");
-                }else{
+                } else {
                     logger.debug("폴더 생성 실패");
                 }
             }
-
             //파일 리스트 객체 만들어서 db에 저장하자!
             FileInfo fileInfo = new FileInfo();
-            String originalFileName = mFile[0].getOriginalFilename(); //진짜 파일 명 저장
+            String originalFileName = mFile.getOriginalFilename(); //진짜 파일 명 저장
 
             if (!originalFileName.isEmpty()) { //파일명이 유효(빈 문자열이 아닐 때)할 때 업로드를 진행함
-                String saveFileName = UUID.randomUUID().toString() //기존 파일명.확장자 -> UUID.확장자로 변경
+                String saveFileName = UUID.randomUUID().toString()
                         + originalFileName.substring(originalFileName.lastIndexOf('.'));
 
-                fileInfo.setOriginalFile(originalFileName);
                 fileInfo.setSaveFile(saveFileName);
-                fileInfo.setSaveFolder(saveFolder); //파일 경로 지정
-                logger.debug("원본 파일 이름 : {}, 실제 저장 파일 이름 : {}", mFile[0].getOriginalFilename(), saveFileName);
-
+                fileInfo.setSaveFolder(user.getId()); //파일 경로 지정
                 //MultipartFile mFile를 File 객체로 변환해 서버에 저장하는 메서드
                 //첫번째 파라미터 경로에 두 번째 파라미터 명으로 저장한다.
-                mFile[0].transferTo(new File(folder, saveFileName));
-
+                mFile.transferTo(new File(folder, saveFileName));
             }
             user.setProfile(fileInfo); //fileInfo 리스트를 boarddto에 저장
+            logger.debug(user.getProfile().toString());
         }else{//업로드한 파일이 없으면 userInfo의 프로필은 그대로 유지되어야한다.
             user.setProfile(service.getUserProfile(user));
         }
@@ -255,4 +311,10 @@ public class UserController {
     public void deleteUser(User user) throws Exception {
         service.deleteUser(user.getId());
     }
+
+    //추후 추가할 메일인증 기능을 위한 메소드, 미구현 상호
+//    @GetMapping("checkVaildEmail/{email}")
+//    private String checkVaildEmail(@PathVariable("email") String email)throws Exception{
+//        logger.debug("이메일 인증 시작 : {}", email);
+//    }
 }

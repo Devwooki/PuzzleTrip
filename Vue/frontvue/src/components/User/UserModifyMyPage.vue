@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2>마이페이지 수정</h2>
-        <img src="@/assets/marker/noimage.png" width="300px">
+        <img :src="imgSrc" width="50%">
         <br>
         <label for="profile"/> 프로필 이미지 선택
         <input name="profile" type="file" accept="image/jpeg, image/png, image/gif, .jpg" @change="onFileChange"/>
@@ -41,15 +41,7 @@
 
         <br>
         <label for="name">이메일:</label>
-        <input id="email" name="email" type="text" v-model="email"/>@
-        <input id="emailDomain" name="emailDomain" type="text" v-model="emailDomain" />
-        <select id="select-domain" v-model="selectedDomain" @change="selectDomain">
-            <option value="0" selected>도메인 선택</option>
-            <option value="naver.com">네이버</option>
-            <option value="duam.net">다음</option>
-            <option value="gmail.com">Gmail</option>
-            <option value="self">직접입력..</option>
-        </select>
+        <input id="email" name="email" type="text" v-model="email"/>
 
         <br>
         <button type="button" @click="updateUserInfo">업데이트</button>
@@ -70,8 +62,8 @@ export default {
 
             name : '',
             email : '',
-            emailDomain : '',
-            selectedDomain: '0', // 선택된 도메인을 저장할 변
+
+            imgSrc : '',
 
             nowPw : '',
             newPw : '',
@@ -91,9 +83,7 @@ export default {
     methods: {
         ...mapActions('userStore', ['userLogout']),
         onFileChange(event){
-            console.log(event.target.files)
             this.profileImg = event.target.files
-            console.log(typeof this.profileImg)
         },
         isChangePw() {
             this.changePw = !this.changePw;
@@ -105,7 +95,6 @@ export default {
         async updateUserInfo() {
             this.userInfo.name = this.name
             this.userInfo.email = this.email
-            this.userInfo.emailDomain = this.emailDomain
 
             if (this.checkNowPw) {
                 this.userInfo.pw = this.newPw
@@ -116,7 +105,6 @@ export default {
             formData.append('pw', this.userInfo.pw);
             formData.append('name', this.userInfo.name);
             formData.append('email', this.userInfo.email);
-            formData.append('emailDomain', this.userInfo.emailDomain);
             formData.append('files', this.profileImg[0])
 
             const response = await axios.put('user/modify', formData, {
@@ -128,17 +116,7 @@ export default {
             console.log(response.data)
             this.$store.commit('userStore/CHANGE_USER_INFO', response.data.userInfo)
             console.log(this.checkUserInfo)
-            //await this.$router.push({name: 'userMyPage'})
-        },
-        selectDomain() {
-            if (this.selectedDomain === 'self') {
-                // 직접입력을 선택한 경우
-                this.emailDomain = ''; // 이메일 도메인 값을 초기화
-            } else {
-                // 다른 도메인을 선택한 경우
-                if(this.selectedDomain === '0') this.emailDomain = this.userInfo.emailDomain
-                this.emailDomain = this.selectedDomain; // 선택된 도메인 값을 v-model에 할당
-            }
+            await this.$router.push({name: 'userMyPage'})
         },
         checkValidPw(event){
             if (this.nowPw === this.userInfo.pw) {
@@ -165,7 +143,7 @@ export default {
     created(){
         this.name = this.userInfo.name
         this.email = this.userInfo.email
-        this.emailDomain = this.userInfo.emailDomain
+        this.imgSrc =`http://localhost:8989/profilePath/${this.userInfo.id}/${this.userInfo.profile.saveFile}`
     }
 }
 </script>

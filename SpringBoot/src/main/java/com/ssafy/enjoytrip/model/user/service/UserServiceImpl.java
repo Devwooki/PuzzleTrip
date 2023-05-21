@@ -23,17 +23,24 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
 	private final Logger logger = LoggerFactory.getLogger(UserService.class);
-    @Value("${file.path}")
-    private String uploadPath;
+    @Value("${profile.path}")
+    private String profilePath;
 
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
 
     @Override
-    public void join(User user) throws Exception {
+    public void joinUser(User user) throws Exception {
+        //회원가입 하면 유저 정보 입력
         userMapper.insertUser(user);
+        //프로필 테이블에 생성
         userMapper.insertInitUserProfile(user);
+
+        //프로필 이미지가 있으면 저장
+        if(user.getProfile() != null){
+            userMapper.updateUserProfile(user);
+        }
     }
 
     @Override
@@ -50,12 +57,11 @@ public class UserServiceImpl implements UserService {
     public void modifyUser(User user) throws Exception {
         //프로필 파일이 null이 아니면 업데이트
         if (user.getProfile() != null) {
-
             //서버에 저장된 기존 파일은 삭제
             FileInfo profile = userMapper.selectUserProfile(user.getId());
             if(profile != null){
                 logger.debug("profile이 없음 {}",profile);
-                String file = profile.getSaveFolder() + File.separator + profile.getSaveFile();
+                String file = profilePath + File.separator + profile.getSaveFolder() + File.separator + profile.getSaveFile();
                 Path filePath = Paths.get(file);
                 if(Files.exists(filePath)){
                     try {
@@ -67,7 +73,6 @@ public class UserServiceImpl implements UserService {
                     }
                 }else{
                     logger.debug("{} 파일이 존재하지 않습니다.", profile.getSaveFile());
-
                 }
             }
             //프로필 사진 업데이트. 사진은 controller에서 저장함.
