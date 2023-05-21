@@ -16,7 +16,7 @@
             <div>
                 <span class="markerTitleTool">{{ marker.title }}</span>
                 <div class="markerAddr">{{ marker.address }}</div>
-                <v-btn>+</v-btn>
+                <v-btn @click="addAttractionList(marker)">+</v-btn>
             </div>
         </div>
     </div>
@@ -38,7 +38,6 @@ export default {
     },
     computed: {
         ...mapGetters('attractionStore', ['getRightMap', 'getRightMarkers']),
-        ...mapMutations('attractionStore', ['SET_RIGHT_MAP', 'SET_RIGHT_MARKERS'])
     },
     // props: {
     //     markers: {
@@ -58,6 +57,7 @@ export default {
 
     },
     methods: {
+        ...mapMutations('attractionStore', ['SET_RIGHT_MAP', 'SET_RIGHT_MARKERS', 'UPDATE_ATTRACTION_LIST']),
         moveMapToMarker(marker) {
             console.log(marker.latlng.La);
             console.log(marker.latlng.Ma);
@@ -99,6 +99,10 @@ export default {
                 this.infowindow.close();
             }
         },
+        addAttractionList(marker){
+            console.log(marker)
+            this.UPDATE_ATTRACTION_LIST(marker);
+        }
     }
 };
 

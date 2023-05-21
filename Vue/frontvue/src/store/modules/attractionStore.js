@@ -39,7 +39,9 @@ const attractionStore = {
             return state.EndPoint
         },
 
-
+        getAttractionList(state){
+            return state.attractionList
+        }
     },
     mutations: {
         //right bar요소 셋팅하기
@@ -68,6 +70,12 @@ const attractionStore = {
             state.leftEndPoint = leftEndPoint
         },
 
+        //여행지 추기
+        UPDATE_ATTRACTION_LIST(state, marker){
+            console.log("업데이트 목록을 볼가?")
+            console.log(marker)
+            state.attractionList.push(marker)
+        }
     },
     actions: {}
 };
