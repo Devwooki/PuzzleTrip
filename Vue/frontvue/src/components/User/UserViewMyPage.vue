@@ -36,7 +36,6 @@ export default {
     },
     methods: {
         ...mapActions('userStore', ['userLogout']),
-
     },
     created() {
         console.log("@@@마이페이지 접속")
