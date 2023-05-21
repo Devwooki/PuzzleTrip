@@ -113,7 +113,7 @@
                 console.log(data.length);
                 if (data.length === 0) {
                   resultDiv.setAttribute("class", "mb-3 text-primary");
-                  resultDiv.textContent = userId + "는 사용할 수 있습니다.";
+                  res태ultDiv.textContent = userId + "는 사용할 수 있습니다.";
                   isUseId = true;
                 } else {
                   resultDiv.setAttribute("class", "mb-3 text-danger");

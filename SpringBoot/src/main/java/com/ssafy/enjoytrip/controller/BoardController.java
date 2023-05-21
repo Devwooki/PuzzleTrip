@@ -74,7 +74,8 @@ public class BoardController {
         가 들어있는데 JSON형식이 아닌 multi-part형태라 @ResquestBody하면 전달받는 타입이 이상하다해서 이렇게 수정했음...
         */
     @PostMapping("write")
-    public int writeBoard(@RequestParam Map<String, Object> map, @RequestParam(value = "files", required = false) MultipartFile[] mFiles) throws Exception{
+    public int writeBoard(@RequestParam Map<String, Object> map,
+                          @RequestParam(value = "files", required = false) MultipartFile[] mFiles) throws Exception{
         //파일 업로드 하지 않으면 files는 null이다
         logger.debug("게시글 작성 : {}, {}", map, mFiles);
 

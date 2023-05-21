@@ -1,10 +1,11 @@
 package com.ssafy.enjoytrip.model.user.service;
 
 
+import com.ssafy.enjoytrip.model.board.dto.FileInfo;
 import com.ssafy.enjoytrip.model.user.dto.User;
 
 public interface UserService {
-	void join(User user) throws Exception;
+	void joinUser(User user) throws Exception;
 	User getLogin(User user) throws Exception;
 	User getUserInfo(String userId) throws Exception;
 	void modifyUser(User user) throws Exception;
@@ -18,5 +19,5 @@ public interface UserService {
 	Object getRefreshToken(String userId) throws Exception;
 	void deleRefreshToken(String userId) throws Exception;
 
-
+	FileInfo getUserProfile(User user) throws Exception;
 }
