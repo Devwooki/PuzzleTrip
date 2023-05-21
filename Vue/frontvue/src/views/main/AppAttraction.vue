@@ -98,13 +98,14 @@
             </div>
         </div>
         <div class="mainContent">
-            <app-left-bar
-                    class="leftContent"
-                    :selectedSido="selectedSido"
-                    :selectedGugun="selectedGugun"
-                    :startPoint="startPoint"
-                    :endPoint="endPoint"
-            ></app-left-bar>
+            <!--            <app-left-bar-->
+            <!--                    class="leftContent"-->
+            <!--                    :selectedSido="selectedSido"-->
+            <!--                    :selectedGugun="selectedGugun"-->
+            <!--                    :startPoint="startPoint"-->
+            <!--                    :endPoint="endPoint"-->
+            <!--            ></app-left-bar>-->
+            <app-left-bar></app-left-bar>
             <div id="map"></div>
             <!--            <app-right-bar class="rightContent" :map="map" :markers="positions"></app-right-bar>-->
             <app-right-bar class="rightContent"></app-right-bar>
