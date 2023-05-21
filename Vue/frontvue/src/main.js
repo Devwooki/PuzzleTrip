@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import Vuetify from 'vuetify/lib'
 import 'vuetify/dist/vuetify.min.css'
+import VTooltip from 'v-tooltip';
 import VueCookies from "vue-cookies";
 import axios from "axios";
 /* import fontawesome  */
@@ -26,7 +27,8 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
 
-Vue.use(Vuetify)
+Vue.use(Vuetify, VTooltip);
+
 Vue.prototype.$http = axios
 
 

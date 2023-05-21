@@ -3,8 +3,8 @@
     <div class="locaAndThemeAndWeaher">
       <div class="localAndTheme">
         <v-container fluid class="location-sel">
-          <v-row>
-            <v-col>
+          <v-row class="sidoRow">
+            <v-col class="sidoCol">
               <v-select
                   class="sidoSel"
                   v-model="areaCode"
@@ -17,7 +17,7 @@
                   @change="handleSidoChange"
               ></v-select>
             </v-col>
-            <v-col>
+            <v-col class="sidoCol">
               <v-select
                   class="gugunSel"
                   v-model="gugunCode"
@@ -97,16 +97,27 @@
         </div>
       </div>
     </div>
-
-    <div id="map"></div>
+    <div class="mainContent">
+      <app-left-bar
+          class="leftContent"
+          :selectedSido="selectedSido"
+          :selectedGugun="selectedGugun"
+          :startPoint="startPoint"
+          :endPoint="endPoint"
+      ></app-left-bar>
+      <div id="map" ></div>
+      <app-right-bar class="rightContent" :map="map" :markers="positions"></app-right-bar>
+    </div>
   </v-app>
 </template>
 <script>
 import axios from "axios";
+import AppLeftBar from "@/components/Attraction/AppleftBar.vue";
+import AppRightBar from "@/components/Attraction/ApprightBar.vue";
 
 export default {
-  // components: {AppWeather},
   name: "KakaoMap",
+  components: {AppRightBar, AppLeftBar},
   data() {
     return {
       map: null,
@@ -114,7 +125,7 @@ export default {
       gugunCode: '',
       checkAllBox: true,
       eng: '',
-      markers: {},
+      markersArray: {},
       contentTypes: [],
       sido: [
         {name: '서울특별시', value: '1', eng: 'seoul'},
@@ -136,13 +147,20 @@ export default {
         {name: '경남', value: '36', eng: 'gyeongsangnam-do'}
       ],
       gugun: [],
+      //컴포넌트로 데이터 전달하기
+      selectedSido: '',
+      selectedGugun: '',
+      positions: [],
+      //길찾기
+      startPoint: "출발지를 선택해주세요",
+      endPoint: "도착지를 선택해주세요",
       //마커생성에 필요한 변수
       container: {},
       startLoc: {},
       mapTypeControl: {},
       zoomControl: {},
-      //지도 카드 배열
-      mapInfoCard: [],
+      //마커 배열
+      MarkerTmp: [],
       //거리 찍기 필요
       polyline: "",
       polylineArray: [],
@@ -151,9 +169,6 @@ export default {
       findMarker: "",
       findMarkerArray: [],
 
-      //길찾기
-      startPoint: "출발지를 선택해주세요",
-      endPoint: "도착지를 선택해주세요",
       requestData: {
         origin: {
           x: 0,
@@ -201,8 +216,10 @@ export default {
         "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=95684c0a88a9ddfe933ca5737c2da5a4";
       document.head.appendChild(script);
     }
+
   },
   methods: {
+
     initMap() {
       this.startLoc = new kakao.maps.LatLng(36.355297, 127.298126);
       this.mapTypeControl = new kakao.maps.MapTypeControl();
@@ -220,6 +237,8 @@ export default {
       this.map.addControl(this.zoomControl, kakao.maps.ControlPosition.RIGHT);
     },
     handleSidoChange() {
+      this.selectedSido = this.sido.find((item) => item.value === this.areaCode)?.name || '';
+      this.gugunCode = '0';
       axios.get("http://localhost:8989/attraction/" + this.areaCode)
         .then(response => {
           this.gugun = response.data;
@@ -244,6 +263,7 @@ export default {
           document.getElementById("weather-icon").setAttribute("src", imgURL);
         })
     },
+
     //전체선택
     toggleSelectAll() {
       if (!this.checkAllBox) {
@@ -255,6 +275,7 @@ export default {
       }
     },
     handleGugunChange() {
+      this.selectedGugun = this.gugun.find((item) => item.gugunCode === this.gugunCode)?.gugunName || '';
       const sendData = {
         areaCode: this.areaCode,
         gugunCode: this.gugunCode,
@@ -265,23 +286,23 @@ export default {
           .then((Response) => {
             const data = Response.data
             if (data.length === 0) {
-              this.markers = {};
+              this.markersArray = {};
               this.contentTypes = [];
               alert('검색한 지역에 관광지 정보가 없습니다.');
             } else {
-              this.markers = data;
-              this.drawMarker(this.markers)
+              this.markersArray = data;
+              this.drawMarker(this.markersArray)
             }
           })
       }
     },
-    drawMarker(markers) {
-      let positions = [];
+    drawMarker: function (markers) {
+      this.positions = [];
       markers.forEach((position) => {
         let image = "";
         if (position.firstImage === "" || position.firstImage === "") image = require('@/assets/marker/noimage.png')
         else image = position.firstImage;
-        positions.push({
+        this.positions.push({
           title: position.title,
           latlng: new kakao.maps.LatLng(position.latitude, position.longitude),
           image: image,
@@ -290,8 +311,7 @@ export default {
           address: position.addr1,
         })
       })
-      this.MarkerTmp = [];
-      positions.forEach((position) => {
+      this.positions.forEach((position) => {
         let imageSrc = require(`@/assets/marker/marker${position.contentType}.png`);
         let imageSize = new kakao.maps.Size(35, 35);
         let markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
@@ -307,11 +327,12 @@ export default {
         marker.ca.setAttribute("innerText", position.address);
         marker.ca.setAttribute("summaryImg", position.image);
         this.MarkerTmp.push(marker)
-        this.map.setLevel(5)
+        this.map.setLevel(6)
         this.makeOverlay(marker);
+
       })
-      const halfIndex = Math.floor(this.MarkerTmp.length / 2);
-      const halfMarker = this.MarkerTmp[halfIndex];
+      const halfIndex = Math.floor(this.MarkerTmp.length);
+      const halfMarker = this.MarkerTmp[halfIndex - 1];
       let move = new kakao.maps.LatLng(halfMarker.getPosition().getLat(), halfMarker.getPosition().getLng());
       this.map.panTo(move);
     },
@@ -362,17 +383,17 @@ export default {
       axios.post(apiUrl, requestData, {headers})
         .then(response => {
           let data = response.data.routes[0];
-          /*          let result_code = data.result_code;
-                    let summary = data.summary;*/
+                    let result_code = data.result_code;
+                    let summary = data.summary;
           let sections = data.sections;
           //젠체 코드
-          /*          console.log("전체 : ", data);
+                    console.log("전체 : ", data);
                     //경로 탐색 결과 코드
                     console.log("결과코드 : ", result_code);
                     //summary
                     console.log("요약 : ", summary);
                     //구간별 경로 정보
-                    console.log("구간별 정보 : ", sections);*/
+                    console.log("구간별 정보 : ", sections);
           if (sections.length >= 1) {
             for (const [idx, section] of sections.entries()) {
               let {distance, duration, guides: arrays, roads} = section;  //distance : 미터단위, duration : 초 단위
@@ -454,7 +475,7 @@ export default {
               //글자 찍기
               this.customOverlay = new kakao.maps.CustomOverlay({
                 position: new kakao.maps.LatLng(37.39243974939504, 125.10972941510435),
-                content: `<div class ="distancelabel">거리: ${distance}, 시간 : ${duration}</div>`
+                content: `<div class="distancelabel">거리: ${(distance / 1000).toFixed(2)} km, 시간: ${(duration / 60).toFixed(2)} 분</div>`
               });
               // 배열에 커스텀오버레이 객체 추가
               this.customOverlayArray.push(this.customOverlay);
@@ -466,9 +487,9 @@ export default {
         console.log(err)
       });
     },
-    makeOverlay(marker) {
+    makeOverlay(marker, index) {
 
-      let content = `<div class="wrap">
+      let content = `<div class="wrap" data-index="${index}">
                          <div class="info">
                            <div class="body">
                              <div class="img">
@@ -482,53 +503,44 @@ export default {
                                 </div>
                              </div>
                              <div>
-                              <button class="findWay" id="findWayBtnStart">출발</button>
-                              <button class="findWay" id="findWayBtnEnd">도착</button><br>
+                              <span class="findWay" id="findWayBtnStart">왼클릭: 출발</span>
+                              <span class="findWay" id="findWayBtnEnd">우클릭: 도착</span>
                              </div>
-                              <button class="findWay" id="closeBtn">닫기</button>
                            </div>
                         </div>
                       </div>
                    `;
-
+      /*var overlay = new kakao.maps.CustomOverlay({
+        content: content,
+        map: this.map,
+        position: marker.getPosition(),
+        clickable: true,
+        visible: false,
+      });*/
       var overlay = new kakao.maps.CustomOverlay({
         content: content,
         map: this.map,
         position: marker.getPosition(),
         clickable: true,
       });
-      this.mapInfoCard.push(overlay);
-      overlay.setVisible(false);
+      overlay.setVisible(false)
 
-      let vueIns = this;
-      kakao.maps.event.addListener(marker, 'click', function () {
-        if (overlay.getVisible()) {
-          overlay.setVisible(false)
-        }
-        else {
-          overlay.setVisible(true)
-          console.dir(marker.ca.attributes)
-
-          document.getElementById("findWayBtnStart").onclick = () => {
-            overlay.setVisible(false)
-            vueIns.findDirections(marker, event.target.id);
-          }
-          document.getElementById("findWayBtnEnd").onclick = () => {
-            overlay.setVisible(false)
-            vueIns.findDirections(marker, event.target.id);
-          }
-          document.getElementById("closeBtn").onclick = () => {
-            console.log("버튼누름")
-            console.log(this.mapInfoCard)
-            vueIns.deleteAllCard();
-          }
-        }
+      kakao.maps.event.addListener(marker, 'mouseover', function () {
+        overlay.setVisible(true)
       });
-    },
-    deleteAllCard() {
-      console.log("메소드 들어옴")
-      console.log(this.mapInfoCard)
-      this.mapInfoCard = [];
+      kakao.maps.event.addListener(marker, 'mouseout', function () {
+        setTimeout(function () {
+          overlay.setVisible(false)
+        });
+      });
+
+      kakao.maps.event.addListener(marker, "click", () => {
+        this.findDirections(marker, "findWayBtnStart"); // 추가 정보 전달
+        console.log(marker.getPosition())
+      });
+      kakao.maps.event.addListener(marker, 'rightclick', () => {
+        this.findDirections(marker, "findWayBtnEnd");
+      });
     },
     deletFindWay() {
       //선 삭제
@@ -549,7 +561,7 @@ export default {
       this.findMarkerArray = [];
 
     },
-    deletFindWayBtn() {
+/*    deletFindWayBtn() {
       //값 삭제
       this.requestData.origin.x = 0;
       this.requestData.origin.y = 0;
@@ -577,12 +589,33 @@ export default {
       if (this.MarkerTmp) {
         this.DestroyedMarker()
       }
-    },
+    },*/
+
   }
 }
 </script>
 
 <style>
+.mainContent {
+    display: flex;
+    justify-content: space-between;
+}
+.leftContent {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    width: 17%;
+    height: 900px;
+    z-index: 4;
+}
+
+.rightContent {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    width: 17%;
+    height: 900px;
+    z-index: 4;
+}
+
 @font-face {
     font-family: 'SEBANG_Gothic_Bold';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
@@ -595,6 +628,7 @@ export default {
 }
 
 #map {
+    width: 70%;
     height: 900px;
     z-index: 2;
 }
@@ -622,13 +656,13 @@ export default {
     width: 300px !important;
 }
 
-.col {
+.sidoCol {
     flex-basis: 0;
     flex-grow: unset !important;
     max-width: 100%;
 }
 
-.row {
+.sidoRow {
     line-height: 10px !important;
 }
 
@@ -735,7 +769,7 @@ export default {
     position: absolute;
     left: -145px;
     bottom: 40px;
-    height: 280px;
+    height: 230px;
     margin: 10px;
     width: 280px;
     border-radius: 10px;
@@ -751,7 +785,7 @@ export default {
 
 #findWayBtnStart {
     color: #FF8E01;
-    margin: 12px 0 0 100px;
+    margin: 12px 0 0 50px;
 }
 
 #findWayBtnEnd {
@@ -845,5 +879,13 @@ a.button {
 
 .btnFade.btnOrange:hover {
     background: #FF8E01;
+}
+
+.mapAndCal {
+    display: flex;
+}
+
+.cal {
+    width: 50%;
 }
 </style>
