@@ -1,71 +1,73 @@
 <template>
-  <div id="app">
-    <div class="selectedSido">{{ selectedSido }}</div>
+    <div id="app">
+        <div class="selectedSido">{{ selectedSido }}</div>
 
-    <v-expansion-panels v-model="panel" :disabled="disabled" multiple  >
-      <v-expansion-panel>
-        <v-expansion-panel-header>여행 일정 정하기</v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-row>
-            <v-col>
-              <v-date-picker v-model="dates" range></v-date-picker>
-            </v-col>
+        <v-expansion-panels v-model="panel" :disabled="disabled" multiple>
+            <v-expansion-panel>
+                <v-expansion-panel-header>여행 일정 정하기</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                    <v-row>
+                        <v-col>
+                            <v-date-picker v-model="dates" range></v-date-picker>
+                        </v-col>
 
-          </v-row>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-    <v-col>
-      <v-text-field
-          v-model="dateRangeText"
-          label="여행일정"
-          prepend-icon="mdi-calendar"
-          readonly>
-      </v-text-field>
-    </v-col>
-    <div class="moveLoc">
+                    </v-row>
+                </v-expansion-panel-content>
+            </v-expansion-panel>
+        </v-expansion-panels>
+        <v-col>
+            <v-text-field
+                    v-model="dateRangeText"
+                    label="여행일정"
+                    prepend-icon="mdi-calendar"
+                    readonly>
+            </v-text-field>
+        </v-col>
+        <div class="moveLoc">
 
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
-  name: 'AppLeftBar',
-  components: {},
-  data() {
-    return {
-      dates: ['2023-05-10', '2023-05-20'],
-      panel: [0, 1],
-      disabled: false,
-      readonly: false,
-    };
-  },
-  props: {
-    selectedSido: {
-      type: String,
-      default: '',
+    name: 'AppLeftBar',
+    components: {},
+    data() {
+        return {
+            dates: ['2023-05-10', '2023-05-20'],
+            panel: [0, 1],
+            disabled: false,
+            readonly: false,
+        };
     },
-    selectedGugun: {
-      type: String,
-      default: '',
+    // props: {
+    //     selectedSido: {
+    //         type: String,
+    //         default: '',
+    //     },
+    //     selectedGugun: {
+    //         type: String,
+    //         default: '',
+    //     },
+    //     startPoint: {
+    //         type: String,
+    //         default: '',
+    //     },
+    //     endPoint: {
+    //         type: String,
+    //         default: '',
+    //     },
+    // },
+    computed: {
+        ...mapGetters('attractionStore', ['getLeftSelectedSido', 'getLeftSelectedGugun', 'getLeftStartPoint', 'getLeftEndPoint']),
+        dateRangeText() {
+            return this.dates.join(' ~ ')
+        },
     },
-    startPoint: {
-      type: String,
-      default: '',
-    },
-    endPoint: {
-      type: String,
-      default: '',
-    },
-  },
-  computed: {
-    dateRangeText() {
-      return this.dates.join(' ~ ')
-    },
-  },
-  methods: {
-  },
+    methods: {},
 };
 </script>
 

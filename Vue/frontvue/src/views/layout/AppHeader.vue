@@ -10,7 +10,7 @@
         <div id="userManu">
           <router-link v-if="userInfo === null" :to="{name: 'userLogin'}">로그인</router-link>
           <div v-if="userInfo">
-            <router-link :to="{name : 'myPage'}" title="마이페이지로">{{ userInfo.name }}</router-link>
+            <router-link :to="{name : 'userMyPage'}" title="마이페이지로">{{ userInfo.name }}</router-link>
             님 반갑습니다.
             <a @click.prevent="logout">로그아웃</a>
           </div>
