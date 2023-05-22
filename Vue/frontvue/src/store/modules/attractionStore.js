@@ -11,8 +11,9 @@ const attractionStore = {
         leftSelectedGugun: '',
         StartPoint: '',
         EndPoint: '',
-        WayPoint: '',
-
+        WayPoint: [],
+        Duration: 0,
+        Distance: 0,
         //right bar에서 + 버튼 누르면 추가될 리스트
         attractionList: []
 
@@ -41,6 +42,17 @@ const attractionStore = {
         getLeftEndPoint(state) {
             return state.EndPoint
         },
+        getLeftWayPoint(state) {
+            return state.WayPoint
+        },
+        getLeftDistance(state) {
+            return state.Distance
+        },
+        getLeftDuration(state) {
+            return state.Duration
+        },
+
+
 
         getAttractionList(state){
             return state.attractionList
@@ -71,6 +83,15 @@ const attractionStore = {
         },
         SET_LEFT_END_POINT(state,leftEndPoint ){
             state.EndPoint = leftEndPoint
+        },
+        SET_LEFT_WAY_POINT(state,leftWayPoint ){
+            state.WayPoint = leftWayPoint
+        },
+        SET_LEFT_DURATION(state,Duration ){
+            state.Duration = Duration
+        },
+        SET_LEFT_DISTANCE(state,Distance ){
+            state.Distance = Distance
         },
 
         //여행지 추기

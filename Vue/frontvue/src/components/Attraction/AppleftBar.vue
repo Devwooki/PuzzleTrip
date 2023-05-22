@@ -1,19 +1,29 @@
 <template>
   <div id="app">
     <div class="findWay">
-      <div>출 발:</div>
-      <div class="StartPoint">{{ getLeftStartPoint }}</div>
-      <div>경유지 1:</div>
-      <div class="StartPoint">없음</div>
-      <div>경유지 2:</div>
-      <div class="StartPoint">없음</div>
-      <div>경유지 3:</div>
-      <div class="StartPoint">없음</div>
-      <div>도 착:</div>
-      <div class="EndPoint">{{ getLeftEndPoint }}</div>
-      <div>길찾기</div>
-    </div>
+      <button class="StartPoint">출 발:</button>
+      <div class="Text">{{ getLeftStartPoint }}</div>
 
+      <!--      <button class="WayPoint">추가 1:</button>-->
+      <!--      <div class="Text">{{ getLeftWayPoint }}</div>-->
+
+      <!--      <button class="WayPoint">추가 2:</button>-->
+      <!--      <div class="Text">{{ getLeftWayPoint }}</div>-->
+
+      <!--      <button class="WayPoint">추가 3:</button>-->
+      <!--      <div class="Text">{{ getLeftWayPoint }}</div>-->
+
+      <button class="EndPoint">도 착:</button>
+      <div class="Text">{{ getLeftEndPoint }}</div>
+
+    </div>
+    <div class="findTime">
+      <div class="Text">{{ getLeftDistance }}</div>
+      <button class="EndPoint">Km/h</button>
+
+      <div class="Text">{{ getLeftDuration }}</div>
+      <button class="EndPoint">분</button>
+    </div>
     <v-expansion-panels v-model="panel" :disabled="disabled" multiple class="calBox">
       <v-expansion-panel>
         <v-expansion-panel-header>여행 일정 정하기</v-expansion-panel-header>
@@ -53,7 +63,6 @@ export default {
       panel: [0, 1],
       disabled: false,
       readonly: false,
-
       EndPoint: ""
     };
   },
@@ -79,40 +88,51 @@ export default {
     ...mapGetters(
       'attractionStore',
       [
-        'getLeftSelectedSido',
-        'getLeftSelectedGugun',
         'getLeftStartPoint',
         'getLeftEndPoint',
-        'getAttractionList'
+        'getLeftWayPoint',
+        'getAttractionList',
+        'getRightMarkers',
+        "getRightMap",
+        "getLeftDistance",
+        "getLeftDuration"
       ]
     ),
     dateRangeText() {
       return this.dates.join(' ~ ')
     },
-    startPoint() {
-      const startPoint = this.getLeftStartPoint;
-      console.log("ASDASD", startPoint)
-      return startPoint
-    }
   },
   methods: {
-
     showPlan() {
       console.log("추가한 여향지 목록 보여준다")
       console.log(this.getAttractionList)
-    }
+    },
+
   },
 };
 </script>
 
 <style scoped>
 .findWay {
+
     text-align: center;
-    width: 290px;
+    width: 300px;
     display: grid;
-    grid-template-rows: repeat(5,40px);
+    grid-template-rows: repeat(2, 30px);
     grid-template-columns: 70px 250px;
     margin: 5px;
+}
+.findTime {
+    justify-content: center;
+    text-align: center;
+    width: 300px;
+    display: grid;
+    grid-template-rows: repeat(2, 30px);
+    grid-template-columns: 20px 70px;
+    margin: 5px;
+}
+.Text {
+    line-height: 30px;
 }
 
 .calBox {

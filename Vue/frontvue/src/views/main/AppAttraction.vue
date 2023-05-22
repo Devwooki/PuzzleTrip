@@ -85,12 +85,12 @@
         <!-- 이미지 정보-->
         <div id="name">지역을 선택해주세요</div>
         <div id="weatherinfo">
-          <font-awesome-icon :icon="['fas', 'temperature-high']" size="lg" style="color: #fb5050; " />
+          <font-awesome-icon :icon="['fas', 'temperature-high']" size="lg" style="color: #fb5050; "/>
           <div id="temp"></div>
           <div class="temperature">도</div>
         </div>
         <div id="weatherinfo">
-          <font-awesome-icon :icon="['fas', 'tint']" size="lg"  style="color: #3f9ce4;" />
+          <font-awesome-icon :icon="['fas', 'tint']" size="lg" style="color: #3f9ce4;"/>
           <div id="hum"></div>
           <div class="humidity">도</div>
         </div>
@@ -182,15 +182,23 @@ export default {
           y: 0
         },
         waypoints: [
-          {
-            x: '127.3855645721133',
-            y: '36.36071080159904'
-          },
-          {
-            x: '127.38793109858915',
-            y: '36.37507683636454'
-          }
+          // {
+          //   x: 127.38793109858915,
+          //   y: 36.37507683636454
+          // }
         ],
+        // {
+        //   x: "0",
+        //   y: "0"
+        // },
+        // {
+        //   x: "0",
+        //   y: "0"
+        // },
+        // {
+        //   x: 127.38793109858915,
+        //   y: 36.37507683636454
+        // }
         //경로탐색 우선순위 옵션 => (기본값: RECOMMEND) RECOMMEND: 추천 경로 | TIME: 최단 시간 | DISTANCE: 최단 경로
         priority: 'DISTANCE',
         //차량 유종 정보 => (기본값: GASOLINE) GASOLINE: 휘발유 | DIESEL: 경유 | LPG: LPG
@@ -222,7 +230,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('attractionStore', ['SET_LEFT_START_POINT', 'SET_LEFT_END_POINT']),
+    ...mapMutations('attractionStore', ['SET_LEFT_START_POINT', 'SET_LEFT_END_POINT', 'SET_LEFT_WAY_POINT', 'SET_LEFT_DURATION', 'SET_LEFT_DISTANCE']),
     initMap() {
       this.startLoc = new kakao.maps.LatLng(36.355297, 127.298126);
       this.mapTypeControl = new kakao.maps.MapTypeControl();
@@ -351,9 +359,12 @@ export default {
         element.setMap(null);
       }
     },
+    findDirectionsWay(latlng) {
+      alert(latlng)
+    },
     findDirections(marker, BtnName) {
       if (BtnName === "findWayBtnStart") {
-        console.log("출발 스토어 저장",marker.Gb)
+        console.log("출발 스토어 저장", marker.Gb)
         this.SET_LEFT_START_POINT(marker.Gb)
         this.requestData.origin.x = `${marker.getPosition().La}`;
         this.requestData.origin.y = `${marker.getPosition().Ma}`;
@@ -366,7 +377,7 @@ export default {
         }
       }
       if (BtnName === "findWayBtnEnd") {
-        console.log("도착 스토어 저장",marker.Gb)
+        console.log("도착 스토어 저장", marker.Gb)
         this.SET_LEFT_END_POINT(marker.Gb)
         this.requestData.destination.x = `${marker.getPosition().La}`;
         this.requestData.destination.y = `${marker.getPosition().Ma}`;
@@ -376,22 +387,8 @@ export default {
           this.requestData.destination.x !== 0 && this.requestData.destination.y !== 0) {
           this.findWayGo(this.requestData);
           this.deletFindWay();
-
         }
       }
-      if (BtnName === "findWayBtnPoint") {
-        console.log("두번 클릭함")
-        /*this.requestData.destination.x = `${marker.getPosition().La}`;
-        this.requestData.destination.y = `${marker.getPosition().Ma}`;
-        this.endPoint = marker.ca.attributes.innertext.value
-
-        if (this.requestData.origin.x !== 0 && this.requestData.origin.y !== 0 &&
-          this.requestData.destination.x !== 0 && this.requestData.destination.y !== 0) {
-          this.findWayGo(this.requestData);
-          this.deletFindWay();
-        }*/
-      }
-
     },
 
     findWayGo(requestData) {
@@ -497,10 +494,14 @@ export default {
               var moveLatLon = new kakao.maps.LatLng(sections[0].bound.min_y, sections[0].bound.min_x);
               this.map.panTo(moveLatLon);
 
-              this.findDistance = this.findDistance + parseFloat(distance / 1000);
-              this.findDuration = this.findDuration + parseFloat(duration / 60);
+              this.findDistance =  parseFloat(distance / 1000);
+              this.findDuration =  parseFloat(duration / 60);
               this.findDistance = parseInt(this.findDistance, 10);
               this.findDuration = parseInt(this.findDuration, 10);
+              console.log(this.findDistance)
+              this.SET_LEFT_DURATION(this.findDuration)
+              this.SET_LEFT_DISTANCE(this.findDistance)
+
             }
           }
         })
@@ -523,7 +524,6 @@ export default {
                              <div>
                               <span class="findWay" id="findWayBtnStart">왼클릭: 출발</span>
                               <span class="findWay" id="findWayBtnEnd">우클릭: 도착</span>
-                              <span class="findWay" id="findWayBtnPoint">더블 클릭: 경유지</span>
                              </div>
                            </div>
                         </div>
@@ -552,39 +552,18 @@ export default {
           overlay.setVisible(false)
         });
       });
-      var delay = 200; // 클릭과 더블 클릭을 구분할 지연 시간 (밀리초)
-
-      var clickTimer = null;
-      this.doubleClick = false;
-      // kakao.maps.event.addListener(marker, "click", () => {
-      //   this.clickTimer = setTimeout(function() {
-      //     THIS.findDirections(marker, "findWayBtnStart");
-      //     console.log(marker.getPosition());
-      //   }, delay);
-      // });
       kakao.maps.event.addListener(marker, 'click', () => {
-        let THIS = this
-        if (!this.doubleClick) {
-          // 클릭 이벤트가 발생했을 때 타이머를 설정하고, 지연 시간 후에 실행될 함수를 예약합니다.
-          this.clickTimer = setTimeout(function() {
-            // 일정 시간 내에 더블 클릭 이벤트가 발생하지 않았을 때 실행될 동작을 여기에 작성합니다.
-            THIS.findDirections(marker, "findWayBtnStart"); // 추가 정보 전달
-            console.log(marker.getPosition());
-            this.doubleClick = false;
-          }, delay);
-        }
+        this.findDirections(marker, "findWayBtnStart");
+        console.log(marker.getPosition());
       });
 
-      kakao.maps.event.addListener(marker, 'dblclick', () => {
-        // 더블 클릭 이벤트가 발생했을 때 클릭 타이머를 제거하고, 더블 클릭 동작을 처리합니다.
-        clearTimeout(clickTimer);
-        this.findDirections(marker, "findWayBtnPoint");
-        this.doubleClick = true;
-      });
-
+      // kakao.maps.event.addListener(this.map, 'dblclick', (mouseEvent) => {
+      //   var latlng = mouseEvent.latLng;
+      //   this.findDirectionsWay(latlng);
+      // });
       kakao.maps.event.addListener(marker, 'rightclick', () => {
-        // 오른쪽 클릭 이벤트가 발생했을 때 처리할 동작을 여기에 작성합니다.
         this.findDirections(marker, "findWayBtnEnd");
+        console.log(marker.getPosition());
       });
     },
     deletFindWay() {
@@ -606,35 +585,35 @@ export default {
       // 배열 비우기
 
     },
-       deletFindWayBtn() {
-          //값 삭제
-          this.requestData.origin.x = 0;
-          this.requestData.origin.y = 0;
-          this.requestData.destination.x = 0;
-          this.requestData.destination.y = 0;
-          this.startPoint = "출발지를 선택해주세요"
-          this.endPoint = "도착지를 선택해주세요"
-          //선 삭제
-          this.polylineArray.forEach(function (polyline) {
-            polyline.setMap(null);
-          });
-          this.polylineArray = [];
-          //오버레이 삭제
-          this.customOverlayArray.forEach(function (customOverlay) {
-            customOverlay.setMap(null);
-          });
-          this.customOverlay = [];
-          //마커 이미지 삭제
-          this.findMarkerArray.forEach(function (findMarker) {
-            findMarker.setMap(null);
-          });
-          // 배열 비우기
-          this.findMarkerArray = [];
-          //마커지우기
-          if (this.MarkerTmp) {
-            this.DestroyedMarker()
-          }
-        },
+    deletFindWayBtn() {
+      //값 삭제
+      this.requestData.origin.x = 0;
+      this.requestData.origin.y = 0;
+      this.requestData.destination.x = 0;
+      this.requestData.destination.y = 0;
+      this.startPoint = "출발지를 선택해주세요"
+      this.endPoint = "도착지를 선택해주세요"
+      //선 삭제
+      this.polylineArray.forEach(function (polyline) {
+        polyline.setMap(null);
+      });
+      this.polylineArray = [];
+      //오버레이 삭제
+      this.customOverlayArray.forEach(function (customOverlay) {
+        customOverlay.setMap(null);
+      });
+      this.customOverlay = [];
+      //마커 이미지 삭제
+      this.findMarkerArray.forEach(function (findMarker) {
+        findMarker.setMap(null);
+      });
+      // 배열 비우기
+      this.findMarkerArray = [];
+      //마커지우기
+      if (this.MarkerTmp) {
+        this.DestroyedMarker()
+      }
+    },
 
   }
 }
@@ -685,6 +664,7 @@ export default {
 .sidoSel, .gugunSel {
     width: 300px;
 }
+
 .findWayTextArea {
     padding: 1rem 1rem 0 0.8rem;
     justify-content: center;
@@ -706,9 +686,11 @@ export default {
 .sidoRow {
     line-height: 10px !important;
 }
+
 .findWaySol {
     display: flex;
 }
+
 /*테마선택*/
 .search-checkbox {
     max-width: fit-content;
