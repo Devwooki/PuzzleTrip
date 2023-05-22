@@ -10,6 +10,9 @@ env.properties
 # dotenv environment variable files
 .env*
 
+#파일업로드 제외
+upload/
+
 
 HELP.md
 target/
