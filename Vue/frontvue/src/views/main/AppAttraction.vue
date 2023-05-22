@@ -264,7 +264,7 @@ export default {
         })
     },
     weatherInfo(engValue) {
-      axios.get("http://api.openweathermap.org/data/2.5/weather?q=" + engValue.eng + "&appid=7315a10a3bef7e73b88ed593dc718d1c")
+      axios.get("http://api.openweathermap.org/data/2.5/weather?q=" + engValue.eng + `&appid=${process.env.VUE_APP_WEATHER_KEY}`)
         .then(response => {
           const data = response.data;
           document.getElementById("name").innerText = engValue.name;
@@ -405,11 +405,10 @@ export default {
       console.dir(requestData.origin)
       console.dir(requestData.destination)
       const apiUrl = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
-      const REST_API_KEY = '42f1b6d378cc81efe4eb31d1b450d8d4'; // 카카오디벨로퍼스에서 발급 받은 API 키 값
       // 요청 헤더 설정
       const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `KakaoAK ${REST_API_KEY}`
+        'Authorization': `KakaoAK ${process.env.VUE_APP_KAKAO_DEV}`
       };
       // Axios를 사용하여 API 호출 수행
       axios.post(apiUrl, requestData, {headers})

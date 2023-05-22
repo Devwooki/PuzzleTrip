@@ -77,6 +77,7 @@ export default {
         },
     },
     methods: {
+
         showPlan(){
             console.log("추가한 여향지 목록 보여준다")
             console.log(this.getAttractionList)

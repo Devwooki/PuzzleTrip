@@ -41,7 +41,7 @@ export default {
       selectedMarkerTitle: ''
     };
   },
-  computed: {
+  computed: {//해당 컴포넌트에 계산된(computed) state를 가져온다 - getter
     ...mapGetters('attractionStore', ['getRightMap', 'getRightMarkers']),
   },
   // props: {
@@ -62,7 +62,11 @@ export default {
 
   },
   methods: {
-    ...mapMutations('attractionStore', ['SET_RIGHT_MAP', 'SET_RIGHT_MARKERS', 'UPDATE_ATTRACTION_LIST']),
+    ...mapMutations('attractionStore', [
+        'SET_RIGHT_MAP',
+        'SET_RIGHT_MARKERS',
+        'UPDATE_ATTRACTION_LIST'
+    ]),
     moveMapToMarker(marker) {
       /*console.log(marker.latlng.La);
       console.log(marker.latlng.Ma);*/
