@@ -1,17 +1,23 @@
 <template>
-    <div class="draggable" :style="{ top: position.y + 'px', left: position.x + 'px' }" @mousedown="startDrag">
+    <div  @mousedown="startDrag">
         <button id="chat-button" @click="toggleChat">{{chatState}}</button>
-        <div id="chat-container" :class="{ 'out-of-bound': isOutOfBound }" v-if="showChat">
+        <div id="chat-container" v-if="showChat">
             <div id="chat-window">
                 <h1>채팅</h1>
-                <ul id="messages"></ul>
-                <input type="text" id="message-input" v-model="message">
-                <button id="send-message" @click="sendMessage">보내기</button>
+                <ul id="messages" v-for="(item, idx) in recvList" :key="idx">
+                    <li>{{item.userId}} : {{item.content}}</li>
+                </ul>
+                <input type="text" id="message-input" v-model="message" placeholder="내용" @keyup="sendMessage">
+                <button type="button" @click="sendMessage">전송</button>
             </div>
         </div>
     </div>
 </template>
 <script>
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
+import {mapGetters} from "vuex";
+
 export default {
     name: 'AppChat',
     components: {},
@@ -19,8 +25,9 @@ export default {
         return {
             showChat : false,
             chatState : '채팅 열기',
+            tempId : '',
             message: '',
-            messages: [],
+            recvList: [],
 
             isDragging: false,
             startPosition: { x: 0, y: 0 },
@@ -30,29 +37,68 @@ export default {
         };
     },
     created() {
+        //appChat이 실해오디면 소켓 연결을 시도한다.
+        this.connect();
+    },
+    computed :{
+        ...mapGetters('userStore', ['getIsLogin', 'checkUserInfo'])
     },
     methods: {
         toggleChat() {
             this.showChat = !this.showChat; // showChat 값을 토글합니다.
             this.chatState = this.showChat ? '채팅 닫기' : '채팅 열기'
-            if (this.showChat) {
-                this.getMessages();
+            // if (this.showChat) {
+            //     this.getMessages();
+            // }
+        },
+        sendMessage(event) {
+            if(event.keyCode === 13 && this.getIsLogin && this.message !== ''){
+                this.send()
+                this.message = ''
             }
         },
-        sendMessage() {
-            // this.$stomp.send("/app/chat", JSON.stringify({
-            //     message: this.message
-            // }));
-            this.messages.push(this.message)
-            this.message = "";
-            this.getMessages()
+        send(){
+            console.log("Send message:" + this.message);
+            if (this.stompClient && this.stompClient.connected) {
+                const msg = {
+                    userId: this.checkUserInfo.id,
+                    content: this.message
+                };
+                this.stompClient.send("/receive", JSON.stringify(msg), {});
+            }
         },
-        getMessages() {
-            // this.$stomp.subscribe("/topic/chat", message => {
-            //     this.messages.push(message);
-            // });
-            console.log(this.messages)
+        connect() {
+            let socket = new SockJS(process.env.VUE_APP_API_BASE_URL);
+            this.stompClient = Stomp.over(socket);
+            console.log(`소켓 연결을 시도합니다. 서버 주소: ${process.env.VUE_APP_API_BASE_URL}/chat`)
+            this.stompClient.connect(
+                {},
+                frame => {
+                    // 소켓 연결 성공
+                    this.connected = true;
+                    console.log('소켓 연결 성공', frame);
+                    // 서버의 메시지 전송 endpoint를 구독합니다.
+                    // 이런형태를 pub sub 구조라고 합니다.
+                    this.stompClient.subscribe("/send", res => {
+                        console.log('구독으로 받은 메시지 입니다.', res.body);
+
+                        // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+                        this.recvList.push(JSON.parse(res.body))
+                    });
+                },
+                error => {
+                    // 소켓 연결 실패
+                    console.log('소켓 연결 실패', error);
+                    this.connected = false;
+                }
+            );
         },
+        // getMessages() {
+        //     // this.$stomp.subscribe("/topic/chat", message => {
+        //     //     this.messages.push(message);
+        //     // });
+        //     console.log(this.messages)
+        // },
 
 
         //채팅창 드래그를 위한 이벤트
@@ -71,7 +117,6 @@ export default {
                 this.position.y += deltaY;
                 this.startPosition.x = event.clientX;
                 this.startPosition.y = event.clientY;
-                this.checkBoundary();
             }
         },
         stopDrag() {
@@ -79,20 +124,6 @@ export default {
             document.removeEventListener('mousemove', this.handleDrag);
             document.removeEventListener('mouseup', this.stopDrag);
         },
-        checkBoundary() {
-            const container = document.getElementById('app');
-            const containerRect = container.getBoundingClientRect();
-            const chatContainer = document.getElementById('chat-container');
-            const chatContainerRect = chatContainer.getBoundingClientRect();
-
-            const isOutOfBound =
-                chatContainerRect.left < containerRect.left ||
-                chatContainerRect.right > containerRect.right ||
-                chatContainerRect.top < containerRect.top ||
-                chatContainerRect.bottom > containerRect.bottom;
-
-            this.isOutOfBound = isOutOfBound;
-        }
     },
     mounted() {
         // this.$stomp.connect({}, this.getMessages);
@@ -101,32 +132,23 @@ export default {
 </script>
 
 <style scoped>
-.draggable {
+chat-comp{
     position: absolute;
-    cursor: move;
-    width: 50px;
-    height: 50px;
-    background-color: #e86666;
-    /* 기타 스타일 속성들 */
+    z-index: 1000;
+    bottom : 0px;
 }
 
 #chat-container {
-    position: relative;
-    top: 10px;
+    position: absolute;
+    bottom: 20px;
     right: 10px;
     width: 300px ;
-    height: 400px;
+    height: 500px;
     background-color: #fff;
     border: 1px solid #ccc;
     z-index: 1000;
 }
 
-.out-of-bound {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
 
 #chat-window {
     padding: 10px;
