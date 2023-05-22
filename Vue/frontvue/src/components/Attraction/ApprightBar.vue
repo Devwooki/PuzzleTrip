@@ -73,7 +73,6 @@ export default {
       var moveLatLon = new kakao.maps.LatLng(marker.latlng.Ma, marker.latlng.La);
       /* global kakao */
       //this.map.setLevel(5);
-      this.getRightMap.setLevel(5);
       this.selectedMarkerTitle = marker.title;
 
       //this.map.panTo(moveLatLon);

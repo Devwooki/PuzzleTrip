@@ -9,11 +9,14 @@ const attractionStore = {
         //left bar에 필요한
         leftSelectedSido: '',
         leftSelectedGugun: '',
-        leftStartPoint: '',
-        leftEndPoint: '',
+        StartPoint: '',
+        EndPoint: '',
+        WayPoint: '',
 
         //right bar에서 + 버튼 누르면 추가될 리스트
         attractionList: []
+
+
     },
     getters: {
         //right bar의 요소 받아오기
@@ -63,11 +66,11 @@ const attractionStore = {
         SET_LEFT_SELECTED_GUGUNleft(state,leftSelectedGugun ){
             state.leftSelectedGugun = leftSelectedGugun
         },
-        SET_LEFT_SELECTED_POINT(state, leftStartPoint){
-            state.leftStartPoint = leftStartPoint
+        SET_LEFT_START_POINT(state, leftStartPoint){
+            state.StartPoint = leftStartPoint
         },
         SET_LEFT_END_POINT(state,leftEndPoint ){
-            state.leftEndPoint = leftEndPoint
+            state.EndPoint = leftEndPoint
         },
 
         //여행지 추기

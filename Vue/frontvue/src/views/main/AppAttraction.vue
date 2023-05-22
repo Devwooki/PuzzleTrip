@@ -30,32 +30,23 @@
                   @change="handleGugunChange"
               ></v-select>
             </v-col>
-            <a href="" title="Button fade orange" class="button btnFade btnOrange">초기화</a>
+            <v-btn class="button btnFade btnOrange" @click="deletFindWayBtn">초기화</v-btn>
 
           </v-row>
         </v-container>
-        <div class="findWayTextArea">
-          <v-text-field
-              :value="startPoint"
-              label="출발지"
-              outlined
-              disabled
-          ></v-text-field>
-          <v-text-field
-              :value="endPoint"
-              label="도착지"
-              outlined
-              disabled
-          ></v-text-field>
-          <div>
-            <input type="text" placeholder="시간" readonly/>
-            <input type="text" readonly v-model="findDistance"/>
-            <input type="text" placeholder="분" readonly/>
-            <input type="text" placeholder="거리" readonly/>
-            <input type="text" readonly v-model="findDuration"/>
-            <input type="text" placeholder="Km" readonly/>
-          </div>
-        </div>
+        <!--        <div class="findWayTextArea">-->
+        <!--          <div ></div>-->
+        <!--          <div>{{startPoint}}</div>-->
+        <!--          <div></div>-->
+        <!--          <div>{{endPoint}}</div>-->
+
+        <!--          <div class="findWaySol">-->
+        <!--            <div>거리: </div>-->
+        <!--            <div>{{findDistance}}</div>-->
+        <!--            <div>시간(분):</div>-->
+        <!--            <div>{{findDuration}}</div>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <v-row class="search-checkbox">
           <v-checkbox class="searchCh" v-model="contentTypes" label="관광지" color="orange" value="12"
                       @change="handleGugunChange"
@@ -94,12 +85,12 @@
         <!-- 이미지 정보-->
         <div id="name">지역을 선택해주세요</div>
         <div id="weatherinfo">
-          <div id="weathertitle">기온:</div>
+          <font-awesome-icon :icon="['fas', 'temperature-high']" size="lg" style="color: #fb5050; " />
           <div id="temp"></div>
           <div class="temperature">도</div>
         </div>
         <div id="weatherinfo">
-          <div id="weathertitle">습도:</div>
+          <font-awesome-icon :icon="['fas', 'tint']" size="lg"  style="color: #3f9ce4;" />
           <div id="hum"></div>
           <div class="humidity">도</div>
         </div>
@@ -124,7 +115,7 @@
 import axios from "axios";
 import AppLeftBar from "@/components/Attraction/AppleftBar.vue";
 import AppRightBar from "@/components/Attraction/ApprightBar.vue";
-import {mapGetters} from "vuex";
+import {mapGetters, mapMutations} from "vuex";
 
 export default {
   name: "KakaoMap",
@@ -179,8 +170,8 @@ export default {
       customOverlayArray: [],
       findMarker: "",
       findMarkerArray: [],
-      findDistance: "",
-      findDuration: "",
+      findDistance: 0,
+      findDuration: 0,
       requestData: {
         origin: {
           x: 0,
@@ -192,12 +183,10 @@ export default {
         },
         waypoints: [
           {
-            name: 'name0',
             x: '127.3855645721133',
             y: '36.36071080159904'
           },
           {
-            name: 'name1',
             x: '127.38793109858915',
             y: '36.37507683636454'
           }
@@ -233,7 +222,7 @@ export default {
     }
   },
   methods: {
-
+    ...mapMutations('attractionStore', ['SET_LEFT_START_POINT', 'SET_LEFT_END_POINT']),
     initMap() {
       this.startLoc = new kakao.maps.LatLng(36.355297, 127.298126);
       this.mapTypeControl = new kakao.maps.MapTypeControl();
@@ -261,6 +250,8 @@ export default {
           //selectedSido가 값이 있다면 그 값의 eng값을 할당한다.
           const engValue = selectedSido ? selectedSido : null;
           this.weatherInfo(engValue);
+          // console.log(process.env.VUE_APP_WEATHER_KEY)
+          // console.log(process.env)
         })
     },
     weatherInfo(engValue) {
@@ -345,7 +336,6 @@ export default {
         this.makeOverlay(marker);
 
       })
-
       //store에 position 저장
       this.$store.commit('attractionStore/SET_RIGHT_MARKERS', this.positions)
 
@@ -363,7 +353,8 @@ export default {
     },
     findDirections(marker, BtnName) {
       if (BtnName === "findWayBtnStart") {
-
+        console.log("출발 스토어 저장",marker.Gb)
+        this.SET_LEFT_START_POINT(marker.Gb)
         this.requestData.origin.x = `${marker.getPosition().La}`;
         this.requestData.origin.y = `${marker.getPosition().Ma}`;
         this.startPoint = marker.ca.attributes.innertext.value
@@ -375,6 +366,8 @@ export default {
         }
       }
       if (BtnName === "findWayBtnEnd") {
+        console.log("도착 스토어 저장",marker.Gb)
+        this.SET_LEFT_END_POINT(marker.Gb)
         this.requestData.destination.x = `${marker.getPosition().La}`;
         this.requestData.destination.y = `${marker.getPosition().Ma}`;
         this.endPoint = marker.ca.attributes.innertext.value
@@ -503,22 +496,14 @@ export default {
               this.map.setLevel(7)
               var moveLatLon = new kakao.maps.LatLng(sections[0].bound.min_y, sections[0].bound.min_x);
               this.map.panTo(moveLatLon);
-              //글자 찍기
-              this.customOverlay = new kakao.maps.CustomOverlay({
-                position: new kakao.maps.LatLng(37.39243974939504, 125.10972941510435),
-                content: `<div class="distancelabel">거리: ${(distance / 1000).toFixed(2)} km, 시간: ${(duration / 60).toFixed(2)} 분</div>`
-              });
-              this.findDistance = (distance / 1000).toFixed(2);
-              this.findDuration = (duration / 60).toFixed(2)
-              // 배열에 커스텀오버레이 객체 추가
-              this.customOverlayArray.push(this.customOverlay);
-              // 커스텀 오버레이를 지도에 표시합니다
-              this.customOverlay.setMap(this.map);
+
+              this.findDistance = this.findDistance + parseFloat(distance / 1000);
+              this.findDuration = this.findDuration + parseFloat(duration / 60);
+              this.findDistance = parseInt(this.findDistance, 10);
+              this.findDuration = parseInt(this.findDuration, 10);
             }
           }
-        }).catch(err => {
-        console.log(err)
-      });
+        })
     },
     makeOverlay(marker, index) {
 
@@ -567,16 +552,39 @@ export default {
           overlay.setVisible(false)
         });
       });
+      var delay = 200; // 클릭과 더블 클릭을 구분할 지연 시간 (밀리초)
 
-      kakao.maps.event.addListener(marker, "click", () => {
-        this.findDirections(marker, "findWayBtnStart"); // 추가 정보 전달
-        console.log(marker.getPosition())
+      var clickTimer = null;
+      this.doubleClick = false;
+      // kakao.maps.event.addListener(marker, "click", () => {
+      //   this.clickTimer = setTimeout(function() {
+      //     THIS.findDirections(marker, "findWayBtnStart");
+      //     console.log(marker.getPosition());
+      //   }, delay);
+      // });
+      kakao.maps.event.addListener(marker, 'click', () => {
+        let THIS = this
+        if (!this.doubleClick) {
+          // 클릭 이벤트가 발생했을 때 타이머를 설정하고, 지연 시간 후에 실행될 함수를 예약합니다.
+          this.clickTimer = setTimeout(function() {
+            // 일정 시간 내에 더블 클릭 이벤트가 발생하지 않았을 때 실행될 동작을 여기에 작성합니다.
+            THIS.findDirections(marker, "findWayBtnStart"); // 추가 정보 전달
+            console.log(marker.getPosition());
+            this.doubleClick = false;
+          }, delay);
+        }
       });
-      kakao.maps.event.addListener(marker, 'rightclick', () => {
-        this.findDirections(marker, "findWayBtnEnd");
-      });
-      kakao.maps.event.addListener(marker, 'wheelclick', () => {
+
+      kakao.maps.event.addListener(marker, 'dblclick', () => {
+        // 더블 클릭 이벤트가 발생했을 때 클릭 타이머를 제거하고, 더블 클릭 동작을 처리합니다.
+        clearTimeout(clickTimer);
         this.findDirections(marker, "findWayBtnPoint");
+        this.doubleClick = true;
+      });
+
+      kakao.maps.event.addListener(marker, 'rightclick', () => {
+        // 오른쪽 클릭 이벤트가 발생했을 때 처리할 동작을 여기에 작성합니다.
+        this.findDirections(marker, "findWayBtnEnd");
       });
     },
     deletFindWay() {
@@ -589,16 +597,16 @@ export default {
       this.customOverlayArray.forEach(function (customOverlay) {
         customOverlay.setMap(null);
       });
-      this.customOverlay = [];
+      this.customOverlayArray = [];
       //마커 이미지 삭제
       this.findMarkerArray.forEach(function (findMarker) {
         findMarker.setMap(null);
       });
-      // 배열 비우기
       this.findMarkerArray = [];
+      // 배열 비우기
 
     },
-    /*    deletFindWayBtn() {
+       deletFindWayBtn() {
           //값 삭제
           this.requestData.origin.x = 0;
           this.requestData.origin.y = 0;
@@ -626,7 +634,7 @@ export default {
           if (this.MarkerTmp) {
             this.DestroyedMarker()
           }
-        },*/
+        },
 
   }
 }
@@ -640,17 +648,15 @@ export default {
 
 .leftContent {
     background-color: #FFFFFF;
-    width: 17%;
+    width: 20%;
     height: 1200px;
-    z-index: 4;
-    margin-top: -238px;
+    margin-top: -180px;
 }
 
 .rightContent {
     width: 17%;
     height: 1140px;
-    z-index: 4;
-    margin-top: -238px;
+    margin-top: -180px;
 }
 
 @font-face {
@@ -679,10 +685,8 @@ export default {
 .sidoSel, .gugunSel {
     width: 300px;
 }
-
 .findWayTextArea {
     padding: 1rem 1rem 0 0.8rem;
-    display: flex;
     justify-content: center;
     align-content: center;
     width: 780px;
@@ -702,7 +706,9 @@ export default {
 .sidoRow {
     line-height: 10px !important;
 }
-
+.findWaySol {
+    display: flex;
+}
 /*테마선택*/
 .search-checkbox {
     max-width: fit-content;
@@ -720,7 +726,7 @@ export default {
     justify-content: center;
     background-color: snow;
     padding-top: 20px;
-    height: 250px;
+    height: 195px;
 }
 
 .allSelectRadio {
@@ -735,18 +741,18 @@ export default {
 #weather_wrap {
     background-color: #8bb9eb;
     color: white;
-    min-width: 10rem;
-    min-height: 10rem;
     flex: 0 0 13rem;
     margin-left: 2rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     border-radius: 10px;
     box-shadow: 3px 3px 3px rgb(165, 165, 165);
 }
 
 #today_weather {
+    color: #f2f2f2;
+
     margin-top: 10px;
-    font-size: 18px;
+    font-size: 15px;
     text-align: center;
     font-weight: 600;
 }
@@ -758,13 +764,16 @@ export default {
 }
 
 #weather-icon {
-    width: 50%;
+    width: 40%;
+    margin-top: 0;
 }
 
 #name {
-    font-size: 18px;
+    color: #f2f2f2;
+
+    font-size: 15px;
     text-align: center;
-    margin-top: -30px;
+    margin-top: -20px;
     font-weight: 600;
 }
 
@@ -773,32 +782,40 @@ export default {
     margin-left: 20px;
     margin-right: 20px;
     height: 30px;
-    font-weight: 500;
     justify-content: center;
 }
 
 #weathertitle {
+    font-size: 15px;
     line-height: 30px;
 }
 
 #temp {
-    margin-left: 10px;
-    line-height: 30px;
+    color: #e86666;
+    margin-left: 5px;
+    font-size: 15px;
+    line-height: 25px;
 }
 
 .temperature {
+    color: #e86666;
+    font-size: 15px;
     margin-left: 5px;
-    line-height: 30px;
+    line-height: 25px;
 }
 
 #hum {
+    color: #5085bb;
+    font-size: 15px;
     margin-left: 10px;
-    line-height: 30px;
+    line-height: 25px;
 }
 
 .humidity {
+    color: #5085bb;
+    font-size: 15px;
     margin-left: 5px;
-    line-height: 30px;
+    line-height: 25px;
 }
 
 /* 지도 카드 */

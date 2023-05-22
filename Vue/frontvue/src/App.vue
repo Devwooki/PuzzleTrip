@@ -6,7 +6,7 @@
             </header>
             <div id="contentWrap">
                 <router-view id="main"></router-view>
-                <app-chat></app-chat>
+<!--                <app-chat></app-chat>-->
             </div>
         </div>
         <app-footer id="footer"></app-footer>
@@ -18,12 +18,12 @@
 
 import AppHeader from "@/views/layout/AppHeader.vue";
 import AppFooter from "@/views/layout/AppFooter.vue";
-import AppChat from "@/views/main/AppChat.vue";
+// import AppChat from "@/views/main/AppChat.vue";
 
 export default {
     name: "App",
     components: {
-        AppHeader, AppFooter, AppChat
+        AppHeader, AppFooter,
     },
 };
 </script>
@@ -60,7 +60,7 @@ header {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 3;
 }
 
 #contentWrap {
