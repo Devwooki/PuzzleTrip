@@ -70,6 +70,6 @@ public class WebMVCConfiguration implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
                 .addResourceHandler("/profilePath/**")//URL접근 경로
-                .addResourceLocations("file://" + profilePath + "/");
+                .addResourceLocations("file:///" + profilePath + "/");
     }
 }

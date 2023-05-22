@@ -4,12 +4,12 @@
             <div class="form-container sign-up-container">
                 <form action="#">
                     <h1>회원가입</h1>
-                    <span>사용하시는 아이디를 입력해주세요.</span>
-                    <input ref="regId" type="text" placeholder="ID" v-model="registerInfo.id"/>
-                    <input ref="regName" type="text" placeholder="Name" v-model="registerInfo.name"/>
+                    <input ref="regId" type="text" placeholder="ID" v-model="registerInfo.id" @keyup="checkDuplId"/>
+                    <span :class="checkDuplIdRes ? 'blue-text' : 'red-text'">{{ checkDuplIdResMessage }}</span>
                     <input ref="regPw" :type="pwType" placeholder="Password" v-model="registerInfo.pw"/>
-                    <input ref="regCheckPw" :type="pwType"  placeholder="Check Password" v-model="registerInfo.checkPw"/>
-                    <span @click="changePwType">비밀번호 표시</span>
+                    <input ref="regCheckPw" :type="pwType" placeholder="Check Password" v-model="registerInfo.checkPw" @keyup="checkSamePw"/>
+                    <span @click="changePwType">비밀번호 보기 {{checkSamePwResMessage}}</span>
+                    <input ref="regName" type="text" placeholder="Name" v-model="registerInfo.name"/>
                     <input ref="regEmail" type="email" placeholder="Email" v-model="registerInfo.email"/>
 
                     <!-- 이메일 인증은 추후 진행
@@ -18,7 +18,8 @@
                     -->
 
                     <span>프로필 이미지를 선택해 주세요.</span>
-                    <input name="profile" type="file" accept="image/jpeg, image/png, image/gif, .jpg" @change="onFileChange"/>
+                    <input name="profile" type="file" accept="image/jpeg, image/png, image/gif, .jpg"
+                           @change="onFileChange"/>
                     <button type="button" @click="signUp">Sign Up</button>
                 </form>
             </div>
@@ -71,12 +72,15 @@ export default {
             registerInfo: {
                 id: '',
                 pw: '',
-                checkPw : '',
+                checkPw: '',
                 name: '',
                 email: '',
-                profileImg : {},
+                profileImg: {},
             },
-            pwType : "password" ,
+            pwType: "password",
+            checkDuplIdRes: false,
+            checkDuplIdResMessage: "사용 불가능한 아이디 입니다.",
+            checkSamePwResMessage : "",
 
             //로그인 위한 요소
             user: {
@@ -97,7 +101,7 @@ export default {
     },
     methods: {
         ...mapActions('userStore', ['confirm', 'getUserInfo']),
-        changePwType(){
+        changePwType() {
             this.showPw = !this.showPw;
             this.pwType = this.showPw ? 'text' : 'password';
             console.log(this.pwType)
@@ -166,7 +170,11 @@ export default {
                 alert('이메일 형식이 올바르지 않습니다.');
                 this.$refs.regEmail.focus();
                 return;
-            } else {
+            } else if( !this.checkDuplIdRes){
+                alert('중복되는 아이디 입니다.')
+                this.$refs.regId.focus();
+                return;
+            }else{
 
                 const formData = new FormData();
                 formData.append('id', this.registerInfo.id);
@@ -181,6 +189,37 @@ export default {
                     }
                 })
 
+
+                document.getElementById('container').classList.add("right-panel-active");
+                alert("회원가입 완료! 지금 즉시 로그인 해보세요!")
+            }
+
+        },
+        async checkDuplId() {
+            const response = await axios.get(`user/idCheck/${this.registerInfo.id}`);
+            console.log("로그인 체크")
+            console.log(response.data)
+            if(response.data === ""){
+                this.checkDuplIdResMessage = "사용 가능한 아아디 입니다.";
+                this.checkDuplIdRes = true;
+            }else{
+                this.checkDuplIdResMessage = "사용 불가능한 아아디 입니다.";
+                this.checkDuplIdRes = false;
+            }
+        },
+        checkSamePw(){
+            if(this.registerInfo.pw === this.registerInfo.checkPw) {
+                this.checkSamePwResMessage = "일치합니다."
+            }else{
+                this.checkSamePwResMessage = "일치하지 않습니다."
+            }
+        },
+        removeUserIdCookie() {
+            console.log(this.saveId)
+            //체크를 해제하면 쿠키를 제거한다.
+            if (!this.saveId) {
+                this.$cookies.remove("userId")
+                this.$cookies.remove("saveId")
             }
         },
 
@@ -201,14 +240,6 @@ export default {
         //
         //     }
         // },
-        removeUserIdCookie() {
-            console.log(this.saveId)
-            //체크를 해제하면 쿠키를 제거한다.
-            if (!this.saveId) {
-                this.$cookies.remove("userId")
-                this.$cookies.remove("saveId")
-            }
-        },
     },
 
 
@@ -227,6 +258,7 @@ export default {
     },
 
     created() {
+        console.log(process.env)
         //console.log(process.env.VUE_APP_KAKAO_KEY)
         //컴포넌트 생성시 쿠키 체크 해서 input창에 값을 지정한다
         //저장된 쿠키가 있으면 브라우저에 불러온다.
@@ -311,7 +343,9 @@ button {
 }
 
 button:active {
-    transform: scale(0.95);
+    //transform: scale(0.95);
+    position: relative;
+    top : 2px;
 }
 
 button:focus {
@@ -472,5 +506,13 @@ input {
     margin: 0 5px;
     height: 40px;
     width: 40px;
+}
+
+.red-text {
+    color: #d96161;
+}
+
+.blue-text {
+    color: #7D9600;
 }
 </style>

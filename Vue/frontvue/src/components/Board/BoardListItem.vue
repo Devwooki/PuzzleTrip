@@ -35,6 +35,10 @@ tr:hover {
     background-color: #f2f2f2;
     cursor: pointer;
 }
+tr:active{
+    position: relative;
+    top:2px
+}
 /*tr 선택하면 그 부분 전체 하이라이트 들어가게(호버 효과나 그런 거?)*/
 .board-table th, .board-table td {
     padding: 14px 0;

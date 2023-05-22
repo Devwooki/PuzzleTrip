@@ -120,6 +120,7 @@ table {
     color: #FFF;
 }
 .board-type li:active {
+    position: relative;
     top: 2px;
 }
 

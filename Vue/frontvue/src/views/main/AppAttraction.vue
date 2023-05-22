@@ -895,7 +895,11 @@ export default {
 a,
 a:visited {
     text-decoration: none;
-    color: #00AE68;
+}
+
+a:active{
+    position: relative;
+    top : 2px;
 }
 
 a.button {
