@@ -2,6 +2,20 @@
 *.DS_Store
 project-back/.DS_Store
 Servers
+#spring boot env
+env.properties
+/env.properties
+**/env.properties
+
+# dotenv environment variable files
+.env*
+
+#파일업로드 제외
+upload/
+
+#SQL문 업로드 제외
+SqlResources/
+
 
 HELP.md
 target/

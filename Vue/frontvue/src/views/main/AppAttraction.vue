@@ -219,7 +219,7 @@ export default {
             script.onload = () => kakao.maps.load(this.initMap);
             //동적 로딩을 위해 autoload활용
             script.src =
-                "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=95684c0a88a9ddfe933ca5737c2da5a4";
+                `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.VUE_APP_KAKAO_KEY}`;
             document.head.appendChild(script);
         }
     },
