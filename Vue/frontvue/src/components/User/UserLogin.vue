@@ -227,6 +227,7 @@ export default {
     },
 
     created() {
+        //console.log(process.env.VUE_APP_KAKAO_KEY)
         //컴포넌트 생성시 쿠키 체크 해서 input창에 값을 지정한다
         //저장된 쿠키가 있으면 브라우저에 불러온다.
         if (this.$cookies.get("saveId")) {

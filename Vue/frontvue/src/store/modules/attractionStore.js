@@ -77,7 +77,9 @@ const attractionStore = {
             state.attractionList.push(marker)
         }
     },
-    actions: {}
+    actions: {
+
+    }
 };
 
 export default attractionStore;
