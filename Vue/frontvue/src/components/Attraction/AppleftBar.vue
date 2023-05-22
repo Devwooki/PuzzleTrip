@@ -25,6 +25,7 @@
         <div class="moveLoc">
             <v-btn @click="showPlan">목록 출력</v-btn>
         </div>
+
     </div>
 </template>
 
@@ -61,9 +62,16 @@ export default {
     //     },
     // },
     computed: {
-        ...mapGetters('attractionStore', ['getLeftSelectedSido', 'getLeftSelectedGugun',
-            'getLeftStartPoint', 'getLeftEndPoint',
-            'getAttractionList']),
+        ...mapGetters(
+            'attractionStore',
+            [
+                'getLeftSelectedSido',
+                'getLeftSelectedGugun',
+                'getLeftStartPoint',
+                'getLeftEndPoint',
+                'getAttractionList'
+            ]
+        ),
         dateRangeText() {
             return this.dates.join(' ~ ')
         },
@@ -85,6 +93,6 @@ export default {
     font-size: 30px;
 }
 .calBox {
-    width: 325px !important;
+    width: 350px !important;
 }
 </style>

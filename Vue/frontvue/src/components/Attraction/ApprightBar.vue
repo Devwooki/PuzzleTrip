@@ -64,8 +64,8 @@ export default {
   methods: {
     ...mapMutations('attractionStore', ['SET_RIGHT_MAP', 'SET_RIGHT_MARKERS', 'UPDATE_ATTRACTION_LIST']),
     moveMapToMarker(marker) {
-      console.log(marker.latlng.La);
-      console.log(marker.latlng.Ma);
+      /*console.log(marker.latlng.La);
+      console.log(marker.latlng.Ma);*/
       var moveLatLon = new kakao.maps.LatLng(marker.latlng.Ma, marker.latlng.La);
       /* global kakao */
       //this.map.setLevel(5);

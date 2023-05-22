@@ -48,8 +48,12 @@
               disabled
           ></v-text-field>
           <div>
-            <div class="findTime">시간: 2시간 25분</div>
-            <div class="findDis">거리: 2.6Km</div>
+            <input type="text" placeholder="시간" readonly/>
+            <input type="text" readonly v-model="findDistance"/>
+            <input type="text" placeholder="분" readonly/>
+            <input type="text" placeholder="거리" readonly/>
+            <input type="text" readonly v-model="findDuration"/>
+            <input type="text" placeholder="Km" readonly/>
           </div>
         </div>
         <v-row class="search-checkbox">
@@ -175,7 +179,8 @@ export default {
       customOverlayArray: [],
       findMarker: "",
       findMarkerArray: [],
-
+      findDistance: "",
+      findDuration: "",
       requestData: {
         origin: {
           x: 0,
@@ -223,7 +228,7 @@ export default {
       script.onload = () => kakao.maps.load(this.initMap);
       //동적 로딩을 위해 autoload활용
       script.src =
-        "//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=95684c0a88a9ddfe933ca5737c2da5a4";
+        `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.VUE_APP_KAKAO_KEY}`;
       document.head.appendChild(script);
     }
   },
@@ -369,7 +374,6 @@ export default {
           this.deletFindWay();
         }
       }
-
       if (BtnName === "findWayBtnEnd") {
         this.requestData.destination.x = `${marker.getPosition().La}`;
         this.requestData.destination.y = `${marker.getPosition().Ma}`;
@@ -379,7 +383,20 @@ export default {
           this.requestData.destination.x !== 0 && this.requestData.destination.y !== 0) {
           this.findWayGo(this.requestData);
           this.deletFindWay();
+
         }
+      }
+      if (BtnName === "findWayBtnPoint") {
+        console.log("두번 클릭함")
+        /*this.requestData.destination.x = `${marker.getPosition().La}`;
+        this.requestData.destination.y = `${marker.getPosition().Ma}`;
+        this.endPoint = marker.ca.attributes.innertext.value
+
+        if (this.requestData.origin.x !== 0 && this.requestData.origin.y !== 0 &&
+          this.requestData.destination.x !== 0 && this.requestData.destination.y !== 0) {
+          this.findWayGo(this.requestData);
+          this.deletFindWay();
+        }*/
       }
 
     },
@@ -492,6 +509,8 @@ export default {
                 position: new kakao.maps.LatLng(37.39243974939504, 125.10972941510435),
                 content: `<div class="distancelabel">거리: ${(distance / 1000).toFixed(2)} km, 시간: ${(duration / 60).toFixed(2)} 분</div>`
               });
+              this.findDistance = (distance / 1000).toFixed(2);
+              this.findDuration = (duration / 60).toFixed(2)
               // 배열에 커스텀오버레이 객체 추가
               this.customOverlayArray.push(this.customOverlay);
               // 커스텀 오버레이를 지도에 표시합니다
@@ -520,6 +539,7 @@ export default {
                              <div>
                               <span class="findWay" id="findWayBtnStart">왼클릭: 출발</span>
                               <span class="findWay" id="findWayBtnEnd">우클릭: 도착</span>
+                              <span class="findWay" id="findWayBtnPoint">더블 클릭: 경유지</span>
                              </div>
                            </div>
                         </div>
@@ -555,6 +575,9 @@ export default {
       });
       kakao.maps.event.addListener(marker, 'rightclick', () => {
         this.findDirections(marker, "findWayBtnEnd");
+      });
+      kakao.maps.event.addListener(marker, 'wheelclick', () => {
+        this.findDirections(marker, "findWayBtnPoint");
       });
     },
     deletFindWay() {

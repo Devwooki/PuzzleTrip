@@ -104,6 +104,7 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody User user) throws Exception {
         logger.debug("로그인 하기 : login {}", user);
 
+        logger.debug(profilePath);
         //로그인 반환 방식이 ResponseEntity라서 map객체 생성
         Map<String, Object> result = new HashMap<>();
         //반환할 때 함께 전달할 status
