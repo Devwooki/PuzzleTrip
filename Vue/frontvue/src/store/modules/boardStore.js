@@ -27,6 +27,13 @@ const boardStore = {
 
     },
     mutations: {//state 값을 변경하기 위해 사용하는것 -> 직접호출은 불가하고 commit('정의된 이름')으로 호출
+        RESET_BOARD_STORE(state){
+            state.boardType = 2
+            state.pageNo = 1
+            state.boardNo = null
+            state.comments = []
+            state.pageCount = 1
+        },
         SET_BOARD_TYPE(state, boardType){
             state.boardType = boardType
         },

@@ -1,5 +1,5 @@
 <template>
-<tr  @click="goDetail">
+<tr @click="goDetail">
     <td>{{board.no}}</td>
     <td><h3>{{board.title}}</h3></td>
     <td>{{board.userId}}</td>

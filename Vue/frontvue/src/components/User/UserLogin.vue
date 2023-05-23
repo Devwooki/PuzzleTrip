@@ -7,8 +7,11 @@
                     <input ref="regId" type="text" placeholder="ID" v-model="registerInfo.id" @keyup="checkDuplId"/>
                     <span :class="checkDuplIdRes ? 'blue-text' : 'red-text'">{{ checkDuplIdResMessage }}</span>
                     <input ref="regPw" :type="pwType" placeholder="Password" v-model="registerInfo.pw"/>
-                    <input ref="regCheckPw" :type="pwType" placeholder="Check Password" v-model="registerInfo.checkPw" @keyup="checkSamePw"/>
-                    <span @click="changePwType">비밀번호 보기 {{checkSamePwResMessage}}</span>
+                    <input ref="regCheckPw" :type="pwType" placeholder="Check Password" v-model="registerInfo.checkPw"
+                           @keyup="checkSamePw"/>
+                    <span class="result"> <span @click="changePwType">비밀번호 보기</span> <span
+                            :class="checkSamePwRes ? 'blue-text' : 'red-text'">{{ checkSamePwResMessage }}</span></span>
+
                     <input ref="regName" type="text" placeholder="Name" v-model="registerInfo.name"/>
                     <input ref="regEmail" type="email" placeholder="Email" v-model="registerInfo.email"/>
 
@@ -18,9 +21,16 @@
                     -->
 
                     <span>프로필 이미지를 선택해 주세요.</span>
-                    <input name="profile" type="file" accept="image/jpeg, image/png, image/gif, .jpg"
-                           @change="onFileChange"/>
-                    <button type="button" @click="signUp">Sign Up</button>
+                    <div class="img-align">
+                        <div class="img-container">
+                            <div class="img-profile">
+                                <img :src="imgSrc">
+                            </div>
+                            <input name="profile" id="fileInput" type="file" accept="image/jpeg, image/png, image/gif, .jpg"
+                                   @change="onFileChange" placeholder=" "/>
+                        </div>
+                    </div>
+                    <button type="button" id="signUpBtn" @click="signUp">Sign Up</button>
                 </form>
             </div>
             <div class="form-container sign-in-container">
@@ -80,7 +90,9 @@ export default {
             pwType: "password",
             checkDuplIdRes: false,
             checkDuplIdResMessage: "사용 불가능한 아이디 입니다.",
-            checkSamePwResMessage : "",
+            checkSamePwRes: false,
+            checkSamePwResMessage: "  ",
+            imgSrc : '',
 
             //로그인 위한 요소
             user: {
@@ -88,6 +100,7 @@ export default {
                 pw: '',
             },
             saveId: "",
+            registSuccess: false,
 
 
             // 이메일 인증을 위한 변수
@@ -108,6 +121,9 @@ export default {
         },
         onFileChange(event) {
             this.registerInfo.profileImg = event.target.files;
+
+            this.profileImg = event.target.files
+            this.imgSrc = URL.createObjectURL(event.target.files[0]);
             console.log(this.files);
         },
 
@@ -140,17 +156,16 @@ export default {
             }
         },
         async signUp() {
-            console.log("유저 회원가입")
-            console.log(this.registerInfo)
-
             const emailRegex = /^([a-zA-Z0-9_-]+)@([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/;
             const emailValid = emailRegex.test(this.registerInfo.email);
 
             if (this.registerInfo.id.trim() === '') {
+                this.registSuccess = false;
                 alert('아이디를 입력해주세요.');
                 this.$refs.regId.focus();
                 return;
             } else if (this.registerInfo.name.trim() === '') {
+                this.registSuccess = false;
                 alert('이름을 입력해주세요.');
                 this.$refs.regName.focus();
                 return;
@@ -159,23 +174,22 @@ export default {
                 this.$refs.regPw.focus();
                 return;
             } else if (this.registerInfo.pw.trim() !== this.registerInfo.checkPw.trim()) {
+                this.registSuccess = false;
                 alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
                 this.$refs.regCheckPw.focus();
                 return;
             } else if (this.registerInfo.email.trim() === '') {
+                this.registSuccess = false;
                 alert('이메일을 입력해주세요.');
                 this.$refs.regEmail.focus();
                 return;
             } else if (!emailValid) {
+                this.registSuccess = false;
                 alert('이메일 형식이 올바르지 않습니다.');
                 this.$refs.regEmail.focus();
                 return;
-            } else if( !this.checkDuplIdRes){
-                alert('중복되는 아이디 입니다.')
-                this.$refs.regId.focus();
-                return;
-            }else{
-
+            } else {
+                document.getElementById('container').classList.add("right-panel-active");
                 const formData = new FormData();
                 formData.append('id', this.registerInfo.id);
                 formData.append('pw', this.registerInfo.pw);
@@ -188,10 +202,9 @@ export default {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
+                this.user.id = this.registerInfo.id
+                this.$refs.inputPw.focus();
 
-
-                document.getElementById('container').classList.add("right-panel-active");
-                alert("회원가입 완료! 지금 즉시 로그인 해보세요!")
             }
 
         },
@@ -199,19 +212,21 @@ export default {
             const response = await axios.get(`user/idCheck/${this.registerInfo.id}`);
             console.log("로그인 체크")
             console.log(response.data)
-            if(response.data === ""){
+            if (response.data === "") {
                 this.checkDuplIdResMessage = "사용 가능한 아아디 입니다.";
                 this.checkDuplIdRes = true;
-            }else{
+            } else {
                 this.checkDuplIdResMessage = "사용 불가능한 아아디 입니다.";
                 this.checkDuplIdRes = false;
             }
         },
-        checkSamePw(){
-            if(this.registerInfo.pw === this.registerInfo.checkPw) {
+        checkSamePw() {
+            if (this.registerInfo.pw === this.registerInfo.checkPw) {
                 this.checkSamePwResMessage = "일치합니다."
-            }else{
+                this.checkSamePwRes = true;
+            } else {
                 this.checkSamePwResMessage = "일치하지 않습니다."
+                this.checkSamePwRes = false;
             }
         },
         removeUserIdCookie() {
@@ -223,23 +238,6 @@ export default {
             }
         },
 
-        // async sendIsValid(){
-        //     this.sendIsValid = true;
-        //     const response = await axios.get(`user/checkVaildEmail/${this.registerInfo.email}`)
-        //     console.log(response);
-        //   //this.checkNum = response.data;
-        // },
-        // checkVaildEmail(){
-        //     const maxLength = 6;
-        //     if(this.inputNum.length > maxLength){
-        //         this.inputNum = this.inputNum.slice(0, maxLength);
-        //         alert("글자수를 초과했습니다.")
-        //     }
-        //
-        //     if(this.checkNum === this.inputNum){
-        //
-        //     }
-        // },
     },
 
 
@@ -247,6 +245,14 @@ export default {
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('container');
+
+        //임시 이동
+        const signUpBtn = document.getElementById('signUpBtn')
+        signUpBtn.addEventListener('click', () => {
+            if (this.registSuccess) {
+                document.getElementById('container').classList.remove("right-panel-active");
+            }
+        });
 
         signUpButton.addEventListener('click', () => {
             container.classList.add("right-panel-active");
@@ -256,7 +262,6 @@ export default {
             container.classList.remove("right-panel-active");
         });
     },
-
     created() {
         console.log(process.env)
         //console.log(process.env.VUE_APP_KAKAO_KEY)
@@ -343,9 +348,8 @@ button {
 }
 
 button:active {
-    //transform: scale(0.95);
-    position: relative;
-    top : 2px;
+//transform: scale(0.95); position: relative;
+    top: 2px;
 }
 
 button:focus {
@@ -368,11 +372,25 @@ form {
     text-align: center;
 }
 
+.result {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.result > *:first-child {
+    justify-self: flex-start;
+}
+
+.result > *:last-child {
+    justify-self: flex-end;
+}
+
 input {
     background-color: #eee;
     border: none;
     padding: 12px 15px;
-    margin: 8px 0;
+    margin: 4px 0;
     width: 100%;
 }
 
@@ -515,4 +533,43 @@ input {
 .blue-text {
     color: #7D9600;
 }
+
+
+.img-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+#fileInput{
+    width : 70%;
+}
+
+.img-container :nth-child(1) {
+    flex: 1;
+}
+
+.img-container :nth-child(3) {
+    flex: 2;
+}
+
+.img-container .img-profile {
+    width: 50px; /* 이미지 크기를 조정할 수 있습니다 */
+    height: 50px; /* 이미지 크기를 조정할 수 있습니다 */
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img-container .img-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
 </style>

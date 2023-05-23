@@ -32,7 +32,7 @@
       <router-link :to="{name : 'board'}"> 목록 |</router-link>
       <router-link :to="{name : 'boardWrite'}">글쓰기</router-link>
     </div>
-    <div>
+    <div v-if="board.userId !== null">
       <h3>댓글</h3>
       <board-comment></board-comment>
     </div>
@@ -82,7 +82,7 @@ export default {
         this.likeCnt -= 1;
       }
       axios.put(`board/like`, {
-        userId: 'ssafy',
+        userId: this.checkUserInfo.id,
         boardNo: this.board.no,
         likeSelect: this.likeSelect,
         typeNo: this.board.typeNo

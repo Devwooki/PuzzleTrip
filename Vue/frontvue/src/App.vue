@@ -25,6 +25,10 @@ export default {
     components: {
         AppHeader, AppFooter, AppChat
     },
+    created(){
+        this.$store.commit('boardStore/RESET_BOARD_STORE')
+        this.$store.commit('userStore/RESET_USER_STORE')
+    }
 };
 </script>
 

@@ -9,6 +9,7 @@
                 </ul>
                 <input type="text" id="message-input" v-model="message" placeholder="내용" @keyup="sendMessage">
                 <button type="button" @click="sendMessage">전송</button>
+                <button type="button" @click="connect">재연결</button>
             </div>
         </div>
     </div>
@@ -68,9 +69,10 @@ export default {
             }
         },
         connect() {
-            let socket = new SockJS(process.env.VUE_APP_API_BASE_URL);
+            const serverURL = process.env.VUE_APP_API_BASE_URL + "/chat"
+            let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
-            console.log(`소켓 연결을 시도합니다. 서버 주소: ${process.env.VUE_APP_API_BASE_URL}/chat`)
+            console.log(`소켓 연결을 시도합니다. 서버 주소: {}`, serverURL)
             this.stompClient.connect(
                 {},
                 frame => {

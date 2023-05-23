@@ -10,15 +10,15 @@ import org.springframework.messaging.handler.annotation.SendTo;
 
 //
 @Controller
-//@RequestMapping("/chat")
+@RequestMapping("/chat")
 public class WSChatController {
     private Logger logger = LoggerFactory.getLogger(WSChatController.class);
     @MessageMapping("/receive") //receive메세지를 받을 endpoint로 지정
     @SendTo("/send") //send로 메세지를 반환한다.
+
     public WSChat wsChatHandler(WSChat chat){
         logger.debug("받은 메세지 {} :",chat );
         //걀론 receive에서 받아서 send로 전송한다.
-
         return chat;
     }
 

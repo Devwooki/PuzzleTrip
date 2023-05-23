@@ -67,8 +67,9 @@ export default {
     /*left: -32px;*/
     /*transition: .2s;*/
     /*background-color: black;*/
-    background: #E4DBD6;
-    border-radius: 2px;
+    background-color : #7D9600;
+    color:#fff !important;
+    border-radius: 6px;
 }
 
 .pagination a:active {

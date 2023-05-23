@@ -3,11 +3,9 @@
             <div class="img-align">
                 <div class="img-container">
                     <div class="img-profile">
-                        <!--                <img src="https://raw.githubusercontent.com/sefyudem/Responsive-Login-Form/master/img/bg.svg">-->
-                        <img :src="imgSrc" alt="프로필">
+                        <img :src="imgSrc" alt="프로필 변경" @click="profileClick">
                     </div>
-                    <label for="profile"/> 프로필 이미지 선택
-                    <input name="profile" type="file" accept="image/jpeg, image/png, image/gif, .jpg"
+                    <input name="profile" type="file" id="fileInput" accept="image/jpeg, image/png, image/gif, .jpg"
                            @change="onFileChange"/>
                 </div>
             </div>
@@ -18,12 +16,12 @@
                     <div class="input-div one">
                         <div>ID :</div>
                         <div class="div">
-                            <span id="id" name="id">{{ checkUserInfo.id }}</span>
+                            <div id="id" name="id">{{ checkUserInfo.id }}</div>
                         </div>
                     </div>
 
                     <div class="input-div one">
-                        <div>Email :</div>
+                        <div>name :</div>
                         <div class="div">
                             <input class="div" id="email" name="email" type="text" v-model="name"/>
                         </div>
@@ -34,9 +32,10 @@
                         <div class="div">
                             <input class="div" id="email" name="email" type="text" v-model="email"/>
                         </div>
+                        <button type="button" @click="isChangePw">비밀번호 변경</button>
                     </div>
 
-                    <button type="button" @click="isChangePw">비밀번호 변경</button>
+
                     <div v-show="changePw">
                         <div class="input-div pass">
                             <div>Now PW :</div>
@@ -84,12 +83,10 @@ export default {
             changePw: false, //비밀번호 변경창 띄우는지 체크
             checkNowPw: false, //현재 비밀번호를 알아야 회원 변경 가능
             checkNewPwRes : false,
-
+            imgSrc: '',
 
             name: '',
             email: '',
-
-            imgSrc: '',
 
             nowPw: '',
             newPw: '',
@@ -109,6 +106,10 @@ export default {
     },
     methods: {
         ...mapActions('userStore', ['userLogout']),
+        profileClick(){
+            let fileInput = document.querySelector("#fileInput");
+            fileInput.click();
+        },
         onFileChange(event) {
             this.profileImg = event.target.files
             this.imgSrc = URL.createObjectURL(event.target.files[0]);
@@ -175,7 +176,12 @@ export default {
     created() {
         this.name = this.userInfo.name
         this.email = this.userInfo.email
-        this.imgSrc = `http://localhost:8989/profilePath/${this.userInfo.id}/${this.userInfo.profile.saveFile}`
+
+        if(this.userInfo.profile.saveFolder === null){
+            this.imgSrc = `http://localhost:8989/profilePath/${this.userInfo.profile.saveFile}`
+        }else{
+            this.imgSrc = `http://localhost:8989/profilePath/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
+        }
     }
 }
 </script>
@@ -282,14 +288,18 @@ form {
     height: 45px;
 }
 
-.input-div > div > h5 {
+.input-div > div > input{
     position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    background: none;
+    padding: 0.5rem 0.7rem;
     font-size: 18px;
-    transition: .3s;
+    color: #555;
 }
 
 .input-div:before, .input-div:after {
@@ -321,21 +331,6 @@ form {
 
 .input-div.focus > .i > i {
     color: #38d39f;
-}
-
-.input-div > div > input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    outline: none;
-    background: none;
-    padding: 0.5rem 0.7rem;
-    font-size: 1.2rem;
-    color: #555;
-    font-family: 'poppins', sans-serif;
 }
 
 .input-div.pass {
@@ -418,4 +413,11 @@ span {
     color: #7D9600;
 }
 
+#fileInput{
+    visibility: hidden;
+}
+
+img:hover{
+    cursor : pointer;
+}
 </style>

@@ -12,11 +12,19 @@
                 <form>
                     <h2 class="title">{{checkUserInfo.name}}님의 정보</h2>
                     <div class="input-div one">
+                        <div>ID :</div>
                         <div class="div">
                             <h5>{{ checkUserInfo.id }}</h5>
                         </div>
                     </div>
+                    <div class="input-div one">
+                        <div>name :</div>
+                        <div class="div">
+                            <h5>{{ checkUserInfo.name }}</h5>
+                        </div>
+                    </div>
                     <div class="input-div pass">
+                        <div>Email :</div>
                         <div class="div">
                             <h5>{{ checkUserInfo.email }}</h5>
                         </div>
@@ -59,7 +67,6 @@ export default {
         }else{
              this.imgSrc = `http://localhost:8989/profilePath/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
         }
-        console.log(this.imgSrc)
     }
 }
 </script>
@@ -143,19 +150,24 @@ form{
     font-size: 2.9rem;
 }
 
-.login-content .input-div{
+.login-content .input-div {
     position: relative;
     display: grid;
+    grid-template-columns: 15% 70% 15%;
     margin: 25px 0;
     padding: 5px 0;
     border-bottom: 2px solid #d9d9d9;
 }
 
 .login-content .input-div.one{
-    margin-top: 0;
+    margin: 0 auto;
+
 }
 
 .input-div > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     height: 45px;
 }
@@ -165,7 +177,7 @@ form{
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: #999;
+    color: #555555;
     font-size: 18px;
     transition: .3s;
 }
@@ -201,23 +213,8 @@ form{
     color: #38d39f;
 }
 
-.input-div > div > input{
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    outline: none;
-    background: none;
-    padding: 0.5rem 0.7rem;
-    font-size: 1.2rem;
-    color: #555;
-    font-family: 'poppins', sans-serif;
-}
-
 .input-div.pass{
-    margin-bottom: 4px;
+    margin :0 auto;
 }
 
 a{

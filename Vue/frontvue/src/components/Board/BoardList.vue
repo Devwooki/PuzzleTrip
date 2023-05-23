@@ -1,13 +1,15 @@
 <template>
     <div>
+
         <div>
-            <ul class="board-type">
-                <li :class="{ boardactive: selected === 2 }" value="2" @click="initBoard">자유게시판 : 2</li>
-                <li :class="{ boardactive: selected === 1 }" value="1" @click="initBoard">공지사항 : 1</li>
-            </ul>
-        </div>
-        <div>
-            <p>총 게시글 수 : {{ pageResult.totalBoard }}개</p>
+            <div class="boardInfo-container">
+                <ul class="board-type">
+                    <li :class="{ boardactive: selected === 2 }" value="2" @click="initBoard">자유게시판 : 2</li>
+                    <li :class="{ boardactive: selected === 1 }" value="1" @click="initBoard">공지사항 : 1</li>
+                </ul>
+                <span>총 게시글 수 : {{ pageResult.totalBoard }}개</span>
+            </div>
+
             <div id="board-list">
                 <div class="container">
                     <table class="board-table">
@@ -103,33 +105,6 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-
-.board-type {
-    display: flex;
-    justify-content: center;
-}
-
-.board-type li {
-    margin: 0px 5px 0;
-    padding: 5px 100px 5px;
-    font-size: 27px;
-}
-
-.board-type li:hover {
-    background-color: #7D9600;
-    color: #FFF;
-}
-.board-type li:active {
-    position: relative;
-    top: 2px;
-}
-
-.boardactive {
-    border-bottom: 4px solid #7D9600;
-    font-weight: bold;
-}
-
-
 .board-table {
     font-size: 13px;
     width: 100%;
@@ -242,4 +217,54 @@ a {
     padding: 0
 }
 
+.boardInfo-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+}
+
+.board-type {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.boardInfo-container span {
+    margin-left: auto;
+}
+
+
+.board-type {
+    display: flex;
+    justify-content: center;
+    padding: 0 auto;
+    max-width: 900px;
+}
+
+.board-type li {
+    margin: 10px 0px;
+    padding: 5px 15px 5px;
+    font-size: 12px;
+}
+
+.board-type li:hover {
+    background-color: #7D9600;
+    color: #FFF;
+    border-radius: 5px;
+}
+.board-type li:active {
+    position: relative;
+    top: 2px;
+}
+
+.boardactive {
+    border-bottom: 4px solid #7D9600;
+    font-weight: bold;
+    border-radius: 5px;
+}
 </style>

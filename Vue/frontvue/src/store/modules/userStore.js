@@ -14,6 +14,7 @@ const userStore = {
         isLoginError: false,
         userInfo: null,
         isValidToken: false,
+        userBoardLike: null,
     },
     getters: { //state의 값을 vueComponent에 전달해주는 역할
         checkToken(state) {
@@ -28,9 +29,15 @@ const userStore = {
         getIsLoginError(state) {
             return state.isLoginError
         },
-
     },
     mutations: {//state 값을 변경하기 위해 사용하는것 -> 직접호출은 불가하고 commit('정의된 이름')으로 호출
+        //서버 재 실행 마다 state 초기화
+        RESET_USER_STORE(state) {
+            state.sLogin = false;
+            state.isLoginError = false;
+            state.userInfo = null;
+            state.isValidToken = false;
+        },
         SET_IS_LOGIN(state, isLogin) {
             state.isLogin = isLogin;
         },
@@ -47,7 +54,7 @@ const userStore = {
             //axios header에 토큰을 default값으로 추가해준다.
             // axios.defaults.headers.common['authToken'] = `Bearer ${data.userInfo.accesssToken}`
         },
-        CHANGE_USER_INFO(state, userInfo){
+        CHANGE_USER_INFO(state, userInfo) {
             state.userInfo = userInfo;
         }
     },
@@ -111,23 +118,23 @@ const userStore = {
             console.log("getUserInfo 종료")
         },
 
-        async tokenRegeneration({commit, state}){
+        async tokenRegeneration({commit, state}) {
             console.log(" {}", sessionStorage.getItem("accessToken"))
             console.log("기존토큰 만료로 새로운 access토큰을 발급합니다...")
 
             //access토큰 재발급 위해 refresh토큰을 전송한다.
             axios.defaults.headers["refreshToken"] = sessionStorage.getItem("refreshToken")
-            await axios.post('user/refresh',JSON.stringify(state.userInfo))
+            await axios.post('user/refresh', JSON.stringify(state.userInfo))
                 .then(({data}) => {
-                    if(data.message === "success"){
+                    if (data.message === "success") {
                         console.log("accessToken 재발급 완료")
                         sessionStorage.setItem("accessToken", data.accessToken);
                         commit('SET_IS_VALID_TOKEN', true)
                     }
                 })
-                .catch(async(error) =>{
+                .catch(async (error) => {
                     //실패했거나, status가 401일 떄 : 토큰 발급 실패한 것
-                    if(error.message === "fail" || error.response.status === 401){
+                    if (error.message === "fail" || error.response.status === 401) {
                         console.log("토큰 갱신 실패")
 
                         //refreshToken으로 갱신이 실패하면 2가지 경우가 존재
@@ -135,9 +142,9 @@ const userStore = {
                         // 2. 토큰의 유효성이 증명되지 않았으므로 로그아웃을 수행해야한다.
                         await axios.get(`user/logout/${state.userInfo.id}`)
                             .then(({data}) => {
-                                if(data.message === "success"){
+                                if (data.message === "success") {
                                     console.log("리프레시 토큰 제거")
-                                }else{
+                                } else {
                                     console.log("리프레시 토큰 제거 실패ㅠ")
                                 }
                                 alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.")
@@ -148,7 +155,7 @@ const userStore = {
                                 //this.$router.push({name : 'login'})
                                 //store에서도 사용 가능하지만
                                 // Vuex에서는 router객체 참조하지 않고 직접이동하는걸 권장
-                                router.push({name : 'login'})
+                                router.push({name: 'login'})
                             })
                             .catch((error) => {
                                 console.log(error);
@@ -159,14 +166,14 @@ const userStore = {
                 })
         },
 
-        async userLogout({commit}, userId){
+        async userLogout({commit}, userId) {
             await axios.get(`user/logout/${userId}`)
                 .then(({data}) => {
-                    if(data.message === "success"){
+                    if (data.message === "success") {
                         commit('SET_IS_LOGIN', false);
                         commit('SET_IS_VALID_TOKEN', false)
                         commit('SET_USER_INFO', null)
-                    }else{
+                    } else {
                         console.log("유저 정보가 없습니다.")
                     }
                 })
