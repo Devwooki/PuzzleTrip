@@ -97,16 +97,8 @@
       </div>
     </div>
     <div class="mainContent">
-      <!--            <app-left-bar-->
-      <!--                    class="leftContent"-->
-      <!--                    :selectedSido="selectedSido"-->
-      <!--                    :selectedGugun="selectedGugun"-->
-      <!--                    :startPoint="startPoint"-->
-      <!--                    :endPoint="endPoint"-->
-      <!--            ></app-left-bar>-->
       <app-left-bar class="leftContent"></app-left-bar>
       <div id="map"></div>
-      <!--            <app-right-bar class="rightContent" :map="map" :markers="positions"></app-right-bar>-->
       <app-right-bar class="rightContent"></app-right-bar>
     </div>
   </v-app>
@@ -230,7 +222,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('attractionStore', ['SET_LEFT_START_POINT', 'SET_LEFT_END_POINT', 'SET_LEFT_WAY_POINT', 'SET_LEFT_DURATION', 'SET_LEFT_DISTANCE']),
+    ...mapMutations('attractionStore', ['SET_LEFT_START_POINT', 'SET_LEFT_END_POINT', 'SET_LEFT_WAY_POINT', 'SET_LEFT_DURATION', 'SET_LEFT_DISTANCE', 'DELETE_ALL_ATTRACTION', 'SET_START_END_RESET','SET_DIS_DUR_RESET']),
     initMap() {
       this.startLoc = new kakao.maps.LatLng(36.355297, 127.298126);
       this.mapTypeControl = new kakao.maps.MapTypeControl();
@@ -392,8 +384,8 @@ export default {
     },
 
     findWayGo(requestData) {
-      console.dir(requestData.origin)
-      console.dir(requestData.destination)
+      // console.dir(requestData.origin)
+      // console.dir(requestData.destination)
       const apiUrl = 'https://apis-navi.kakaomobility.com/v1/waypoints/directions';
       // 요청 헤더 설정
       const headers = {
@@ -404,17 +396,17 @@ export default {
       axios.post(apiUrl, requestData, {headers})
         .then(response => {
           let data = response.data.routes[0];
-          let result_code = data.result_code;
-          let summary = data.summary;
+          // let result_code = data.result_code;
+          // let summary = data.summary;
           let sections = data.sections;
-          //젠체 코드
-          console.log("전체 : ", data);
-          //경로 탐색 결과 코드
-          console.log("결과코드 : ", result_code);
-          //summary
-          console.log("요약 : ", summary);
-          //구간별 경로 정보
-          console.log("구간별 정보 : ", sections);
+          // //젠체 코드
+          // console.log("전체 : ", data);
+          // //경로 탐색 결과 코드
+          // console.log("결과코드 : ", result_code);
+          // //summary
+          // console.log("요약 : ", summary);
+          // //구간별 경로 정보
+          // console.log("구간별 정보 : ", sections);
           if (sections.length >= 1) {
             for (const [idx, section] of sections.entries()) {
               let {distance, duration, guides: arrays, roads} = section;  //distance : 미터단위, duration : 초 단위
@@ -494,11 +486,11 @@ export default {
               var moveLatLon = new kakao.maps.LatLng(sections[0].bound.min_y, sections[0].bound.min_x);
               this.map.panTo(moveLatLon);
 
-              this.findDistance =  parseFloat(distance / 1000);
-              this.findDuration =  parseFloat(duration / 60);
+              this.findDistance = parseFloat(distance / 1000);
+              this.findDuration = parseFloat(duration / 60);
               this.findDistance = parseInt(this.findDistance, 10);
               this.findDuration = parseInt(this.findDuration, 10);
-              console.log(this.findDistance)
+              // console.log(this.findDistance)
               this.SET_LEFT_DURATION(this.findDuration)
               this.SET_LEFT_DISTANCE(this.findDistance)
 
@@ -554,7 +546,7 @@ export default {
       });
       kakao.maps.event.addListener(marker, 'click', () => {
         this.findDirections(marker, "findWayBtnStart");
-        console.log(marker.getPosition());
+        // console.log(marker.getPosition());
       });
 
       // kakao.maps.event.addListener(this.map, 'dblclick', (mouseEvent) => {
@@ -563,7 +555,7 @@ export default {
       // });
       kakao.maps.event.addListener(marker, 'rightclick', () => {
         this.findDirections(marker, "findWayBtnEnd");
-        console.log(marker.getPosition());
+        // console.log(marker.getPosition());
       });
     },
     deletFindWay() {
@@ -593,6 +585,7 @@ export default {
       this.requestData.destination.y = 0;
       this.startPoint = "출발지를 선택해주세요"
       this.endPoint = "도착지를 선택해주세요"
+
       //선 삭제
       this.polylineArray.forEach(function (polyline) {
         polyline.setMap(null);
@@ -613,6 +606,9 @@ export default {
       if (this.MarkerTmp) {
         this.DestroyedMarker()
       }
+      this.DELETE_ALL_ATTRACTION()
+      this.SET_DIS_DUR_RESET()
+      this.SET_START_END_RESET()
     },
 
   }
@@ -627,14 +623,14 @@ export default {
 
 .leftContent {
     background-color: #FFFFFF;
-    width: 20%;
-    height: 1200px;
+    width: 18%;
+    height: 1090px;
     margin-top: -180px;
 }
 
 .rightContent {
     width: 17%;
-    height: 1140px;
+    height: 1090px;
     margin-top: -180px;
 }
 

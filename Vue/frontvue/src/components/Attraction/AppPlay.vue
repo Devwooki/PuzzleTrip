@@ -1,9 +1,6 @@
 <template>
   <div class="rightBar box1">
-    <router-link :to="{name: 'hohelComp'}">호텔</router-link>
-    <router-link :to="{name: 'palyComp'}">놀거리</router-link>
-    <router-view></router-view>
-    <div class="recommend">추천 장소</div>
+    <div class="recommend">어트랙션 리스트</div>
     <div v-for="marker in getRightMarkers" :key="marker.contentId" class="markerItem"
          @mouseover="moveMapToMarker(marker)" @mouseleave="closeInfowindow">
       <img :src="marker.image" alt="Marker Image" class="markerImage"/>
@@ -25,7 +22,8 @@
 import {mapGetters, mapMutations} from "vuex";
 
 export default {
-  name: 'AppRightBar',
+  name: 'AppPlay',
+  components: {},
   data() {
     return {
       // infowindow: null,
@@ -55,9 +53,9 @@ export default {
   },
   methods: {
     ...mapMutations('attractionStore', [
-        'SET_RIGHT_MAP',
-        'SET_RIGHT_MARKERS',
-        'UPDATE_ATTRACTION_LIST'
+      'SET_RIGHT_MAP',
+      'SET_RIGHT_MARKERS',
+      'UPDATE_ATTRACTION_LIST'
     ]),
     moveMapToMarker(marker) {
       /*console.log(marker.latlng.La);

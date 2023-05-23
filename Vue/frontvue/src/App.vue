@@ -18,7 +18,6 @@
 
 import AppHeader from "@/views/layout/AppHeader.vue";
 import AppFooter from "@/views/layout/AppFooter.vue";
-// import AppChat from "@/views/main/AppChat.vue";
 
 export default {
     name: "App",
@@ -36,6 +35,18 @@ export default {
     font-weight: normal;
     font-style: normal;
 }
+/* 스크롤바 설정*/
+*::-webkit-scrollbar{
+    width: 20px;
+}
+/* 스크롤바 막대 설정*/
+*::-webkit-scrollbar-thumb{
+    background-color: #8bb9eb;
+    /* 스크롤바 둥글게 설정    */
+    border-radius: 10px;
+    border: 7px solid #FFFFFF;
+}
+
 html {
     font-family: 'SEBANG_Gothic_Bold';
     margin: 0;

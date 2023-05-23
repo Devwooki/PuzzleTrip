@@ -16,6 +16,8 @@ import UserFindPw from "@/components/User/UserFindPw.vue";
 import UserViewMyPage from "@/components/User/UserViewMyPage.vue";
 import UserModifyMyPage from "@/components/User/UserModifyMyPage.vue";
 import store from "@/store";
+import AppPlay from "@/components/Attraction/AppPlay.vue";
+import AppHotel from "@/components/Attraction/AppHotel.vue";
 
 
 Vue.use(VueRouter);
@@ -85,7 +87,19 @@ const routes = [
   {
     path: "/attraction",
     name: "attraction",
-    component: AppAttraction
+    component: AppAttraction,
+    children: [
+      {
+        path: "hotel",
+        name: "hohelComp",
+        component: AppHotel
+      },
+      {
+        path: "play",
+        name: "palyComp",
+        component: AppPlay
+      }
+    ]
   },
   {
     path: "/myPlace",

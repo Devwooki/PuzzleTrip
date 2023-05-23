@@ -52,8 +52,6 @@ const attractionStore = {
             return state.Duration
         },
 
-
-
         getAttractionList(state){
             return state.attractionList
         }
@@ -61,13 +59,13 @@ const attractionStore = {
     mutations: {
         //right bar요소 셋팅하기
         SET_RIGHT_MAP(state, rightMap) {
-            console.log("@@@@@@rightmap 변경 불러오가@@@@@")
-            console.log(rightMap)
+            // console.log("@@@@@@rightmap 변경 불러오가@@@@@")
+            // console.log(rightMap)
             state.rightMap = rightMap
         },
         SET_RIGHT_MARKERS(state, rightMarkers) {
-            console.log("@@@@@@rightMarkers 변경 불러오가@@@@@")
-            console.log(rightMarkers)
+            // console.log("@@@@@@rightMarkers 변경 불러오가@@@@@")
+            // console.log(rightMarkers)
             state.rightMarkers = rightMarkers
         },
 
@@ -93,12 +91,27 @@ const attractionStore = {
         SET_LEFT_DISTANCE(state,Distance ){
             state.Distance = Distance
         },
-
+        SET_START_END_RESET(state) {
+            state.StartPoint = ''
+            state.EndPoint = ''
+        },
+        SET_DIS_DUR_RESET(state) {
+            state.Distance = 0
+            state.Duration = 0
+        },
         //여행지 추기
         UPDATE_ATTRACTION_LIST(state, marker){
-            console.log("업데이트 목록을 볼가?")
-            console.log(marker)
+            console.log("스토어에서 추가 받음",marker)
             state.attractionList.push(marker)
+        },
+        //여행지 빼기
+        UPDATE_ATTRACTION_LIST_MINUS(state, index){
+            console.log("스토어에서 삭제 받음",index)
+            state.attractionList.splice(index, 1)
+        },
+        //선택 리스트 초기화
+        DELETE_ALL_ATTRACTION(state) {
+            state.attractionList.splice(0)
         }
     },
     actions: {
