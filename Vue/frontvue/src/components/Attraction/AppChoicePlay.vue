@@ -1,14 +1,14 @@
 <template>
-  <div class="rightBar box1">
-    <div class="recommend">추천 호텔</div>
-    <div v-for="marker in getRightMarkers.filter(marker => marker.contentType === 32)" :key="marker.contentId" class="markerItem"
-         @mouseover="moveMapToMarker(marker)" @mouseleave="closeInfowindow">
-      <img :src="marker.image" alt="Marker Image" class="markerImage"/>
+  <div class="choicePlay">
+    <div class="choice">선택 장소</div>
+    <div v-for="(attraction, index) in getAttractionList.filter(attraction => attraction.contentType !== 32)" :key="attraction.contentId" class="attractionItem"
+         @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow">
+      <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
       <div class="infoDiv">
-        <span class="markerTitleTool">{{ marker.title }}</span>
-        <div class="markerAddr">{{ marker.address }}</div>
+        <span class="attractionTitleTool">{{ attraction.title }}</span>
+        <div class="attractionAddr">{{ attraction.address }}</div>
         <div class="infoFav">
-          <font-awesome-icon :icon="['fas', 'plus']" class="plusBtn" @click="addAttractionList(marker)"
+          <font-awesome-icon :icon="['fas', 'minus-circle']" class="plusBtn" @click="minusList(index)"
                              :style="{ color: 'skyblue' }"/>
           <font-awesome-icon :icon="['fas', 'heart']" class="heartBtn" :style="{ color: '#f95880' }"/>
         </div>
@@ -18,45 +18,91 @@
 </template>
 
 <script>
-
 import {mapGetters, mapMutations} from "vuex";
 
 export default {
-  name: 'AppHotel',
+  name: 'AppChoiveHotel',
   components: {},
   data() {
     return {
-      // infowindow: null,
-      // rightmap: null,
-      selectedMarkerTitle: ''
+      dates: ['2023-05-10', '2023-05-20'],
+      panel: [0, 1],
+      disabled: false,
+      readonly: false,
+      EndPoint: "",
+      attractionList: [],
     };
   },
-  computed: {//해당 컴포넌트에 계산된(computed) state를 가져온다 - getter
-    ...mapGetters('attractionStore', ['getRightMap', 'getRightMarkers','getAttractionList']),
-  },
+  //     selectedSido: {
   // props: {
-  //     markers: {
-  //         type: Array,
+  //         type: String,
+  //         default: '',
   //     },
-  //     map: {
-  //         type: Object,
-  //         required: true
+  //     selectedGugun: {
+  //         type: String,
+  //         default: '',
+  //     },
+  //     startPoint: {
+  //         type: String,
+  //         default: '',
+  //     },
+  //     endPoint: {
+  //         type: String,
+  //         default: '',
   //     },
   // },
-  mounted() {
-    //디버깅용
-    // console.log("#####두드등장")
-    // console.log(this.rightmap)
+  computed: {
+    ...mapGetters(
+      'attractionStore',
+      [
+        'getLeftStartPoint',
+        'getLeftEndPoint',
+        'getLeftWayPoint',
+        'getAttractionList',
+        'getRightMarkers',
+        "getRightMap",
+        "getLeftDistance",
+        "getLeftDuration"
+      ]
+    ),
+    //날자 사이에 ~추가
+    dateRangeText() {
+      return this.dates.join(' ~ ')
+    },
+    truncatedEndPoint() {
+      const maxLength = 15;
+      if (this.getLeftEndPoint.length > maxLength) {
+        return this.getLeftEndPoint.slice(0, maxLength) + "...";
+      } else {
+        return this.getLeftEndPoint;
+      }
+    },
+    truncatedStartPoint() {
+      const maxLength = 15;
+      if (this.getLeftStartPoint.length > maxLength) {
+        return this.getLeftStartPoint.slice(0, maxLength) + "...";
+      } else {
+        return this.getLeftStartPoint;
+      }
+    },
 
-    //this.rightmap = this.map; 대신에 this.getRightMap 쓰면 됩니당
-
+  },
+  watch: {
+    //리스트 변화하면 감지해서 받아옴
+    getAttractionList(newList) {
+      console.log("갱신리스트", newList)
+      this.attractionList = newList
+      // this.$store.commit("attractionStore/UPDATE_ATTRACTION_LIST", newList)
+    },
   },
   methods: {
     ...mapMutations('attractionStore', [
       'SET_RIGHT_MAP',
       'SET_RIGHT_MARKERS',
-      'UPDATE_ATTRACTION_LIST'
+      'UPDATE_ATTRACTION_LIST',
+      'UPDATE_ATTRACTION_LIST_MINUS'
     ]),
+    //리스트에 호버 하면 지도 위치이동
     moveMapToMarker(marker) {
       /*console.log(marker.latlng.La);
       console.log(marker.latlng.Ma);*/
@@ -102,44 +148,27 @@ export default {
         this.infowindow.close();
       }
     },
-    addAttractionList(marker) {
-      console.log("right에서 전송보냄",marker)
-      this.UPDATE_ATTRACTION_LIST(marker);
-      //console.log(this.getAttractionList)
+    minusList(index) {
+      console.log(index)
+      this.UPDATE_ATTRACTION_LIST_MINUS(index)
     }
-  }
-};
+  },
 
+};
 </script>
 
 <style scoped>
-/* 스크롤바 설정*/
-.box1::-webkit-scrollbar{
-    width: 20px;
-}
-/* 스크롤바 막대 설정*/
-.box1::-webkit-scrollbar-thumb{
-    background-color: #8bb9eb;
-    /* 스크롤바 둥글게 설정    */
-    border-radius: 10px;
-    border: 7px solid #FFFFFF;
-}
-.rightBar {
-    display: inline-block;
-    overflow-y: scroll;
-    box-sizing: border-box;
-    background-color: snow;
-}
 
-.recommend {
-    margin-top: 10px;
+/* 선택 목록 추가 */
+.choice {
+    margin-top: -10px;
     font-size: 20px;
     text-align: center;
 }
 
-.markerItem {
+.attractionItem {
     margin-top: 20px;
-    margin-left: 5px;
+    margin-left: 25px;
     margin-bottom: 20px;
     border: 2px solid wheat;
     width: 295px;
@@ -150,18 +179,18 @@ export default {
     background-color: papayawhip;
 }
 
-.markerImage {
+.attractionImage {
     width: 30%;
     border-radius: 4px 0 0 7px;
     margin-right: 4px;
 }
 
-.markerTitleTool {
+.attractionTitleTool {
     font-size: 13px !important;
 
 }
 
-.markerAddr {
+.attractionAddr {
     margin-top: auto;
     font-size: 10px !important;
     color: #919696;
@@ -184,4 +213,5 @@ export default {
 .heartBtn {
     margin-right: 10px;
 }
+
 </style>

@@ -4,15 +4,6 @@
       <button class="StartPoint">출 발:</button>
       <div class="Text">{{ truncatedStartPoint }}</div>
 
-      <!--      <button class="WayPoint">추가 1:</button>-->
-      <!--      <div class="Text">{{ getLeftWayPoint }}</div>-->
-
-      <!--      <button class="WayPoint">추가 2:</button>-->
-      <!--      <div class="Text">{{ getLeftWayPoint }}</div>-->
-
-      <!--      <button class="WayPoint">추가 3:</button>-->
-      <!--      <div class="Text">{{ getLeftWayPoint }}</div>-->
-
       <button class="EndPoint">도 착:</button>
       <div class="Text">{{ truncatedEndPoint }}</div>
 
@@ -44,19 +35,15 @@
           readonly>
       </v-text-field>
     </v-col>
-    <div class="choice">선택 장소</div>
-    <div v-for="(attraction, index) in getAttractionList" :key="attraction.contentId" class="attractionItem"
-         @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow">
-      <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
-      <div class="infoDiv">
-        <span class="attractionTitleTool">{{ attraction.title }}</span>
-        <div class="attractionAddr">{{ attraction.address }}</div>
-        <div class="infoFav">
-          <font-awesome-icon :icon="['fas', 'minus-circle']" class="plusBtn" @click="minusList(index)"
-                             :style="{ color: 'skyblue' }"/>
-          <font-awesome-icon :icon="['fas', 'heart']" class="heartBtn" :style="{ color: '#f95880' }"/>
-        </div>
+    <div class="themeChoice">
+      <div class="menu">
+        <router-link :to="{name: 'choiceHotel'}" class="hotelChoice">호텔</router-link>
+        <router-link :to="{name: 'choicePlay'}" class="playChoice">장소</router-link>
       </div>
+      <router-view class="themeRes"></router-view>
+<!--      <router-view에 이름을 부여해서 해결할 수 있다
+        <router-view :name=
+-->
     </div>
   </div>
 </template>
@@ -242,58 +229,31 @@ export default {
     width: 350px !important;
 }
 
-/* 선택 목록 추가 */
-.choice {
-    margin-top: -10px;
-    font-size: 20px;
+.menu {
+    width: 300px;
+    font-size: 40px;
+    height: 50px;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0 5px;
+}
+.hotelChoice {
+    line-height: 50px;
+    border: 1px solid #fff;
+    width: 150px;
     text-align: center;
+    color: #fff;
+    background-color: #7fccde;
 }
-
-.attractionItem {
-    margin-top: 20px;
-    margin-left: 25px;
-    margin-bottom: 20px;
-    border: 2px solid wheat;
-    width: 295px;
-    height: 80px;
-    display: flex;
-    flex-direction: row;
-    border-radius: 4px;
-    background-color: papayawhip;
+.playChoice {
+    line-height: 50px;
+    border: 1px solid #fff;
+    width: 150px;
+    text-align: center;
+    color: #fff;
+    background-color: #7fccde;
 }
-
-.attractionImage {
-    width: 30%;
-    border-radius: 4px 0 0 7px;
-    margin-right: 4px;
-}
-
-.attractionTitleTool {
-    font-size: 13px !important;
-
-}
-
-.attractionAddr {
-    margin-top: auto;
-    font-size: 10px !important;
-    color: #919696;
-}
-
-.infoDiv {
-    width: 200px;
-}
-
-.infoFav {
-    display: flex;
-    justify-content: end;
-}
-
-.heartBtn, .plusBtn {
-    margin-right: 8px;
-    cursor: pointer;
-}
-
-.heartBtn {
-    margin-right: 10px;
+.themeRes {
+    height: 1090px;
 }
 </style>

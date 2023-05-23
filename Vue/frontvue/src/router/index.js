@@ -18,6 +18,8 @@ import UserModifyMyPage from "@/components/User/UserModifyMyPage.vue";
 import store from "@/store";
 import AppPlay from "@/components/Attraction/AppPlay.vue";
 import AppHotel from "@/components/Attraction/AppHotel.vue";
+import AppChoicePlay from "@/components/Attraction/AppChoicePlay.vue";
+import AppChoiceHotel from "@/components/Attraction/AppChoiceHotel.vue";
 
 
 Vue.use(VueRouter);
@@ -85,19 +87,37 @@ const routes = [
     ]
   },
   {
+
+    /*
+    * component : [
+    *   leftbar : choid~~~,
+    *   rightbar : ~~~~
+    *  => router-view name="left || rightbar"
+    * ]
+    * */
     path: "/attraction",
     name: "attraction",
     component: AppAttraction,
     children: [
       {
         path: "hotel",
-        name: "hohelComp",
+        name: "hotelComp",
         component: AppHotel
       },
       {
         path: "play",
-        name: "palyComp",
+        name: "playComp",
         component: AppPlay
+      },
+      {
+        path: "choicePlay",
+        name: "choicePlay",
+        component: AppChoicePlay
+      },
+      {
+        path: "choiceHotel",
+        name: "choiceHotel",
+        component: AppChoiceHotel
       }
     ]
   },

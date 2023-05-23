@@ -1,7 +1,7 @@
 <template>
   <div class="rightBar box1">
-    <div class="recommend">어트랙션 리스트</div>
-    <div v-for="marker in getRightMarkers" :key="marker.contentId" class="markerItem"
+    <div class="recommend">추천 장소</div>
+    <div v-for="marker in getRightMarkers.filter(marker => marker.contentType !== 32)" :key="marker.contentId" class="markerItem"
          @mouseover="moveMapToMarker(marker)" @mouseleave="closeInfowindow">
       <img :src="marker.image" alt="Marker Image" class="markerImage"/>
       <div class="infoDiv">
