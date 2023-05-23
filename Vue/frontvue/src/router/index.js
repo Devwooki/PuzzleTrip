@@ -21,7 +21,6 @@ import AppHotel from "@/components/Attraction/AppHotel.vue";
 import AppChoicePlay from "@/components/Attraction/AppChoicePlay.vue";
 import AppChoiceHotel from "@/components/Attraction/AppChoiceHotel.vue";
 
-
 Vue.use(VueRouter);
 //페이지 네비게이션 가드
 //특정 페이지로 이동하기전에 제어하는 함수이다

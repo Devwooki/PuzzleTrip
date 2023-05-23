@@ -38,14 +38,14 @@ export default {
 <style scoped>
 .menu {
     width: 300px;
-    font-size: 40px;
-    height: 50px;
+    font-size: 15px;
+    height: 30px;
     display: flex;
     justify-content: space-evenly;
     margin: 0 5px;
 }
 .hotelChoice {
-    line-height: 50px;
+    line-height: 30px;
     border: 1px solid #fff;
     width: 150px;
     text-align: center;
@@ -53,7 +53,7 @@ export default {
     background-color: #7fccde;
 }
 .playChoice {
-    line-height: 50px;
+    line-height: 30px;
     border: 1px solid #fff;
     width: 150px;
     text-align: center;

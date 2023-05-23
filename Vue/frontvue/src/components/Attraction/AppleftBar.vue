@@ -27,6 +27,7 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+      <button class="saveTrip" @click="saveTip">일정 저장하기</button>
     <v-col>
       <v-text-field
           v-model="dateRangeText"
@@ -182,6 +183,9 @@ export default {
     minusList(index) {
       console.log(index)
       this.UPDATE_ATTRACTION_LIST_MINUS(index)
+    },
+    saveTip() {
+      alert('저장')
     }
   },
 
@@ -231,14 +235,14 @@ export default {
 
 .menu {
     width: 300px;
-    font-size: 40px;
-    height: 50px;
+    font-size: 15px;
+    height: 30px;
     display: flex;
     justify-content: space-evenly;
     margin: 0 5px;
 }
 .hotelChoice {
-    line-height: 50px;
+    line-height: 30px;
     border: 1px solid #fff;
     width: 150px;
     text-align: center;
@@ -246,7 +250,7 @@ export default {
     background-color: #7fccde;
 }
 .playChoice {
-    line-height: 50px;
+    line-height: 30px;
     border: 1px solid #fff;
     width: 150px;
     text-align: center;
@@ -255,5 +259,15 @@ export default {
 }
 .themeRes {
     height: 1090px;
+}
+.saveTrip{
+    margin-left: 90px;
+    margin-top: 15px;
+    line-height: 30px;
+    border: 1px solid #fff;
+    width: 150px;
+    text-align: center;
+    color: #fff;
+    background-color: #7fccde;
 }
 </style>
