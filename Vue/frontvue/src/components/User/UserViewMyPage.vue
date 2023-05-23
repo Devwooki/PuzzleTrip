@@ -108,6 +108,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    border : 2px solid black;
 }
 
 .img-container .img-profile img {
@@ -144,10 +145,11 @@ form{
 }
 
 .login-content h2{
-    margin: 15px 0;
+    margin: 15px auto;
     color: #333;
     text-transform: uppercase;
     font-size: 2.9rem;
+
 }
 
 .login-content .input-div {

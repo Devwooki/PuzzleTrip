@@ -1,12 +1,13 @@
 <template>
+    <div class="myPageModify">
         <div class="container">
             <div class="img-align">
                 <div class="img-container">
                     <div class="img-profile">
                         <img :src="imgSrc" alt="프로필 변경" @click="profileClick">
                     </div>
-                    <input name="profile" type="file" id="fileInput" accept="image/jpeg, image/png, image/gif, .jpg"
-                           @change="onFileChange"/>
+                    <input  name="profile" type="file" id="fileInput" accept="image/jpeg, image/png, image/gif, .jpg"
+                           @change="onFileChange" style="display: none;"/>
                 </div>
             </div>
 
@@ -16,31 +17,29 @@
                     <div class="input-div one">
                         <div>ID :</div>
                         <div class="div">
-                            <div id="id" name="id">{{ checkUserInfo.id }}</div>
+                            <input class="div" id="id" name="id" type="text" v-model="id" readonly/>
                         </div>
                     </div>
 
                     <div class="input-div one">
                         <div>name :</div>
                         <div class="div">
-                            <input class="div" id="email" name="email" type="text" v-model="name"/>
+                            <input ref="inputName"  class="div" id="email" name="email" type="text" v-model="name"/>
                         </div>
                     </div>
 
                     <div class="input-div one">
                         <div>Email :</div>
                         <div class="div">
-                            <input class="div" id="email" name="email" type="text" v-model="email"/>
+                            <input ref="inputEmail" class="div" id="email" name="email" type="text" v-model="email"/>
                         </div>
-                        <button type="button" @click="isChangePw">비밀번호 변경</button>
                     </div>
 
 
-                    <div v-show="changePw">
                         <div class="input-div pass">
                             <div>Now PW :</div>
                             <div class="div">
-                                <input :type="pwType" id="nowPw" name="nowPw" v-model="nowPw" @keyup="checkValidPw"/>
+                                <input ref="nowPw" :type="pwType" id="nowPw" name="nowPw" v-model="nowPw" @keyup="checkValidPw"/>
                             </div>
                             <span :class="checkNowPw ? 'blue-text' : 'red-text'">{{ message1 }}</span>
                         </div>
@@ -55,7 +54,7 @@
                             <div class="input-div pass">
                                 <div>check PW :</div>
                                 <div class="div">
-                                    <input :type="pwType" id="checkNewPw" name="checkNewPw" v-model="checkNewPw"
+                                    <input ref="checkNewPw" :type="pwType" id="checkNewPw" name="checkNewPw" v-model="checkNewPw"
                                            @keyup="checkValidNewPw"/>
                                 </div>
                                 <span :class="checkNewPwRes ? 'blue-text' : 'red-text'">{{ message2 }}</span>
@@ -63,13 +62,15 @@
                         </div>
                         <button type="button" @click="changePwType">비밀번호 표시</button>
 
-                    </div>
+
 
                     <button class="btn"  type="button" @click="updateUserInfo">업데이트</button>
                     <router-link class="btn-delete" :to="{name : 'userMyPage'}">취소</router-link>
                 </form>
             </div>
         </div>
+    </div>
+
 </template>
 
 <script>
@@ -80,14 +81,12 @@ export default {
     name: "UserModifyMyPage",
     data() {
         return {
-            changePw: false, //비밀번호 변경창 띄우는지 체크
             checkNowPw: false, //현재 비밀번호를 알아야 회원 변경 가능
             checkNewPwRes : false,
             imgSrc: '',
-
+            id : '',
             name: '',
             email: '',
-
             nowPw: '',
             newPw: '',
             checkNewPw: '',
@@ -114,43 +113,63 @@ export default {
             this.profileImg = event.target.files
             this.imgSrc = URL.createObjectURL(event.target.files[0]);
         },
-        isChangePw() {
-            this.changePw = !this.changePw;
-        },
         changePwType() {
             this.showPw = !this.showPw;
             this.pwType = this.showPw ? 'text' : 'password';
         },
         async updateUserInfo() {
-            this.userInfo.name = this.name
-            this.userInfo.email = this.email
-
             if (this.checkNowPw) {
-                this.userInfo.pw = this.newPw
-            }
 
-            const formData = new FormData();
-            formData.append('id', this.userInfo.id);
-            formData.append('pw', this.userInfo.pw);
-            formData.append('name', this.userInfo.name);
-            formData.append('email', this.userInfo.email);
-            formData.append('files', this.profileImg[0])
+                const emailRegex = /^([a-zA-Z0-9_-]+)@([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/;
+                const emailValid = emailRegex.test(this.email);
 
+                if (this.name.trim() === '') {
+                    alert('이름을 입력해주세요.');
+                    this.$refs.inputName.focus();
+                    return;
+                } else if (this.email.trim() === '') {
+                    alert('이메일을 입력해주세요.');
+                    this.$refs.inputEmail.focus();
+                    return;
+                } else if (!emailValid) {
+                    alert('이메일 형식이 올바르지 않습니다.');
+                    this.$refs.inputEmail.focus();
+                    return;
+                }else{
+                    const formData = new FormData();
+                    formData.append('id', this.id);
 
-            const response = await axios.put('user/modify', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+                    if(this.checkNewPwRes){
+                        formData.append('pw', this.newPw);
+                    }else{
+                        formData.append('pw', this.userInfo.pw);
+                    }
+                    formData.append('name', this.name);
+                    formData.append('email', this.email);
+                    formData.append('files', this.profileImg[0])
+
+                    const response = await axios.put('user/modify', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    console.log("@@@유저 정보 업데이트")
+                    console.log(response.data)
+                    this.$store.commit('userStore/CHANGE_USER_INFO', response.data.userInfo)
+                    console.log(this.checkUserInfo)
+                    await this.$router.push({name: 'userMyPage'})
                 }
-            })
-            console.log("@@@유저 정보 업데이트")
-            console.log(response.data)
-            this.$store.commit('userStore/CHANGE_USER_INFO', response.data.userInfo)
-            console.log(this.checkUserInfo)
-            await this.$router.push({name: 'userMyPage'})
+
+
+            }else{
+                alert("비밀번호가 확인되어야 유저 정보 수정이 가능합니다.")
+                this.$refs.nowPw.focus();
+                return;
+            }
         },
         checkValidPw(event) {
             if (this.nowPw === this.userInfo.pw) {
-                this.message1 = 'O';
+                this.message1 = 'V';
                 this.checkNowPw = true;
                 event.target.setAttribute("readonly", true)
                 this.$nextTick(() => {
@@ -164,7 +183,7 @@ export default {
         checkValidNewPw() {
             if (this.newPw === this.checkNewPw) {
                 this.checkNewPwRes = true;
-                this.message2 = 'O';
+                this.message2 = 'V';
 
             } else {
                 this.checkNewPwRes = false;
@@ -174,6 +193,7 @@ export default {
         }
     },
     created() {
+        this.id = this.userInfo.id
         this.name = this.userInfo.name
         this.email = this.userInfo.email
 
@@ -232,6 +252,7 @@ input, button {
     display: flex;
     justify-content: center;
     align-items: center;
+    border : 2px solid black;
 }
 
 .img-container .img-profile img {
@@ -242,6 +263,7 @@ input, button {
 
 .title {
     width: max-content;
+
 }
 
 .login-content {
@@ -260,10 +282,11 @@ form {
 }
 
 .login-content h2 {
-    margin: 15px 0;
+    margin: 15px auto;
     color: #333;
     text-transform: uppercase;
     font-size: 2.9rem;
+
 }
 
 .login-content .input-div {
@@ -404,9 +427,12 @@ a:hover {
 span {
     display : flex;
     align-items: center;
+    font-size: 25px;
+    font-weight: bold;
 }
 .red-text {
     color: #d96161;
+    boarder : 1.5px solid #d96161;
 }
 
 .blue-text {
@@ -419,5 +445,10 @@ span {
 
 img:hover{
     cursor : pointer;
+}
+
+#modifyImg{
+    bottom: 0;
+    right: 0;
 }
 </style>
