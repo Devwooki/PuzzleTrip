@@ -45,7 +45,7 @@
       <div class="choicePlay">
         <!-- eslint-disable-next-line -->
         <div v-for="(attraction, index) in filteredChoice" :key="attraction.contentId" class="attractionItem"
-             @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow">
+             @mouseover="moveMapToMarker(attraction)">
           <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
           <div class="infoDiv">
             <span class="attractionTitleTool">{{ attraction.title }}</span>
@@ -343,7 +343,7 @@ export default {
 
 .infoFav {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .heartBtn, .plusBtn {

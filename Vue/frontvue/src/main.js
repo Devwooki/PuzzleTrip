@@ -11,6 +11,7 @@ import axios from "axios";
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
+
 /* import specific icons */
 import {
         faHeart as fasHeart,
@@ -33,7 +34,7 @@ library.add(
   faTemperatureHigh,
   faTint,
   faMinusCircle,
-faQuoteLeft
+  faQuoteLeft
 )
 
 
@@ -54,7 +55,6 @@ Vue.$cookies.config("3d");
 new Vue({
   router,
   store,
-
   vuetify: new Vuetify({
     theme: {
       themes: {
