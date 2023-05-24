@@ -15,8 +15,8 @@ const attractionStore = {
         Duration: 0,
         Distance: 0,
         //right bar에서 + 버튼 누르면 추가될 리스트
-        attractionList: []
-
+        attractionList: [],
+        day: 0,
 
     },
     getters: {
@@ -54,6 +54,9 @@ const attractionStore = {
 
         getAttractionList(state){
             return state.attractionList
+        },
+        getDay(state) {
+            return state.day
         }
     },
     mutations: {
@@ -98,6 +101,10 @@ const attractionStore = {
         SET_DIS_DUR_RESET(state) {
             state.Distance = 0
             state.Duration = 0
+        },
+        //여행 일자 계산 저장
+        SET_DAY(state, Day) {
+          state.day = Day
         },
         //여행지 추기
         UPDATE_ATTRACTION_LIST(state, marker){

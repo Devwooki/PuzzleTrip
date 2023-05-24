@@ -616,6 +616,7 @@ export default {
 </script>
 
 <style>
+
 .mainContent {
     display: flex;
     justify-content: space-between;
@@ -660,19 +661,6 @@ export default {
 .sidoSel, .gugunSel {
     width: 300px;
 }
-
-.findWayTextArea {
-    padding: 1rem 1rem 0 0.8rem;
-    justify-content: center;
-    align-content: center;
-    width: 780px;
-    margin-top: -40px;
-}
-
-.findWayTextArea .v-input__slot {
-    width: 300px !important;
-}
-
 .sidoCol {
     flex-basis: 0;
     flex-grow: unset !important;
@@ -682,11 +670,6 @@ export default {
 .sidoRow {
     line-height: 10px !important;
 }
-
-.findWaySol {
-    display: flex;
-}
-
 /*테마선택*/
 .search-checkbox {
     max-width: fit-content;
@@ -717,6 +700,7 @@ export default {
 
 /*날씨 정보*/
 #weather_wrap {
+    z-index: 4;
     background-color: #8bb9eb;
     color: white;
     flex: 0 0 13rem;
@@ -761,11 +745,6 @@ export default {
     margin-right: 20px;
     height: 30px;
     justify-content: center;
-}
-
-#weathertitle {
-    font-size: 15px;
-    line-height: 30px;
 }
 
 #temp {
@@ -825,10 +804,6 @@ export default {
     margin-left: 10px;
 }
 
-#closeBtn {
-    margin: 12px 0 0 120px;
-}
-
 .body {
     position: relative;
     overflow: hidden;
@@ -862,17 +837,6 @@ export default {
     overflow: hidden;
 }
 
-.desc .addinfo {
-    border: 1px solid black;
-    text-align: center;
-    color: #5085bb;
-}
-
-.link {
-    height: 20px;
-    line-height: 10px;
-}
-
 .link a {
     display: block;
     color: #5085bb;
@@ -881,28 +845,10 @@ export default {
     top: 5px;
     text-align: center;
 }
-
-#findWayBtn:hover {
-    color: #086ba8;
-}
-
-
 a,
 a:visited {
     text-decoration: none;
     color: #00AE68;
-}
-
-a.button {
-    width: 100px;
-    height: 55px;
-    padding: 0;
-    font-weight: 600;
-    text-align: center;
-    line-height: 55px;
-    color: #FFF !important;
-    border-radius: 5px;
-    transition: all 0.4s;
 }
 
 .btnOrange {
@@ -913,11 +859,5 @@ a.button {
     background: #FF8E01;
 }
 
-.mapAndCal {
-    display: flex;
-}
 
-.cal {
-    width: 50%;
-}
 </style>

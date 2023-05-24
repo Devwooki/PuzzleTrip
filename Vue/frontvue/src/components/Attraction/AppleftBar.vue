@@ -17,17 +17,17 @@
     </div>
     <v-expansion-panels v-model="panel" :disabled="disabled" multiple class="calBox">
       <v-expansion-panel>
-        <v-expansion-panel-header>여행 일정 정하기</v-expansion-panel-header>
+        <v-expansion-panel-header>여행 일정</v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-row>
             <v-col>
-              <v-date-picker v-model="dates" range></v-date-picker>
+              <v-date-picker v-model="dates" :allowed-dates="disabledDates" range></v-date-picker>
             </v-col>
           </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-      <button class="saveTrip" @click="saveTip">일정 저장하기</button>
+
     <v-col>
       <v-text-field
           v-model="dateRangeText"
@@ -38,15 +38,29 @@
     </v-col>
     <div class="themeChoice">
       <div class="menu">
-        <router-link :to="{name: 'choiceHotel'}" class="hotelChoice">호텔</router-link>
-        <router-link :to="{name: 'choicePlay'}" class="playChoice">장소</router-link>
+        <button class="hotelChoice" @click="showHotel">선택 호텔</button>
+        <button class="playChoice" @click="showPlace">선택 장소</button>
+        <router-link :to="{name: 'appPlan'}" class="saveTrip">일정 생성하기 </router-link>
       </div>
-      <router-view class="themeRes"></router-view>
-<!--      <router-view에 이름을 부여해서 해결할 수 있다
-        <router-view :name=
--->
+      <div class="choicePlay">
+        <!-- eslint-disable-next-line -->
+        <div v-for="(attraction, index) in filteredChoice" :key="attraction.contentId" class="attractionItem"
+             @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow">
+          <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
+          <div class="infoDiv">
+            <span class="attractionTitleTool">{{ attraction.title }}</span>
+            <div class="attractionAddr">{{ attraction.address }}</div>
+            <div class="infoFav">
+              <font-awesome-icon :icon="['fas', 'minus-circle']" class="plusBtn" @click="minusList(index)"
+                                 :style="{ color: 'skyblue' }"/>
+              <font-awesome-icon :icon="['fas', 'heart']" class="heartBtn" :style="{ color: '#f95880' }"/>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -57,32 +71,15 @@ export default {
   components: {},
   data() {
     return {
-      dates: ['2023-05-10', '2023-05-20'],
+      dates: ["2023-06-01"],
       panel: [0, 1],
       disabled: false,
       readonly: false,
       EndPoint: "",
       attractionList: [],
+      showHotelMarkers: false
     };
   },
-  // props: {
-  //     selectedSido: {
-  //         type: String,
-  //         default: '',
-  //     },
-  //     selectedGugun: {
-  //         type: String,
-  //         default: '',
-  //     },
-  //     startPoint: {
-  //         type: String,
-  //         default: '',
-  //     },
-  //     endPoint: {
-  //         type: String,
-  //         default: '',
-  //     },
-  // },
   computed: {
     ...mapGetters(
       'attractionStore',
@@ -90,11 +87,11 @@ export default {
         'getLeftStartPoint',
         'getLeftEndPoint',
         'getLeftWayPoint',
-        'getAttractionList',
         'getRightMarkers',
         "getRightMap",
+        'getAttractionList',
         "getLeftDistance",
-        "getLeftDuration"
+        "getLeftDuration",
       ]
     ),
     //날자 사이에 ~추가
@@ -117,7 +114,27 @@ export default {
         return this.getLeftStartPoint;
       }
     },
+    filteredChoice() {
+      if (!this.getAttractionList || Object.keys(this.getAttractionList).length === 0) {
+        return {};
+      }
 
+      if (this.showHotelMarkers) {
+        return Object.keys(this.getAttractionList).reduce((filtered, key) => {
+          if (this.getAttractionList[key].contentType === 32) {
+            filtered[key] = this.getAttractionList[key];
+          }
+          return filtered;
+        }, {});
+      } else {
+        return Object.keys(this.getAttractionList).reduce((filtered, key) => {
+          if (this.getAttractionList[key].contentType !== 32) {
+            filtered[key] = this.getAttractionList[key];
+          }
+          return filtered;
+        }, {});
+      }
+    },
   },
   watch: {
     //리스트 변화하면 감지해서 받아옴
@@ -126,14 +143,36 @@ export default {
       this.attractionList = newList
       // this.$store.commit("attractionStore/UPDATE_ATTRACTION_LIST", newList)
     },
+    dates(newValue){
+      console.log(newValue);
+      console.log(newValue[0]);
+      console.log(newValue[1]);
+
+     let day1 =  new Date(newValue[0]);
+      let day2 =  new Date(newValue[1])
+
+      let dif = day1.getTime() - day2.getTime();
+
+      let day = Math.abs(dif / (1000 * 60 * 60 * 24)) + 1;
+
+      console.log(day1);
+      console.log(day2);
+      console.log(day);
+      this.SET_DAY(day);
+    }
   },
   methods: {
     ...mapMutations('attractionStore', [
       'SET_RIGHT_MAP',
       'SET_RIGHT_MARKERS',
       'UPDATE_ATTRACTION_LIST',
-      'UPDATE_ATTRACTION_LIST_MINUS'
+      'UPDATE_ATTRACTION_LIST_MINUS',
+      'SET_DAY',
     ]),
+    //지난 날자 선택 금지
+    disabledDates(val) {
+      return val >= new Date().toISOString().substr(0,10)
+    },
     //리스트에 호버 하면 지도 위치이동
     moveMapToMarker(marker) {
       /*console.log(marker.latlng.La);
@@ -184,11 +223,13 @@ export default {
       console.log(index)
       this.UPDATE_ATTRACTION_LIST_MINUS(index)
     },
-    saveTip() {
-      alert('저장')
-    }
+    showHotel() {
+      this.showHotelMarkers = true;
+    },
+    showPlace() {
+      this.showHotelMarkers = false;
+    },
   },
-
 };
 </script>
 
@@ -206,7 +247,6 @@ export default {
 }
 
 .findWay {
-
     text-align: center;
     width: 300px;
     display: grid;
@@ -249,6 +289,7 @@ export default {
     color: #fff;
     background-color: #7fccde;
 }
+
 .playChoice {
     line-height: 30px;
     border: 1px solid #fff;
@@ -257,17 +298,60 @@ export default {
     color: #fff;
     background-color: #7fccde;
 }
-.themeRes {
-    height: 1090px;
-}
-.saveTrip{
-    margin-left: 90px;
-    margin-top: 15px;
+
+.saveTrip {
     line-height: 30px;
     border: 1px solid #fff;
     width: 150px;
     text-align: center;
     color: #fff;
-    background-color: #7fccde;
+    background-color: #e86666;
+}
+.attractionItem {
+    margin-top: 20px;
+    margin-left: 5px;
+    margin-bottom: 20px;
+    border: 2px solid wheat;
+    width: 295px;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 4px;
+    background-color: papayawhip;
+}
+
+.attractionImage {
+    width: 30%;
+    border-radius: 4px 0 0 7px;
+    margin-right: 4px;
+}
+
+.attractionTitleTool {
+    font-size: 13px !important;
+
+}
+
+.attractionAddr {
+    margin-top: auto;
+    font-size: 10px !important;
+    color: #919696;
+}
+
+.infoDiv {
+    width: 200px;
+}
+
+.infoFav {
+    display: flex;
+    justify-content: end;
+}
+
+.heartBtn, .plusBtn {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.heartBtn {
+    margin-right: 10px;
 }
 </style>

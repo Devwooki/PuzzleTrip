@@ -16,10 +16,7 @@ import UserFindPw from "@/components/User/UserFindPw.vue";
 import UserViewMyPage from "@/components/User/UserViewMyPage.vue";
 import UserModifyMyPage from "@/components/User/UserModifyMyPage.vue";
 import store from "@/store";
-import AppPlay from "@/components/Attraction/AppPlay.vue";
-import AppHotel from "@/components/Attraction/AppHotel.vue";
-import AppChoicePlay from "@/components/Attraction/AppChoicePlay.vue";
-import AppChoiceHotel from "@/components/Attraction/AppChoiceHotel.vue";
+import AppPlan from "@/components/Attraction/AppPlan.vue";
 
 Vue.use(VueRouter);
 //페이지 네비게이션 가드
@@ -86,39 +83,14 @@ const routes = [
     ]
   },
   {
-
-    /*
-    * component : [
-    *   leftbar : choid~~~,
-    *   rightbar : ~~~~
-    *  => router-view name="left || rightbar"
-    * ]
-    * */
     path: "/attraction",
     name: "attraction",
     component: AppAttraction,
-    children: [
-      {
-        path: "hotel",
-        name: "hotelComp",
-        component: AppHotel
-      },
-      {
-        path: "play",
-        name: "playComp",
-        component: AppPlay
-      },
-      {
-        path: "choicePlay",
-        name: "choicePlay",
-        component: AppChoicePlay
-      },
-      {
-        path: "choiceHotel",
-        name: "choiceHotel",
-        component: AppChoiceHotel
-      }
-    ]
+  },
+  {
+    path: "/appPlan",
+    name: "appPlan",
+    component: AppPlan
   },
   {
     path: "/myPlace",
