@@ -2,16 +2,16 @@
     <div>
 
         <div>
-            <div class="boardInfo-container">
+            <div class="container container1">
+                <span>총 게시글 수 : {{ pageResult.totalBoard }}개</span>
                 <ul class="board-type">
                     <li :class="{ boardactive: selected === 2 }" value="2" @click="initBoard">자유게시판 : 2</li>
                     <li :class="{ boardactive: selected === 1 }" value="1" @click="initBoard">공지사항 : 1</li>
                 </ul>
-                <span>총 게시글 수 : {{ pageResult.totalBoard }}개</span>
             </div>
 
             <div id="board-list">
-                <div class="container">
+                <div class="container container2">
                     <table class="board-table">
                         <thead>
                         <tr>
@@ -30,7 +30,10 @@
 
                     </table>
 
-                    <router-link class="custom-btn btn-15" :to="{name : 'boardWrite'}">글쓰기</router-link>
+                    <div class="btn-loc">
+                        <router-link class="write-btn btn-15" :to="{name : 'boardWrite'}">글쓰기</router-link>
+                    </div>
+
 
                 </div>
             </div>
@@ -163,22 +166,29 @@ p {
     margin: 1rem 0;
 }
 
+.btn-loc{
+    display: flex;
+    justify-content: right;
+}
+
 a {
-    margin: 20px;
+    margin: 10px;
     outline: none;
     text-align: center;
+    font-size : 12px;
 }
-.custom-btn {
-    width: 130px;
-    height: 40px;
-    padding: 10px 25px;
+.write-btn {
+    width: 70px;
+    height: 35px;
+    padding: 10px 15px;
     border: 2px solid #000;
-    font-weight: 500;
+    font-weight: 200;
     background: transparent;
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
     display: inline-block;
+    position: relative;
+    right: 0;
 }
 /* 15 */
 .btn-15 {
@@ -211,23 +221,32 @@ a {
 /* reset */
 
 
-.container {
+
+.container.container2 {
     width: 90%;
     margin: 0 auto;
     padding: 0
+}
+
+.container.container1  {
+    width: 90%;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .boardInfo-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 90%;
+    margin:0 auto;
     border-radius: 5px;
 }
 
-.board-type {
+/*.board-type {
     display: flex;
     list-style: none;
     padding: 0;
@@ -236,7 +255,7 @@ a {
 
 .boardInfo-container span {
     margin-left: auto;
-}
+}*/
 
 
 .board-type {

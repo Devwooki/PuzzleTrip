@@ -447,8 +447,4 @@ img:hover{
     cursor : pointer;
 }
 
-#modifyImg{
-    bottom: 0;
-    right: 0;
-}
 </style>

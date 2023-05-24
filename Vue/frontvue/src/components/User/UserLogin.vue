@@ -24,10 +24,10 @@
                     <div class="img-align">
                         <div class="img-container">
                             <div class="img-profile">
-                                <img :src="imgSrc">
+                                <img :src="imgSrc" alt="프로필 변경" @click="profileClick">
                             </div>
-                            <input name="profile" id="fileInput" type="file" accept="image/jpeg, image/png, image/gif, .jpg"
-                                   @change="onFileChange" placeholder=" "/>
+                            <input  name="profile" type="file" id="fileInput" accept="image/jpeg, image/png, image/gif, .jpg"
+                                    @change="onFileChange" style="display: none;"/>
                         </div>
                     </div>
                     <button type="button" id="signUpBtn" @click="signUp">Sign Up</button>
@@ -114,6 +114,10 @@ export default {
     },
     methods: {
         ...mapActions('userStore', ['confirm', 'getUserInfo']),
+        profileClick(){
+            let fileInput = document.querySelector("#fileInput");
+            fileInput.click();
+        },
         changePwType() {
             this.showPw = !this.showPw;
             this.pwType = this.showPw ? 'text' : 'password';
@@ -264,6 +268,7 @@ export default {
     },
     created() {
         console.log(process.env)
+        this.imgSrc = `http://localhost:8989/profilePath/noimage.png`
         //console.log(process.env.VUE_APP_KAKAO_KEY)
         //컴포넌트 생성시 쿠키 체크 해서 input창에 값을 지정한다
         //저장된 쿠키가 있으면 브라우저에 불러온다.
@@ -541,6 +546,7 @@ input {
     align-items: center;
     flex-direction: row;
     overflow: hidden;
+
 }
 
 #fileInput{
@@ -556,13 +562,15 @@ input {
 }
 
 .img-container .img-profile {
-    width: 50px; /* 이미지 크기를 조정할 수 있습니다 */
-    height: 50px; /* 이미지 크기를 조정할 수 있습니다 */
+    width: 60px; /* 이미지 크기를 조정할 수 있습니다 */
+    height: 60px; /* 이미지 크기를 조정할 수 있습니다 */
     border-radius: 50%;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    border : 2px solid black;
+    margin: 4px 0;
 }
 
 .img-container .img-profile img {
@@ -571,5 +579,11 @@ input {
     object-fit: cover;
 }
 
+#fileInput{
+    visibility: hidden;
+}
 
+img:hover{
+    cursor : pointer;
+}
 </style>
