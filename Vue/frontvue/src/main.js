@@ -47,6 +47,19 @@ Vue.prototype.$http = axios
 Vue.use(VueCookies);
 Vue.$cookies.config("3d");
 
+Vue.directive('autosize', {
+
+  inserted: function (el) {
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px';
+  },
+  update: function (el) {
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px';
+  }
+});
+
+
 new Vue({
   router,
   store,

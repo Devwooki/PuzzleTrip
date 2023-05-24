@@ -11,12 +11,17 @@
                 </div>
                 <blockquote>
                     <div class="main-content">
-                        <p>{{ board.content }}</p>
                         <cite>{{ board.userId }} 작성</cite>
+                        <p>{{ board.content }}</p>
+
+                        <div class="show-only-img" v-if="OnlyImage.length !== 0">
+                            <div class="img-container" v-for="(img, idx) in OnlyImage" :key="idx">
+                                <img :src="`http://localhost:8989/profilePath/${img.saveFolder}/${img.saveFile}`">
+                            </div>
+                        </div>
                     </div>
                     <div class="sub-content">
                         <div class="file-container">
-                            <h3>파일</h3>
                             <div class="file-list">
                                 <board-file-item :fileInfos="board.fileInfos"></board-file-item>
                             </div>
@@ -29,22 +34,16 @@
                 </blockquote>
             </div>
             <div class="btn-loc">
-                <router-link class="write-btn btn-15" v-if="checkUserInfo !==null && (board.userId === checkUserInfo.id || checkUserInfo.id === 'admin') " :to="{name : 'boardModify'}">수정</router-link>
-                <a class="write-btn btn-15" v-if="checkUserInfo !==null && (board.userId === checkUserInfo.id || checkUserInfo.id === 'admin')" @click="beforeRemove">삭제</a>
-                <router-link class="write-btn btn-15" :to="{name : 'board'}">목록</router-link>
+                <router-link class="write-btn btn-modi" v-if="checkUserInfo !==null && (board.userId === checkUserInfo.id || checkUserInfo.id === 'admin') " :to="{name : 'boardModify'}">수정</router-link>
+                <a class="write-btn btn-del" v-if="checkUserInfo !==null && (board.userId === checkUserInfo.id || checkUserInfo.id === 'admin')" @click="beforeRemove">삭제</a>
+                <router-link class="write-btn btn-list" :to="{name : 'board'}">목록</router-link>
                 <router-link class="write-btn btn-15" :to="{name : 'boardWrite'}">글쓰기</router-link>
             </div>
 
             <div v-if="checkUserInfo !== null || board.typeNo !== 1">
-                <h3>댓글</h3>
                 <board-comment></board-comment>
             </div>
         </div>
-
-
-
-
-
     </div>
 </template>
 
@@ -66,15 +65,26 @@ export default {
             board: {},
             likeSelect: false,
             likeCnt: 0,
+            OnlyImage : [],
         };
     },
     async created() {
         const response = await axios.get(`board/details/${this.getBoardType}/${this.getBoardNo}`)
         this.board = response.data
-        console.log(this.board)
         this.likeCnt = this.board.likeCnt
-        console.log("##########좀 떠라")
-        console.log(this.checkUserInfo)
+        console.log(this.board.fileInfos)
+
+        for(let fileInfo in this.board.fileInfos){
+            console.log(this.board.fileInfos[fileInfo])
+
+            const extension = this.board.fileInfos[fileInfo].saveFile.split('.').pop().toLowerCase();
+            if (extension === 'jpg' || extension === 'png' || extension === 'gif') {
+                this.OnlyImage.push(this.board.fileInfos[fileInfo]);
+            }
+        }
+
+
+        console.log(this.OnlyImage)
     },
     methods: {
         async beforeRemove() {
@@ -139,10 +149,28 @@ export default {
     padding: 10px 30px;
 }
 blockquote p {
-    height: 300px;
+    height: auto;
+    padding: 10px 0 30px;
     position: relative;
     top: 5px;
 }
+
+.show-only-img{
+    height: 300px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 30px;
+}
+
+.img-container img {
+    margin-right: 10px; /* 이미지 간격을 조정하고 싶은 경우 사용 */
+    height: 300px;
+    border-radius: 5px;
+    border : 1.5px solid black;
+}
+
 
 .detail-container blockquote:before {
     position: absolute;
@@ -174,7 +202,7 @@ blockquote p {
 
 .detail-container blockquote cite {
     display: block;
-    font-size: 0.8rem;
+    font-size: 1.2rem;
     text-align: right;
     padding: 15px 0;
     color: #808080;
@@ -205,6 +233,7 @@ blockquote p {
 .sub-content .board-recommand{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     flex : 1;
 }
@@ -266,6 +295,91 @@ a {
     width: 100%;
 }
 .btn-15:active {
+    top: 2px;
+}
+
+/*modi*/
+.btn-modi {
+    background: #7D9600;
+    color: #fff;
+    z-index: 1;
+    border-radius: 5px;
+}
+.btn-modi:after {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    background: #dce3bc;
+    transition: all 0.2s ease;
+}
+.btn-modi:hover {
+    color: #7D9600;
+}
+.btn-modi:hover:after {
+    left: 0;
+    width: 100%;
+}
+.btn-modi:active {
+    top: 2px;
+}
+
+.btn-del {
+    background: #d96161;
+    color: #fff;
+    z-index: 1;
+    border-radius: 5px;
+}
+.btn-del:after {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    background: #f3d3d3;
+    transition: all 0.2s ease;
+}
+.btn-del:hover {
+    color: #ce5252;
+}
+.btn-del:hover:after {
+    left: 0;
+    width: 100%;
+}
+.btn-del:active {
+    top: 2px;
+}
+
+.btn-list {
+    background: #2b90d9;
+    color: #fff;
+    z-index: 1;
+    border-radius: 5px;
+}
+.btn-list:after {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    background: #c1d8ef;
+    transition: all 0.2s ease;
+}
+.btn-list:hover {
+    color: #2186cc;
+}
+.btn-list:hover:after {
+    left: 0;
+    width: 100%;
+}
+.btn-list:active {
     top: 2px;
 }
 </style>

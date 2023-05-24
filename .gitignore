@@ -6,6 +6,10 @@ Servers
 env.properties
 /env.properties
 **/env.properties
+application.properties
+/application.properties
+**/application.properties
+
 
 # dotenv environment variable files
 .env*

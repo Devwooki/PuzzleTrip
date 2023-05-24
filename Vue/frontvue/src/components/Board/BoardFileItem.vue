@@ -4,7 +4,7 @@
             <a href="#" @click.prevent="downloadFile(fileInfo)">
                 <span data-attr="다운">다운</span><span data-attr="로드">로드</span>
             </a>
-            <label>{{ fileInfo.originalFile }}</label>
+            <label @click="downloadFile(fileInfo)">{{ fileInfo.originalFile }}</label>
         </li>
     </ul>
 </template>
@@ -156,5 +156,8 @@ a span:nth-child(2):after {
 
 a:hover span:nth-child(2):after {
     transform: rotateX(90deg) translateY(-50%);
+}
+label:hover{
+    cursor: pointer;
 }
 </style>

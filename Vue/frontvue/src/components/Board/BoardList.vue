@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div>
             <div class="container container1">
                 <span>총 게시글 수 : {{ pageResult.totalBoard }}개</span>
@@ -30,7 +29,7 @@
 
                     </table>
 
-                    <div class="btn-loc">
+                    <div class="btn-loc" v-if="checkUserInfo !== null">
                         <router-link class="write-btn btn-15" :to="{name : 'boardWrite'}">글쓰기</router-link>
                     </div>
 
@@ -59,6 +58,7 @@ export default {
             selected: 2,
             boards: {},
             pageResult: {},
+            isAdmin : false,
         };
     },
     methods: {
@@ -87,10 +87,12 @@ export default {
         console.log(this.getBoardType)
         console.log(this.getPageNo)
         this.getBoardData()
+
     },
     computed: {
         //vuex모듈 중 boardStore에서 'getBoardType', 'getPageNo'를 얻어온다.
-        ...mapGetters('boardStore', ['getBoardType', 'getPageNo'])
+        ...mapGetters('boardStore', ['getBoardType', 'getPageNo']),
+        ...mapGetters('userStore', ['checkUserInfo'])
     },
 };
 </script>
@@ -269,6 +271,7 @@ a {
     margin: 10px 0px;
     padding: 5px 15px 5px;
     font-size: 12px;
+    list-style-type: none;
 }
 
 .board-type li:hover {
