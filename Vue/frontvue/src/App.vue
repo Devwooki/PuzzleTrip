@@ -108,7 +108,12 @@ header {
     position: absolute;
     z-index: 1000;
     right : 10px;
-    bottom: 10px;
+    bottom: 0;
+    border : 5px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
 }
 
 </style>

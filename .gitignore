@@ -9,6 +9,11 @@ env.properties
 
 
 /*.properties
+application.properties
+/application.properties
+**/application.properties
+SpringBoot/src/main/resources/application.properties
+/SpringBoot/src/main/resources/application.properties
 
 
 

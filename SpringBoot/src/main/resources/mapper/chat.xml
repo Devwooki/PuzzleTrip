@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.model.WSChat.mapper.ChatMapper">
+
+<!-- void insertChat(WSChat wsChat) throws SQLException;
+    List<WSChat> selectLastChatLog() throws SQLException;-->
+
+    <insert id="insertChat" parameterType="WSChat">
+        insert into ws_chat (user_id, content)
+        values ( #{userId}, #{content})
+    </insert>
+
+    <select id="selectLastChatLog" resultType="WSChat">
+        select * from ws_chat
+        order by writed_at asc
+        limit 0, 200
+    </select>
+
+</mapper>

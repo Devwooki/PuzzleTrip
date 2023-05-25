@@ -40,17 +40,24 @@ export default {
     methods: {
         async writeComment() {
             if(this.content.trim() !== '') {
-                const sendData = {
-                    userId: this.userId,
-                    content: this.content,
-                    boardType: this.getBoardType,
-                    boardNo: this.getBoardNo,
-                }
+                if(this.content.length > 200){
+                    this.$refs.commentArea.focus()
+                    this.content = this.content.substring(0, 199)
+                    alert("댓글은 200자로 제한됩니다.")
+                    return;
+                }else{
+                    const sendData = {
+                        userId: this.userId,
+                        content: this.content,
+                        boardType: this.getBoardType,
+                        boardNo: this.getBoardNo,
+                    }
 
-                const response = await axios.post(`/comment/${this.getBoardType}/${this.getBoardNo}`, sendData)
-                this.$store.commit('boardStore/SET_COMMENTS', response.data)
-                this.content = ''
-                this.$refs.commentArea.focus()
+                    const response = await axios.post(`/comment/${this.getBoardType}/${this.getBoardNo}`, sendData)
+                    this.$store.commit('boardStore/SET_COMMENTS', response.data)
+                    this.content = ''
+                    this.$refs.commentArea.focus()
+                }
             }
         },
         removeContent() {
