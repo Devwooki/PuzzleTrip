@@ -99,6 +99,42 @@ export default {
 </script>
 
 <style scoped>
+.btn-gradient {
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+    position: relative;
+    border-radius: 4px;
+}
+
+.cyan {
+    background-color: #7fccde;
+    padding: 4px 12px;
+    font-size: 12px;
+}
+.red {
+    box-shadow:0px 4px 0px #E04342;
+    padding: 4px 12px;
+    font-size: 12px;
+    margin-left: -20px;
+}
+.btn-gradient.cyan {
+    background: rgba(27, 188, 194, 1);
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(27, 188, 194, 1)), to(rgba(24, 163, 168, 1)));
+    background: -webkit-linear-gradient(rgba(27, 188, 194, 1) 0%, rgba(24, 163, 168, 1) 100%);
+    background: -moz-linear-gradient(rgba(27, 188, 194, 1) 0%, rgba(24, 163, 168, 1) 100%);
+    background: -o-linear-gradient(rgba(27, 188, 194, 1) 0%, rgba(24, 163, 168, 1) 100%);
+    background: linear-gradient(rgba(27, 188, 194, 1) 0%, rgba(24, 163, 168, 1) 100%);
+}
+
+.btn-gradient.red{
+    background: rgba(250,90,90,1);
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(250,90,90,1)), to(rgba(232,81,81,1)));
+    background: -webkit-linear-gradient(rgba(250,90,90,1) 0%, rgba(232,81,81,1) 100%);
+    background: -moz-linear-gradient(rgba(250,90,90,1) 0%, rgba(232,81,81,1) 100%);
+    background: -o-linear-gradient(rgba(250,90,90,1) 0%, rgba(232,81,81,1) 100%);
+    background: linear-gradient(rgba(250,90,90,1) 0%, rgba(232,81,81,1) 100%);
+}
 #containerTop {
     display: flex;
     justify-content: center;
@@ -125,6 +161,7 @@ header {
 }
 
 /* 유져 메뉴 */
+
 #userManu {
     display: flex;
     justify-content: flex-end;
@@ -152,6 +189,7 @@ p {
 }
 
 /* 메인 메뉴 */
+
 #mainManu {
     display: flex;
     margin-left: 4rem;
@@ -159,6 +197,7 @@ p {
 }
 
 /* 링크 효과 */
+
 #userManu a:hover {
     color: #086ba8 !important;
 }
@@ -168,6 +207,7 @@ div li {
 }
 
 /*메뉴 버튼 효과*/
+
 .button {
     font-weight: 900;
     background: #F3EED9;
@@ -205,8 +245,6 @@ div li {
 .button:hover .btnTwo { /*When hovering over .button change .btnTwo*/
     left: 0;
 }
-
-/**/
 .button:active { /*Clicked and held*/
     box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.3);
 }

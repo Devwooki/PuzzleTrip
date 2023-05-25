@@ -11,27 +11,31 @@ import axios from "axios";
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
+
 /* import specific icons */
 import {
-  faHeart as fasHeart,
-  faPlus as fasPlus,
-  faTemperatureHigh,
-  faTint,
-  faMinusCircle,
-  faQuoteLeft
+
+        faHeart as fasHeart,
+        faPlus as fasPlus,
+        faTemperatureHigh,
+        faTint,
+        faMinusCircle,
+        faQuoteLeft
 } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as farHeart} from '@fortawesome/free-regular-svg-icons'
+
+
 
 'fas', 'temperature-high'
 /* add icons to the library */
 library.add(
-    fasHeart,
-    farHeart,
-    fasPlus,
-    faTemperatureHigh,
-    faTint,
-    faMinusCircle,
-    faQuoteLeft
+  fasHeart,
+  farHeart,
+  fasPlus,
+  faTemperatureHigh,
+  faTint,
+  faMinusCircle,
+  faQuoteLeft
 )
 
 /* add font awesome icon component */
@@ -63,7 +67,6 @@ Vue.directive('autosize', {
 new Vue({
   router,
   store,
-
   vuetify: new Vuetify({
     theme: {
       themes: {

@@ -7,6 +7,7 @@
             <div id="contentWrap">
                 <router-view id="main"></router-view>
                 <app-chat class="chat-comp"></app-chat>
+
             </div>
         </div>
         <app-footer id="footer"></app-footer>
@@ -18,12 +19,11 @@
 
 import AppHeader from "@/views/layout/AppHeader.vue";
 import AppFooter from "@/views/layout/AppFooter.vue";
-import AppChat from "@/views/main/AppChat.vue";
 
 export default {
     name: "App",
     components: {
-        AppHeader, AppFooter, AppChat
+        AppHeader, AppFooter,
     },
     created(){
         this.$store.commit('boardStore/RESET_BOARD_STORE')
@@ -40,6 +40,18 @@ export default {
     font-weight: normal;
     font-style: normal;
 }
+/* 스크롤바 설정*/
+*::-webkit-scrollbar{
+    width: 20px;
+}
+/* 스크롤바 막대 설정*/
+*::-webkit-scrollbar-thumb{
+    background-color: #8bb9eb;
+    /* 스크롤바 둥글게 설정    */
+    border-radius: 10px;
+    border: 7px solid #FFFFFF;
+}
+
 html {
     font-family: 'SEBANG_Gothic_Bold';
     margin: 0;
@@ -64,7 +76,7 @@ header {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 3;
 }
 
 #contentWrap {

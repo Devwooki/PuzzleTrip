@@ -1,5 +1,5 @@
 <template>
-    <div  @mousedown="startDrag">
+    <div>
         <button id="chat-button" @click="toggleChat">{{chatState}}</button>
         <div id="chat-container" v-if="showChat">
             <div id="chat-window">
@@ -101,31 +101,6 @@ export default {
         //     // });
         //     console.log(this.messages)
         // },
-
-
-        //채팅창 드래그를 위한 이벤트
-        startDrag(event) {
-            this.isDragging = true;
-            this.startPosition.x = event.clientX;
-            this.startPosition.y = event.clientY;
-            document.addEventListener('mousemove', this.handleDrag);
-            document.addEventListener('mouseup', this.stopDrag);
-        },
-        handleDrag(event) {
-            if (this.isDragging) {
-                const deltaX = event.clientX - this.startPosition.x;
-                const deltaY = event.clientY - this.startPosition.y;
-                this.position.x += deltaX;
-                this.position.y += deltaY;
-                this.startPosition.x = event.clientX;
-                this.startPosition.y = event.clientY;
-            }
-        },
-        stopDrag() {
-            this.isDragging = false;
-            document.removeEventListener('mousemove', this.handleDrag);
-            document.removeEventListener('mouseup', this.stopDrag);
-        },
     },
     mounted() {
         // this.$stomp.connect({}, this.getMessages);
