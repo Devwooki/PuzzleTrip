@@ -6,5 +6,5 @@ import lombok.Data;
 public class WSChat {
     private String userId;
     private String content;
-    private String Img;
+    private String writedAt;
 }

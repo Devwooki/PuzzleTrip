@@ -1,25 +1,26 @@
 <template>
     <div>
-        <button id="chat-button" @click="toggleChat">{{chatState}}</button>
+        <img :src="imgSrc" class="chat-btn" @click="toggleChat">
         <div class="show-chat-btn" v-if="showChat">
 
             <div class="chat-window">
                 <h3>유저들과 대화를 나눠보세요</h3>
-
-                <div class="chat-container"  v-scroll-bottom>
+                <div class="chat-container" v-scroll-bottom>
                     <ul id="messages" v-for="(item, idx) in recvList" :key="idx">
                         <li :class="{'chat-right': item.userId === checkUserInfo.id, 'chat-left': item.userId !== checkUserInfo.id}">
-                            {{item.userId}} : {{item.content}}
+                            <span class="write" v-if="item.userId !== checkUserInfo.id">{{ item.userId }}</span>
+                            <span class="content">{{ item.content }}</span>
                         </li>
                     </ul>
                 </div>
 
-                <div class="chat-input-container">
-                    <input class="send-input" type="text" id="message-input" v-model="message" placeholder="내용" @keyup="sendMessage">
-                    <button class="send-btn" type="button" @click="sendMessage">전송</button>
-                </div>
                 <div class="chat-option">
                     <button type="button" @click="connect">재연결</button>
+                </div>
+                <div class="chat-input-container">
+                    <input ref="sendInput" class="send-input" type="text" id="message-input" v-model="message"
+                           placeholder="내용" @keyup="sendMessage">
+                    <button class="send-btn" type="button" @click="sendMessage">전송</button>
                 </div>
             </div>
         </div>
@@ -33,10 +34,10 @@ import {mapGetters} from "vuex";
 export default {
     directives: {
         'scroll-bottom': {
-            inserted: function(el) {
+            inserted: function (el) {
                 el.scrollTop = el.scrollHeight;
             },
-            componentUpdated: function(el) {
+            componentUpdated: function (el) {
                 el.scrollTop = el.scrollHeight;
             }
         }
@@ -45,15 +46,15 @@ export default {
     components: {},
     data() {
         return {
-            showChat : false,
-            chatState : '채팅 열기',
-            tempId : '',
+            showChat: false,
+            imgSrc: require('@/assets/pzt-close.png'),
+            tempId: '',
             message: '',
             recvList: [],
 
             isDragging: false,
-            startPosition: { x: 0, y: 0 },
-            position: { x: 0, y: 0 },
+            startPosition: {x: 0, y: 0},
+            position: {x: 0, y: 0},
             isOutOfBound: false
 
         };
@@ -62,24 +63,34 @@ export default {
         //appChat이 실해오디면 소켓 연결을 시도한다.
         this.connect();
     },
-    computed :{
+    computed: {
         ...mapGetters('userStore', ['getIsLogin', 'checkUserInfo'])
     },
     methods: {
         toggleChat() {
-            this.showChat = !this.showChat; // showChat 값을 토글합니다.
-            this.chatState = this.showChat ? '채팅 닫기' : '채팅 열기'
-            // if (this.showChat) {
-            //     this.getMessages();
-            // }
-        },
-        sendMessage(event) {
-            if(event.keyCode === 13 && this.getIsLogin && this.message !== ''){
-                this.send()
-                this.message = ''
+            if (this.checkUserInfo !== null) {
+                this.showChat = !this.showChat; // showChat 값을 토글합니다.
+                this.chatState = this.showChat ? '채팅 닫기' : '채팅 열기'
+                this.imgSrc = this.showChat ? require('@/assets/pzt-close.png') : require('@/assets/pzt-write.png')
+            } else {
+                alert("로그인 하셔야 채팅방 참여가 가능하십니다.");
+                return;
             }
         },
-        send(){
+        sendMessage(event) {
+            if (event.keyCode === 13 && this.getIsLogin && this.message !== '')
+                if (this.message.length > 250) {
+                    this.message = this.message.substring(0, 250)
+                    this.$refs.sendInput.focus();
+                    alert("메세지 글자수는 250자로 제한됩니다.")
+                    return;
+                } else {
+                    this.send()
+                    this.message = ''
+                    this.$refs.sendInput.focus();
+                }
+        },
+        send() {
             console.log("Send message:" + this.message);
             if (this.stompClient && this.stompClient.connected) {
                 const msg = {
@@ -116,12 +127,6 @@ export default {
                 }
             );
         },
-        // getMessages() {
-        //     // this.$stomp.subscribe("/topic/chat", message => {
-        //     //     this.messages.push(message);
-        //     // });
-        //     console.log(this.messages)
-        // },
     },
     mounted() {
         // this.$stomp.connect({}, this.getMessages);
@@ -130,6 +135,11 @@ export default {
 </script>
 
 <style scoped>
+.chat-btn {
+    width: 70px;
+    height: 70px;
+}
+
 .chat-window {
     display: flex;
     flex-direction: column;
@@ -139,9 +149,9 @@ export default {
 
 .show-chat-btn {
     position: absolute;
-    bottom: 20px;
+    bottom: 40px;
     right: 10px;
-    width: 300px ;
+    width: 300px;
     height: 500px;
     border-radius: 5px;
     background-color: #fff;
@@ -149,60 +159,78 @@ export default {
     z-index: 1000;
 }
 
-.chat-container{
+.chat-container {
     border: 1px solid black;
     border-radius: 5px;
     width: 270px;
-    height: 370px;
-    height: 370px;
+    height: 380px;
     overflow-y: scroll;
 }
 
-.chat-input-container{
-    display : flex;
-    margin :5px 0 0 0;
+.chat-input-container {
+    display: flex;
+    margin: 5px 0 0 0;
 }
 
-.chat-input-container .send-input{
+.chat-input-container .send-input {
     padding: 10px;
     border-bottom: 1px solid #555555;
-    flex:4;
+    flex: 4;
 }
-.chat-input-container .send-btn{
+
+.chat-input-container .send-btn {
     padding: 10px;
     border-bottom: 1px solid #555555;
-    flex:1;
+    flex: 1;
 }
-.chat-input-container{
-    display : flex;
+
+.chat-input-container {
+    display: flex;
 }
 
 
-.chat-option{
-    margin :5px 0 0 auto;
+.chat-option {
+    margin: 5px 0 0 auto;
 }
 
 #messages {
     list-style-type: none;
 }
+
 #send-message {
     margin-top: 10px;
 }
+
 #chat-button {
     position: relative;
     top: 10px;
     right: 10px;
-    color : black;
+    color: black;
     z-index: 1000;
 }
+
 .chat-right {
-    text-align: right;
-    /* 오른쪽에 메시지 스타일링을 위한 추가적인 스타일 지정 가능 */
+    display: flex;
+    align-items: end;
+    flex-direction: column;
+    margin: 3px;
 }
 
 .chat-left {
-    text-align: left;
-    /* 왼쪽에 메시지 스타일링을 위한 추가적인 스타일 지정 가능 */
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    margin: 6px 0 6px 6px;
 }
 
+.content{
+    padding: 3px;
+}
+
+.chat-left .content{
+    background-color: #c5c2ef;
+}
+.chat-right .content{
+    background-color: #efdcc2;
+}
 </style>
