@@ -98,6 +98,12 @@ export default {
             this.UPDATE_ATTRACTION_LIST(marker);
             //console.log(this.getAttractionList)
         },
+        closeInfowindow() {
+            // 마우스가 markerItem에서 벗어날 때 infowindow 닫기
+            if (this.infowindow) {
+                this.infowindow.close();
+            }
+        },
         showHotel() {
             this.showHotelMarkers = true;
         },

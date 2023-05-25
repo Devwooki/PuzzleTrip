@@ -45,7 +45,7 @@
             <div class="choicePlay">
                 <!-- eslint-disable-next-line -->
                 <div v-for="(attraction, index) in filteredChoice" :key="attraction.contentId" class="attractionItem"
-                     @mouseover="moveMapToMarker(attraction)">
+                     @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow(attraction)">
                     <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
                     <div class="infoDiv">
                         <span class="attractionTitleTool">{{ attraction.title }}</span>
