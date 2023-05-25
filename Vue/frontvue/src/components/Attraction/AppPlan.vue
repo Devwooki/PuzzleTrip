@@ -2,15 +2,15 @@
     <div class="planRoot">
         <div class="dayContent">
             <div class="choiceBox">
-                <span>
-                    <span style="color: #3f9ce4">{{ this.getLeftSelectedSido }}</span> : <span
-                        style="color: red">{{ this.getDay.day }}</span>
+                <span style=" font-size: 25px">
+                    <span style="color: #3f9ce4; font-size: 25px">{{ this.getLeftSelectedSido }} </span>
+                    <span style="color: red; font-size: 25px">{{ this.getDay.day }}</span>
                     일 여행 </span>
                 <draggable group="dayOnce" v-model="checklist">
                     <div v-for="(attraction, index) in checklist"
                          :key="index"
                          class="attractionItem"
-                         @click="moveMapToMarker(attraction)">
+                         @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow">
                         <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
                         <div class="infoDiv">
                             <span class="attractionTitleTool">{{ attraction.title }}</span>
@@ -24,7 +24,7 @@
                     <div class="dayDivDay">{{ check.day }}일차</div>
                     <v-divider></v-divider>
                     <draggable group="dayOnce" v-model="check.contentList">
-                        <div v-for="(attraction, attIdx) in check.contentList" :key="attIdx" @click="moveMapToMarker(attraction)">
+                        <div v-for="(attraction, attIdx) in check.contentList" :key="attIdx" @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow">
                             <div class="attractionItem">
                                 <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
                                 <div class="infoDiv">
@@ -265,9 +265,15 @@ export default {
             //마커 그리기
             this.customOverlay = new kakao.maps.CustomOverlay({
                 position: moveLatLon,
-                content: `<div class="popTitle" style="padding-left: 15px 15px; margin-bottom: 50px; border:1px solid black; background-color: #FFFFFF">${marker.title}</div>`
+                content: `<div class="popTitle" style="padding-left: 15px 15px; padding: 10px; border:1px solid black; background-color: #FFFFFF">${marker.title}</div>`
             });
             this.customOverlay.setMap(this.map)
+        },
+        closeInfowindow() {
+            // 마우스가 markerItem에서 벗어날 때 infowindow 닫기
+            if (this.customOverlay) {
+                this.customOverlay.setMap(null)
+            }
         },
     }
 }

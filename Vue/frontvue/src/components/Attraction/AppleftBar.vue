@@ -45,7 +45,7 @@
             <div class="choicePlay">
                 <!-- eslint-disable-next-line -->
                 <div v-for="(attraction, index) in filteredChoice" :key="attraction.contentId" class="attractionItem"
-                     @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow(attraction)">
+                     @mouseover="moveMapToMarker(attraction)" @mouseleave="closeInfowindow()">
                     <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
                     <div class="infoDiv">
                         <span class="attractionTitleTool">{{ attraction.title }}</span>
@@ -196,8 +196,8 @@ export default {
         },
         closeInfowindow() {
             // 마우스가 markerItem에서 벗어날 때 infowindow 닫기
-            if (this.infowindow) {
-                this.infowindow.close();
+            if (this.customOverlay) {
+                this.customOverlay.setMap(null)
             }
         },
         minusList(index) {
