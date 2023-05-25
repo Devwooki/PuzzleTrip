@@ -63,6 +63,15 @@ Vue.directive('autosize', {
   }
 });
 
+// Vue.directive('scroll-bottom',{
+//     inserted: function(el) {
+//         el.scrollTop = el.scrollHeight;
+//     },
+//     componentUpdated: function(el) {
+//         el.scrollTop = el.scrollHeight;
+//     }
+// })
+
 
 new Vue({
   router,

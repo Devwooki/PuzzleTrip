@@ -1,15 +1,26 @@
 <template>
     <div>
         <button id="chat-button" @click="toggleChat">{{chatState}}</button>
-        <div id="chat-container" v-if="showChat">
-            <div id="chat-window">
-                <h1>채팅</h1>
-                <ul id="messages" v-for="(item, idx) in recvList" :key="idx">
-                    <li>{{item.userId}} : {{item.content}}</li>
-                </ul>
-                <input type="text" id="message-input" v-model="message" placeholder="내용" @keyup="sendMessage">
-                <button type="button" @click="sendMessage">전송</button>
-                <button type="button" @click="connect">재연결</button>
+        <div class="show-chat-btn" v-if="showChat">
+
+            <div class="chat-window">
+                <h3>유저들과 대화를 나눠보세요</h3>
+
+                <div class="chat-container"  v-scroll-bottom>
+                    <ul id="messages" v-for="(item, idx) in recvList" :key="idx">
+                        <li :class="{'chat-right': item.userId === checkUserInfo.id, 'chat-left': item.userId !== checkUserInfo.id}">
+                            {{item.userId}} : {{item.content}}
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="chat-input-container">
+                    <input class="send-input" type="text" id="message-input" v-model="message" placeholder="내용" @keyup="sendMessage">
+                    <button class="send-btn" type="button" @click="sendMessage">전송</button>
+                </div>
+                <div class="chat-option">
+                    <button type="button" @click="connect">재연결</button>
+                </div>
             </div>
         </div>
     </div>
@@ -20,6 +31,16 @@ import SockJS from 'sockjs-client'
 import {mapGetters} from "vuex";
 
 export default {
+    directives: {
+        'scroll-bottom': {
+            inserted: function(el) {
+                el.scrollTop = el.scrollHeight;
+            },
+            componentUpdated: function(el) {
+                el.scrollTop = el.scrollHeight;
+            }
+        }
+    },
     name: 'AppChat',
     components: {},
     data() {
@@ -109,36 +130,61 @@ export default {
 </script>
 
 <style scoped>
-chat-comp{
-    position: absolute;
-    z-index: 1000;
-    bottom : 0px;
+.chat-window {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
 }
 
-#chat-container {
+.show-chat-btn {
     position: absolute;
     bottom: 20px;
     right: 10px;
     width: 300px ;
     height: 500px;
+    border-radius: 5px;
     background-color: #fff;
     border: 1px solid #ccc;
     z-index: 1000;
 }
 
+.chat-container{
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 270px;
+    height: 370px;
+    height: 370px;
+    overflow-y: scroll;
+}
 
-#chat-window {
+.chat-input-container{
+    display : flex;
+    margin :5px 0 0 0;
+}
+
+.chat-input-container .send-input{
     padding: 10px;
+    border-bottom: 1px solid #555555;
+    flex:4;
+}
+.chat-input-container .send-btn{
+    padding: 10px;
+    border-bottom: 1px solid #555555;
+    flex:1;
+}
+.chat-input-container{
+    display : flex;
+}
+
+
+.chat-option{
+    margin :5px 0 0 auto;
 }
 
 #messages {
     list-style-type: none;
 }
-
-#message-input {
-    width: 250px;
-}
-
 #send-message {
     margin-top: 10px;
 }
@@ -148,6 +194,15 @@ chat-comp{
     right: 10px;
     color : black;
     z-index: 1000;
+}
+.chat-right {
+    text-align: right;
+    /* 오른쪽에 메시지 스타일링을 위한 추가적인 스타일 지정 가능 */
+}
+
+.chat-left {
+    text-align: left;
+    /* 왼쪽에 메시지 스타일링을 위한 추가적인 스타일 지정 가능 */
 }
 
 </style>
