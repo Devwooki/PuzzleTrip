@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default axios.create({
-    baseURL : "http://localhost:8989"
+    baseURL : `${process.env.VUE_APP_API_BASE_URL}`
 })
 //추후 할 일
 //axios를 모듈화

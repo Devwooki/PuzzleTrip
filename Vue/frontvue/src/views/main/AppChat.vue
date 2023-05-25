@@ -15,12 +15,12 @@
                 </div>
 
                 <div class="chat-option">
-                    <button type="button" @click="connect">재연결</button>
+                    <button type="button" @click="reConnect">재연결</button>
                 </div>
                 <div class="chat-input-container">
                     <input ref="sendInput" class="send-input" type="text" id="message-input" v-model="message"
-                           placeholder="내용" @keyup="sendMessage">
-                    <button class="send-btn" type="button" @click="sendMessage">전송</button>
+                           placeholder="내용" @keyup="sendEnter">
+                    <button class="send-btn" type="button" @click="sendBtn">전송</button>
                 </div>
             </div>
         </div>
@@ -30,6 +30,7 @@
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
 import {mapGetters} from "vuex";
+import axios from "@/util/axios";
 
 export default {
     directives: {
@@ -62,6 +63,9 @@ export default {
     created() {
         //appChat이 실해오디면 소켓 연결을 시도한다.
         this.connect();
+        axios.get('chat/init').then(response => {
+            this.recvList = response.data
+        })
     },
     computed: {
         ...mapGetters('userStore', ['getIsLogin', 'checkUserInfo'])
@@ -77,8 +81,8 @@ export default {
                 return;
             }
         },
-        sendMessage(event) {
-            if (event.keyCode === 13 && this.getIsLogin && this.message !== '')
+        sendBtn(){
+            if (this.getIsLogin && this.message !== ''){
                 if (this.message.length > 250) {
                     this.message = this.message.substring(0, 250)
                     this.$refs.sendInput.focus();
@@ -89,6 +93,21 @@ export default {
                     this.message = ''
                     this.$refs.sendInput.focus();
                 }
+            }
+        },
+        sendEnter(event) {
+            if (event.keyCode === 13 && this.getIsLogin && this.message !== ''){
+                if (this.message.length > 250) {
+                    this.message = this.message.substring(0, 250)
+                    this.$refs.sendInput.focus();
+                    alert("메세지 글자수는 250자로 제한됩니다.")
+                    return;
+                } else {
+                    this.send()
+                    this.message = ''
+                    this.$refs.sendInput.focus();
+                }
+            }
         },
         send() {
             console.log("Send message:" + this.message);
@@ -116,20 +135,29 @@ export default {
                     this.stompClient.subscribe("/send", res => {
                         console.log('구독으로 받은 메시지 입니다.', res.body);
 
+
                         // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-                        this.recvList.push(JSON.parse(res.body))
+                        this.recvList = JSON.parse(res.body)
                     });
                 },
                 error => {
                     // 소켓 연결 실패
                     console.log('소켓 연결 실패', error);
                     this.connected = false;
+                    alert("다시 연결을 시도해 주세요")
+                    return;
                 }
             );
         },
+        reConnect(){
+            this.connect()
+            this.recvList = null
+            axios.get('chat/init').then(response => {
+                this.recvList = response.data
+            })
+        },
     },
     mounted() {
-        // this.$stomp.connect({}, this.getMessages);
     }
 };
 </script>
@@ -197,17 +225,6 @@ export default {
     list-style-type: none;
 }
 
-#send-message {
-    margin-top: 10px;
-}
-
-#chat-button {
-    position: relative;
-    top: 10px;
-    right: 10px;
-    color: black;
-    z-index: 1000;
-}
 
 .chat-right {
     display: flex;
@@ -228,7 +245,7 @@ export default {
 }
 
 .chat-left .content{
-    background-color: #c5c2ef;
+    background-color: #d1cfea;
 }
 .chat-right .content{
     background-color: #efdcc2;
