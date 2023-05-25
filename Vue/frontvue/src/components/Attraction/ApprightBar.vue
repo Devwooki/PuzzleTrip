@@ -7,7 +7,7 @@
         <div class="rightBar box1">
             <!-- eslint-disable-next-line -->
             <div v-for="(marker, key) in filteredMarkers" :key="key" class="markerItem"
-                 @mouseover="moveMapToMarker(marker)">
+                 @mouseover="moveMapToMarker(marker)" @mouseleave="closeInfowindow">
                 <img :src="marker.image" alt="Marker Image" class="markerImage"/>
                 <div class="infoDiv">
                     <span class="markerTitleTool">{{ marker.title }}</span>
@@ -100,8 +100,8 @@ export default {
         },
         closeInfowindow() {
             // 마우스가 markerItem에서 벗어날 때 infowindow 닫기
-            if (this.infowindow) {
-                this.infowindow.close();
+            if (this.customOverlay) {
+                this.customOverlay.setMap(null)
             }
         },
         showHotel() {
