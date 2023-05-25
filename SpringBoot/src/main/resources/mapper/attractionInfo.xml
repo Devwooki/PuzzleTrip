@@ -35,7 +35,7 @@
 
     <select id="selectByAreaCodeGugunCode" parameterType="map" resultMap="attractionInfo">
         select * from attraction_info
-        where sido_code = #{areaCode} and gugun_code = #{gugunCode} and readcount > 500
+        where sido_code = #{areaCode} and gugun_code = #{gugunCode} and readcount > 200
 
         <if test="contentTypes != null">
             and content_type_id in
