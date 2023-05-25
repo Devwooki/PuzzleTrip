@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.enjoytrip.attraction.model.mapper.AttractionInfoMapper">
+<mapper namespace="com.ssafy.enjoytrip.model.attraction.mapper.AttractionInfoMapper">
     <!--
     List<Gugun> selectByAreaCode(String areaCode) throws SQLException;
     List<AttractionInfo> selectByAreaCodeGugunCode(Map<String, String> paramMap) throws SQLException;
@@ -35,11 +35,11 @@
 
     <select id="selectByAreaCodeGugunCode" parameterType="map" resultMap="attractionInfo">
         select * from attraction_info
-        where sido_code = #{areaCode} and gugun_code = #{gugunCode}
+        where sido_code = #{areaCode} and gugun_code = #{gugunCode} and readcount > 200
 
-        <if test="checked != null">
+        <if test="contentTypes != null">
             and content_type_id in
-            <foreach item="checkbox" collection="checked" open="(" separator="," close=")">
+            <foreach item="checkbox" collection="contentTypes" open="(" separator="," close=")">
                 #{checkbox}
             </foreach>
         </if>

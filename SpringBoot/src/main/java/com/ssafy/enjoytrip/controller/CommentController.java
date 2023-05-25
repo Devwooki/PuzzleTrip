@@ -1,8 +1,7 @@
 package com.ssafy.enjoytrip.controller;
 
-import com.ssafy.enjoytrip.board.model.dto.Board;
-import com.ssafy.enjoytrip.board.model.dto.Comment;
-import com.ssafy.enjoytrip.board.model.service.BoardService;
+import com.ssafy.enjoytrip.model.board.dto.Comment;
+import com.ssafy.enjoytrip.model.board.service.BoardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,10 @@ public class CommentController {
     //댓글 삭제
     //댓글 조회 ->
     @GetMapping("/{boardType}/{boardNo}")
+    @ResponseBody
     private List<Comment> listsComment(@PathVariable int boardType,
                                       @PathVariable int boardNo) throws Exception {
+        logger.debug("댓글 가져오기 : boardType {}, boardNo{}", boardType, boardNo);
         logger.debug("boardType {}, boardNo {}", boardType, boardNo );
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("boardType", boardType);
@@ -40,6 +41,7 @@ public class CommentController {
     }
 
     @PostMapping("/{boardType}/{boardNo}")
+    @ResponseBody
     private List<Comment> writeComment(@PathVariable int boardType,
                                      @PathVariable int boardNo,
                                      @RequestBody Comment comment) throws Exception {
@@ -52,6 +54,7 @@ public class CommentController {
         return service.commentLists(paramMap);
     }
     @PutMapping("/{boardType}/{boardNo}")
+    @ResponseBody
     private List<Comment> modifyComment(@PathVariable int boardType,
                                         @PathVariable int boardNo,
                                         @RequestBody Comment comment) throws Exception {
@@ -63,15 +66,16 @@ public class CommentController {
         service.modifyComment(paramMap);
         return service.commentLists(paramMap);
     }
-    @DeleteMapping("/{boardType}/{boardNo}")
+    @DeleteMapping("/{boardType}/{boardNo}/{commentNo}")
+    @ResponseBody
     private List<Comment> deleteComemnt(@PathVariable int boardType,
                                         @PathVariable int boardNo,
-                                        @RequestBody Comment comment) throws Exception {
-        logger.debug("comment delete : {}", comment.toString());
+                                        @PathVariable int commentNo) throws Exception {
+        logger.debug("comment delete : {} {} {}", boardType, boardNo, commentNo);
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("boardType", boardType);
         paramMap.put("boardNo", boardNo);
-        paramMap.put("comment", comment);
+        paramMap.put("commentNo", commentNo);
         service.deleteComment(paramMap);
         return service.commentLists(paramMap);
     }

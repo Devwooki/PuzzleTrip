@@ -2,9 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.enjoytrip.board.model.mapper.BoardMapper">
+<mapper namespace="com.ssafy.enjoytrip.model.board.mapper.BoardMapper">
 
-    <resultMap type="board" id="board">
+    <!-- 파일 업로드 -->
+    <resultMap type="board" id="boardMap">
         <result column="no" property="no"/>
         <result column="type_no" property="typeNo"/>
         <result column="user_id" property="userId"/>
@@ -15,18 +16,52 @@
         <result column="created_at" property="createdAt"/>
     </resultMap>
 
-    <sql id="search">
-        <if test="word != null and word != ''">
-            <if test="key == 'title'">
-                and title like concat('%', #{word}, '%')
-            </if>
-            <if test="key != 'subject'">
-                and ${key} = #{word}
-            </if>
-        </if>
-    </sql>
+    <resultMap type="fileInfo" id="fileMap">
+        <result column="save_folder" property="saveFolder"/>
+        <result column="original_file" property="originalFile"/>
+        <result column="save_file" property="saveFile"/>
+    </resultMap>
 
-    <select id="selectBoardLists" parameterType="map" resultMap="board">
+    <resultMap type="board" id="viewBoard" extends="boardMap">
+        <collection property="fileInfos" column="no" javaType="list" ofType="fileInfo" select="fileInfoList"/>
+        <!-- select에서 가져오는 컬럼명으로 조회해야한다. -->
+        <!-- 참조하는 테이블 - board의 no컬럼명을 file_info의 board_no에 매핑해야하니까 board의 no를 적어야함  -->
+    </resultMap>
+
+
+    <insert id="insertBoard" parameterType="board">
+        insert into board (type_no, user_id, title, content) values (#{typeNo}, #{userId}, #{title}, #{content})
+        <selectKey resultType="int" keyProperty="no" order="AFTER">
+            select last_insert_id() <!-- 마지막에 삽입된 row의 id를 반환 해당 값을 통해 상세페이지 이동/ 새로운 댓글 작성에 사용-->
+        </selectKey>
+    </insert>
+
+    <insert id="insertFile" parameterType="board">
+        insert into file_info (board_no, save_folder, original_file, save_file)
+        values
+        <foreach collection="fileInfos" item="fileInfo" separator=" , ">
+            (#{no}, #{fileInfo.saveFolder}, #{fileInfo.originalFile}, #{fileInfo.saveFile})
+        </foreach>
+    </insert>
+
+    <!-- 게시판 출력 -->
+     <select id="selectByBoardNo2" parameterType="int" resultMap="viewBoard">
+        select b.no, b.user_id, b.title, b.content, b.hit, b.created_at, b.type_no, b.like_cnt, u.name
+        from board b, user u
+        where b.user_id = u.id
+          and b.no = #{boardNo}
+          and b.status = 0
+    </select>
+
+
+    <select id="fileInfoList" parameterType="int" resultMap="fileMap">
+        select save_folder, original_file, save_file
+        from file_info
+        where board_no = #{boardNo}
+    </select>
+
+
+    <select id="selectBoardLists" parameterType="map" resultMap="boardMap">
         select no, type_no, user_id, title, content, hit, like_cnt, created_at from board
         where type_no = #{boardType}
         and status = 0
@@ -42,20 +77,64 @@
         select * from board where type_no = #{boardType} and no = #{boardNo} and status = 0
     </select>
 
+<!--    <insert id="insertBoard" parameterType="Board">-->
+<!--        insert into board (type_no, user_id, title, content) values (#{typeNo}, #{userId}, #{title}, #{content})-->
+<!--    </insert>-->
+
     <update id="updateBoardHit" parameterType="map">
         update board set hit = hit + 1 where type_no = #{boardType} and no = #{boardNo}
     </update>
 
-    <insert id="insertBoard" parameterType="Board">
-        insert into board (type_no, user_id, title, content) values (#{typeNo}, #{userId}, #{title}, #{content})
-    </insert>
-
-    <update id="updateBoard" parameterType="map">
-        Update board set title = #{title}, content = #{content} where type_no = #{boardType} and no = #{boardNo}
+    <update id="updateBoard" parameterType="board">
+        Update board set title = #{title}, content = #{content} where type_no = #{typeNo} and no = #{no}
     </update>
 
     <delete id="deleteByBoardNo" parameterType="map">
         Update board set status = 1 where type_no = #{boardType} and no = #{boardNo}
     </delete>
 
+    <select id="getlastNo" parameterType="board">
+        select * from board where no = board.no
+    </select>
+
+    <delete id="deleteBoardFile" parameterType="map">
+        delete from file_info
+        where board_no=#{boardNo}
+    </delete>
+
+    <delete id="deleteBoardFileBysFile" parameterType="string">
+        delete from file_info
+        where save_file = #{sFile} and save_folder = #{sFolder}
+    </delete>
+
+    <update id="updateBoardLike" parameterType="map">
+        update  board
+        <if test="likeSelect">
+            set like_cnt = like_cnt + 1
+        </if>
+
+        <if test="!likeSelect">
+            set like_cnt = like_cnt - 1
+        </if>
+        where no = #{boardNo} and type_no = #{typeNo}
+    </update>
+
+    <!--
+     void insertUserLikeBoard(Map<String, Object> paramMap) throws SQLException;
+
+    void deleteUserLikeBoard(Map<String, Object> paramMap) throws SQLException;
+    -->
+    <insert id="insertUserLikeBoard" parameterType="map">
+        insert into user_board_like values (#{userId}, #{boardNo})
+    </insert>
+
+    <delete id="deleteUserLikeBoard" parameterType="map">
+        delete from user_board_like
+        where user_id = #{userId} and board_no = #{boardNo}
+    </delete>
+
+    <select id="selectUserLikeBoard" parameterType="map">
+        select * from user_board_like
+        where user_id = #{userId} and board_no = #{boardNo}
+    </select>
 </mapper>
