@@ -296,7 +296,7 @@ public class UserController {
 
     @GetMapping("idCheck/{userId}")
     public String idCheck(@PathVariable("userId") String id) throws Exception {
-        System.out.println(id + ", " + service.idCheck(id));
+        logger.debug(id + ", " + service.idCheck(id));
         return service.idCheck(id);
     }
 

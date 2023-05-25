@@ -6,7 +6,7 @@
             </header>
             <div id="contentWrap">
                 <router-view id="main"></router-view>
-<!--                <app-chat></app-chat>-->
+                <app-chat class="chat-comp"></app-chat>
             </div>
         </div>
         <app-footer id="footer"></app-footer>
@@ -18,12 +18,17 @@
 
 import AppHeader from "@/views/layout/AppHeader.vue";
 import AppFooter from "@/views/layout/AppFooter.vue";
+import AppChat from "@/views/main/AppChat.vue";
 
 export default {
     name: "App",
     components: {
-        AppHeader, AppFooter,
+        AppHeader, AppFooter, AppChat
     },
+    created(){
+        this.$store.commit('boardStore/RESET_BOARD_STORE')
+        this.$store.commit('userStore/RESET_USER_STORE')
+    }
 };
 </script>
 
@@ -97,7 +102,13 @@ header {
     position: relative;
 (absolute - > relative) transform: translatY(- 100 %);
     height: 5rem;
+}
 
+.chat-comp{
+    position: absolute;
+    z-index: 1000;
+    right : 10px;
+    bottom: 10px;
 }
 
 </style>

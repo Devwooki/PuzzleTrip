@@ -1,42 +1,31 @@
 <template>
     <ul>
-        <li v-for="(fileInfo, index) in fileInfos" :key="index">
-            <a href="#" @click.prevent="downloadFile(fileInfo)">
-                <span data-attr="다운">다운</span><span data-attr="로드">로드</span>
+        <li v-for="(fileInfo, index) in getUploadFile" :key="index">
+            <a href="#" @click.prevent="remove(fileInfo)">
+                <span data-attr="파일">다운</span><span data-attr="삭제">로드</span>
             </a>
-            <label @click="downloadFile(fileInfo)">{{ fileInfo.originalFile }}</label>
+            <label @click="downloadFile(fileInfo)">{{ fileInfo.name }}     ({{(fileInfo.size/1024/1024).toFixed(2)}}MB)</label>
+
         </li>
     </ul>
 </template>
 
 <script>
-import {mapState} from "vuex";
-import axios from "@/util/axios";
+import {mapGetters, mapMutations, mapState} from "vuex";
 
 export default {
-    name: 'BoardFileItem',
-    props: ['fileInfos'],
+    name: 'BoardFileListForWriteModify',
     data() {
         return {};
     },
     computed: {
-        ...mapState('boardStore', ['boardType', 'boardNo'])
+        ...mapState('boardStore', ['boardType', 'boardNo',]),
+        ...mapGetters('boardStore', ['getUploadFile'])
     },
     methods: {
-        async downloadFile(data) {
-            console.dir(data)
-            axios.get(`file/download/${data.saveFolder}/${data.originalFile}/${data.saveFile}`, {
-                responseType: 'blob',
-            }).then(response => {
-                const url = window.URL.createObjectURL(new Blob([response.data]));
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', `${data.originalFile}`);
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
+        ...mapMutations('boardStore', ['REMOVE_UPLOAD_FILE']),
+        remove(fileInfo){
+            this.REMOVE_UPLOAD_FILE(fileInfo);
         }
     }
 };
@@ -52,6 +41,7 @@ export default {
     list-style: none; /* 리스트 마커 제거 */
     padding: 0; /* 내부 여백 제거 */
     margin: 0; /* 외부 여백 제거 */
+
 }
 
 li {
@@ -114,7 +104,7 @@ a span:nth-child(2):before {
     position: absolute;
     top: 0;
     left: 0;
-    background: #77AAAD;
+    background: #da6552;
     padding: 2px;
     transition: 0.5S;
     transform-origin: bottom;
@@ -131,7 +121,7 @@ a span:nth-child(1):after {
     position: absolute;
     top: 0;
     left: 0;
-    background: #77AAAD;
+    background: #da6552;
     transform-origin: bottom;
     transform: rotateX(0deg) translateY(0%);
     transition: 0.5s;

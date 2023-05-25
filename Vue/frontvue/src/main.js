@@ -14,6 +14,7 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
 import {
+
         faHeart as fasHeart,
         faPlus as fasPlus,
         faTemperatureHigh,
@@ -37,7 +38,6 @@ library.add(
   faQuoteLeft
 )
 
-
 /* add font awesome icon component */
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
@@ -47,10 +47,22 @@ Vue.use(Vuetify, VTooltip);
 
 Vue.prototype.$http = axios
 
-
 //쿠키 정보 등록, 글로벌 세팅으로 3일 뒤 쿠키는 자동으로 삭제된다
 Vue.use(VueCookies);
 Vue.$cookies.config("3d");
+
+Vue.directive('autosize', {
+
+  inserted: function (el) {
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px';
+  },
+  update: function (el) {
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px';
+  }
+});
+
 
 new Vue({
   router,

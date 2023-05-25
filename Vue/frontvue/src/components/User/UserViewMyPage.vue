@@ -1,49 +1,40 @@
 <template>
     <div class="myPage">
-<!--        <h2>마이페이지 </h2>
-        <img :src="imgSrc" width="50%">
-        <br>
-        <br>
-        <label for="name"/>이름 : {{checkUserInfo.name}}
-        <br>
-        <label for="id"/>아이디 : {{ checkUserInfo.id }}
-        <br>
-        <label for="email"/>이메일: {{ checkUserInfo.email }}
-        <br>
-        <router-link :to="{name : 'userModify'}">수정</router-link>
-        <button type="button">탈퇴</button>
-        <br>
-        <user-like></user-like>-->
         <div class="container">
-            <div class="img">
-                <img src="https://raw.githubusercontent.com/sefyudem/Responsive-Login-Form/master/img/bg.svg">
+            <div class="img-align">
+                <div class="img-container">
+                    <div class="img-profile">
+                        <img :src="imgSrc" alt="프로필">
+                    </div>
+                </div>
             </div>
             <div class="login-content">
                 <form>
-                    <img :src="imgSrc" width="50%">
-                    <h2 class="title">{{checkUserInfo.name}}님의 회원정보</h2>
+                    <h2 class="title">{{checkUserInfo.name}}님의 정보</h2>
                     <div class="input-div one">
-                        <div class="i">
-                            <i class="fas fa-user"></i>
-                        </div>
+                        <div>ID :</div>
                         <div class="div">
                             <h5>{{ checkUserInfo.id }}</h5>
                         </div>
                     </div>
-                    <div class="input-div pass">
-                        <div class="i">
-                            <i class="fas fa-lock"></i>
+                    <div class="input-div one">
+                        <div>name :</div>
+                        <div class="div">
+                            <h5>{{ checkUserInfo.name }}</h5>
                         </div>
+                    </div>
+                    <div class="input-div pass">
+                        <div>Email :</div>
                         <div class="div">
                             <h5>{{ checkUserInfo.email }}</h5>
                         </div>
                     </div>
-                    <user-like></user-like>
-                    <a href="#">탈퇴</a>
-                    <input type="submit" class="btn" value="수정하기">
+                    <router-link class="btn"  :to="{name : 'userModify'}">수정하기</router-link>
+                    <a class="btn-delete">탈퇴</a>
                 </form>
             </div>
         </div>
+        <user-like></user-like>
     </div>
 
 </template>
@@ -56,7 +47,7 @@ export default {
     components: {UserLike},
     data() {
         return {
-            imgSrc : '',
+            imgSrc : ''
         }
     },
     computed: {
@@ -68,8 +59,14 @@ export default {
     },
     created() {
         console.log("@@@마이페이지 접속")
-        console.log(this.userInfo)
-        this.imgSrc =`http://localhost:8989/profilePath/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
+        console.log(this.userInfo.profile)
+
+
+        if(this.userInfo.profile.saveFolder === null){
+            this.imgSrc = `http://localhost:8989/profilePath/${this.userInfo.profile.saveFile}`
+        }else{
+             this.imgSrc = `http://localhost:8989/profilePath/userProfile/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
+        }
     }
 }
 </script>
@@ -83,21 +80,47 @@ export default {
 
 .container{
     width: 100vw;
-    height: 700px;
+    height: 550px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap :7rem;
+    grid-gap :2rem;
     padding: 0 2rem;
 }
 
-.img{
+.img-align {
     display: flex;
     justify-content: flex-end;
-    align-items: center;
 }
+
+.img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.img-container .img-profile {
+    width: 320px; /* 이미지 크기를 조정할 수 있습니다 */
+    height: 320px; /* 이미지 크기를 조정할 수 있습니다 */
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border : 2px solid black;
+}
+
+.img-container .img-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .title {
     width: max-content;
 }
+
 .login-content{
     display: flex;
     justify-content: flex-start;
@@ -105,8 +128,12 @@ export default {
     text-align: center;
 }
 
-.img img{
-    width: 500px;
+.img-container img{
+    //width: 400px;
+    width: 80%;
+    height: 60%;
+    border-radius: 70%;
+    object-fit: cover;
 }
 
 form{
@@ -118,37 +145,31 @@ form{
 }
 
 .login-content h2{
-    margin: 15px 0;
+    margin: 15px auto;
     color: #333;
     text-transform: uppercase;
     font-size: 2.9rem;
+
 }
 
-.login-content .input-div{
+.login-content .input-div {
     position: relative;
     display: grid;
-    grid-template-columns: 7% 93%;
+    grid-template-columns: 15% 70% 15%;
     margin: 25px 0;
     padding: 5px 0;
     border-bottom: 2px solid #d9d9d9;
 }
 
 .login-content .input-div.one{
-    margin-top: 0;
-}
+    margin: 0 auto;
 
-.i{
-    color: #d9d9d9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.i i{
-    transition: .3s;
 }
 
 .input-div > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     height: 45px;
 }
@@ -158,7 +179,7 @@ form{
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: #999;
+    color: #555555;
     font-size: 18px;
     transition: .3s;
 }
@@ -194,23 +215,8 @@ form{
     color: #38d39f;
 }
 
-.input-div > div > input{
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-    outline: none;
-    background: none;
-    padding: 0.5rem 0.7rem;
-    font-size: 1.2rem;
-    color: #555;
-    font-family: 'poppins', sans-serif;
-}
-
 .input-div.pass{
-    margin-bottom: 4px;
+    margin :0 auto;
 }
 
 a{
@@ -227,13 +233,13 @@ a:hover{
 }
 
 .btn{
-    display: block;
+    display: flex;
     width: 100%;
     height: 50px;
     border-radius: 25px;
     outline: none;
     border: none;
-    background-image: linear-gradient(to right, #32be8f, #38d39f, #32be8f);
+    background-image: linear-gradient(to right, #7D9600, #a4af6b, #758a0f);
     background-size: 200%;
     font-size: 1.2rem;
     color: #fff;
@@ -241,9 +247,37 @@ a:hover{
     margin: 1rem 0;
     cursor: pointer;
     transition: .5s;
+    align-items: center;
+    justify-content: center;
 }
 .btn:hover{
     background-position: right;
+    justify-content: center;
+    color: #fff;
+}
+
+.btn-delete{
+    display: flex;
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    outline: none;
+    border: none;
+    background-image: linear-gradient(to right, #d96161, #BFA5A5, #ce6969);
+    background-size: 200%;
+    font-size: 1.2rem;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 1rem 0;
+    cursor: pointer;
+    transition: .5s;
+    align-items: center;
+    justify-content: center;
+}
+.btn-delete:hover{
+    background-position: right;
+    justify-content: center;
+    color: #fff;
 }
 
 

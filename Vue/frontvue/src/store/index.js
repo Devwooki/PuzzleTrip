@@ -14,7 +14,10 @@ export default new Vuex.Store({
     boardStore,
     userStore,
     attractionStore,
-  },/* plugins : [
+  },
+})
+/* plugins : [
+
         vuePersistedState({
         //여기 저장된 모듈만 새로고침해도 저장이된다
         path : [
@@ -22,5 +25,5 @@ export default new Vuex.Store({
             boardStore,
         ]
       })
-  ]*/
-})
+  ]
+})*/

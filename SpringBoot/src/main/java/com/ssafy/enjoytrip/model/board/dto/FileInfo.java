@@ -7,4 +7,5 @@ public class FileInfo {
     private String saveFolder;
     private String originalFile;
     private String saveFile;
+    private long fileSize;
 }
