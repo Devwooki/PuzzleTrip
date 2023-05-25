@@ -62,11 +62,17 @@ export default {
             }
         }
     },
+    mounted() {
+        this.DELETE_ALL_MARKERS
+        this.DELETE_ALL_ATTRACTION
+    },
     methods: {
         ...mapMutations('attractionStore', [
             'SET_RIGHT_MAP',
             'SET_RIGHT_MARKERS',
-            'UPDATE_ATTRACTION_LIST'
+            'UPDATE_ATTRACTION_LIST',
+            'DELETE_ALL_MARKERS',
+            'DELETE_ALL_ATTRACTION'
         ]),
         //리스트에 호버 하면 지도 위치이동
         moveMapToMarker(marker) {

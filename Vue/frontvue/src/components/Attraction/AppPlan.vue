@@ -31,7 +31,7 @@
                     <div class="dayDivDay">{{ check.day }}일차</div>
                     <v-divider></v-divider>
                     <draggable group="dayOnce" v-model="check.contentList">
-                        <div v-for="(attraction, attIdx) in check.contentList" :key="attIdx" @click="moveMapToMarker">
+                        <div v-for="(attraction, attIdx) in check.contentList" :key="attIdx" @click="moveMapToMarker(attraction)">
                             <div class="attractionItem">
                                 <img :src="attraction.image" alt="attraction Image" class="attractionImage"/>
                                 <div class="infoDiv">
@@ -176,7 +176,7 @@ export default {
         dragGroup: {
             handler(newVal) {
                 this.deletFindWay()
-                const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+                // const colors = ['#ff0000', '#ff7300', '#ee00ff', '#00ff15', '#ff00ff', '#5500FFFF'];
                 this.UPDATE_DRAG_GROUP(newVal);
                 for (const ele of newVal) {
                     for (const element of ele.contentList) {
@@ -208,7 +208,7 @@ export default {
                             map: this.map,
                             path: linePath, // 선을 구성하는 좌표배열 입니다
                             strokeWeight: 3, // 선의 두께 입니다
-                            strokeColor: colors[newVal[element].day], // 선의 색깔입니다
+                            strokeColor: '#ff0000', // 선의 색깔입니다
                             strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
                             strokeStyle: 'solid' // 선의 스타일입니다
                         });
@@ -276,7 +276,7 @@ export default {
             //마커 그리기
             this.customOverlay = new kakao.maps.CustomOverlay({
                 position: moveLatLon,
-                content: `<div class="popTitle" style="padding-left: 15px 15px; padding: 10px; border:1px solid black; background-color: #FFFFFF">${marker.title}</div>`
+                content: `<div class="popTitle" style="padding-left: 15px 15px; margin-bottom: 50px; border:1px solid black; background-color: #FFFFFF">${marker.title}</div>`
             });
             this.customOverlay.setMap(this.map)
         },
@@ -314,8 +314,8 @@ export default {
     display: flex;
     text-align: center;
     margin-left: 30px;
-    min-height: 905px;
-    max-height: 905px;
+    min-height: 1500px;
+    max-height: 1500px;
     width: 330px;
     overflow-y: scroll;
     box-sizing: border-box;

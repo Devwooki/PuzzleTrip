@@ -130,6 +130,9 @@ const attractionStore = {
         DELETE_ALL_ATTRACTION(state) {
             state.attractionList.splice(0)
         },
+        DELETE_ALL_MARKERS(state) {
+            state.rightMarkers.splice(0)
+        },
         UPDATE_DRAG_GROUP(state, value) {
             state.dragGroup = value
         }
