@@ -15,13 +15,6 @@
                         <div class="infoDiv">
                             <span class="attractionTitleTool">{{ attraction.title }}</span>
                             <div class="attractionAddr">{{ attraction.address }}</div>
-                            <div class="infoFav">
-                                <font-awesome-icon :icon="['fas', 'minus-circle']" class="plusBtn"
-                                                   @click="minusList(index)"
-                                                   :style="{ color: 'skyblue' }"/>
-                                <font-awesome-icon :icon="['fas', 'heart']" class="heartBtn"
-                                                   :style="{ color: '#f95880' }"/>
-                            </div>
                         </div>
                     </div>
                 </draggable>
@@ -37,13 +30,6 @@
                                 <div class="infoDiv">
                                     <span class="attractionTitleTool">{{ attraction.title }}</span>
                                     <div class="attractionAddr">{{ attraction.address }}</div>
-                                    <div class="infoFav">
-                                        <font-awesome-icon :icon="['fas', 'minus-circle']" class="plusBtn"
-                                                           @click="minusList(index)"
-                                                           :style="{ color: 'skyblue' }"/>
-                                        <font-awesome-icon :icon="['fas', 'heart']" class="heartBtn"
-                                                           :style="{ color: '#f95880' }"/>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -229,6 +215,8 @@ export default {
             'UPDATE_ATTRACTION_LIST',
             'UPDATE_ATTRACTION_LIST_MINUS',
             'UPDATE_DRAG_GROUP',
+            'DELETE_ALL_ATTRACTION',
+            'DELETE_ALL_MARKERS'
         ]),
         deletFindWay() {
             //선 삭제
@@ -243,6 +231,7 @@ export default {
                 this.customOverlay.setMap(null)
             }
             this.UPDATE_ATTRACTION_LIST_MINUS(index)
+
         },
         initMap() {
             this.startLoc = new kakao.maps.LatLng(36.355297, 127.298126);
@@ -350,13 +339,13 @@ export default {
 }
 
 .attractionTitleTool {
-    font-size: 13px !important;
+    font-size: 20px !important;
 
 }
 
 .attractionAddr {
     margin-top: auto;
-    font-size: 10px !important;
+    font-size:15px !important;
     color: #919696;
 }
 
