@@ -7,7 +7,6 @@
             <div id="contentWrap">
                 <router-view id="main"></router-view>
                 <app-chat class="chat-comp"></app-chat>
-
             </div>
         </div>
         <app-footer id="footer"></app-footer>
@@ -19,11 +18,12 @@
 
 import AppHeader from "@/views/layout/AppHeader.vue";
 import AppFooter from "@/views/layout/AppFooter.vue";
+import AppChat from "@/views/main/AppChat.vue";
 
 export default {
     name: "App",
     components: {
-        AppHeader, AppFooter,
+        AppHeader, AppFooter, AppChat
     },
     created(){
         this.$store.commit('boardStore/RESET_BOARD_STORE')

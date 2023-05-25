@@ -200,7 +200,7 @@ export default {
         if(this.userInfo.profile.saveFolder === null){
             this.imgSrc = `http://localhost:8989/profilePath/${this.userInfo.profile.saveFile}`
         }else{
-            this.imgSrc = `http://localhost:8989/profilePath/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
+            this.imgSrc = `http://localhost:8989/profilePath/userProfile/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
         }
     }
 }

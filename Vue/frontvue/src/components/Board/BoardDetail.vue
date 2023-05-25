@@ -12,7 +12,7 @@
                 <blockquote>
                     <div class="main-content">
                         <cite>{{ board.userId }} 작성</cite>
-                        <p>{{ board.content }}</p>
+                        <p style="white-space:pre-wrap">{{ board.content }}</p>
 
                         <div class="show-only-img" v-if="OnlyImage.length !== 0">
                             <div class="img-container" v-for="(img, idx) in OnlyImage" :key="idx">
@@ -82,9 +82,6 @@ export default {
                 this.OnlyImage.push(this.board.fileInfos[fileInfo]);
             }
         }
-
-
-        console.log(this.OnlyImage)
     },
     methods: {
         async beforeRemove() {
@@ -166,7 +163,7 @@ blockquote p {
 
 .img-container img {
     margin-right: 10px; /* 이미지 간격을 조정하고 싶은 경우 사용 */
-    height: 300px;
+    height: 270px;
     border-radius: 5px;
     border : 1.5px solid black;
 }

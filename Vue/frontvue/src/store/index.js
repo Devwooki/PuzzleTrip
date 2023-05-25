@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import vuePersistedState from 'vuex-persistedstate';
+//import vuePersistedState from 'vuex-persistedstate';
 
 
 import boardStore from '@/store/modules/boardStore'

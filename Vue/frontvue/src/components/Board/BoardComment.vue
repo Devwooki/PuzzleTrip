@@ -9,8 +9,8 @@
         <div class="comment-write-container" v-if="checkUserInfo !== null">
             <textarea rows={1} class="comment-area" ref="commentArea" v-model="content" v-autosize/>
             <div class="comment-btns">
-            <button class="write-btn btn-15" @click="writeComment">등록</button>
-            <button class="write-btn btn-del" @click="removeContent">취소</button>
+                <button class="write-btn btn-del" @click="removeContent">취소</button>
+                <button class="write-btn btn-15" @click="writeComment">등록</button>
             </div>
         </div>
     </div>
@@ -28,31 +28,34 @@ export default {
     },
     data() {
         return {
-            userId: 'ssafy',
+            userId: '',
             content: '',
         };
     },
     async created() {
+        this.userId = this.checkUserInfo.id
         const response = await axios.get(`/comment/${this.getBoardType}/${this.getBoardNo}`)
         this.$store.commit('boardStore/SET_COMMENTS', response.data);
-
     },
     methods: {
         async writeComment() {
-            const sendData = {
-                userId: this.userId,
-                content: this.content,
-                boardType: this.getBoardType,
-                boardNo: this.getBoardNo,
-            }
+            if(this.content.trim() !== '') {
+                const sendData = {
+                    userId: this.userId,
+                    content: this.content,
+                    boardType: this.getBoardType,
+                    boardNo: this.getBoardNo,
+                }
 
-            const response = await axios.post(`/comment/${this.getBoardType}/${this.getBoardNo}`, sendData)
-            this.$store.commit('boardStore/SET_COMMENTS', response.data)
-            this.content = ''
-            this.$refs.commentArea.focus()
+                const response = await axios.post(`/comment/${this.getBoardType}/${this.getBoardNo}`, sendData)
+                this.$store.commit('boardStore/SET_COMMENTS', response.data)
+                this.content = ''
+                this.$refs.commentArea.focus()
+            }
         },
         removeContent() {
             this.content = ''
+            this.$refs.commentArea.focus()
         },
     },
     computed: {
@@ -110,7 +113,7 @@ export default {
 .btn-15 {
     background: #626262;
     color: #fff;
-    z-index: -1;
+    z-index: 1;
     border-radius: 5px;
 }
 

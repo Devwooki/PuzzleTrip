@@ -160,6 +160,7 @@ export default {
             }
         },
         async signUp() {
+            console.log(this.registSuccess)
             const emailRegex = /^([a-zA-Z0-9_-]+)@([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/;
             const emailValid = emailRegex.test(this.registerInfo.email);
 
@@ -193,6 +194,8 @@ export default {
                 this.$refs.regEmail.focus();
                 return;
             } else {
+                this.registSuccess= true;
+
                 document.getElementById('container').classList.add("right-panel-active");
                 const formData = new FormData();
                 formData.append('id', this.registerInfo.id);
@@ -209,6 +212,14 @@ export default {
                 this.user.id = this.registerInfo.id
                 this.$refs.inputPw.focus();
 
+                this.registerInfo = {
+                        id: '',
+                        pw: '',
+                        checkPw: '',
+                        name: '',
+                        email: '',
+                        profileImg: {},
+                }
             }
 
         },
@@ -246,6 +257,14 @@ export default {
 
 
     mounted() {
+        if (this.$cookies.get("saveId")) {
+            this.saveId = true;
+            this.user.id = this.$cookies.get("userId")
+            this.$refs.inputPw.focus()
+        } else {
+            this.saveId = false;
+            this.$refs.inputId.focus()
+        }
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('container');
@@ -272,14 +291,6 @@ export default {
         //console.log(process.env.VUE_APP_KAKAO_KEY)
         //컴포넌트 생성시 쿠키 체크 해서 input창에 값을 지정한다
         //저장된 쿠키가 있으면 브라우저에 불러온다.
-        if (this.$cookies.get("saveId")) {
-            this.saveId = true;
-            this.user.id = this.$cookies.get("userId")
-            this.$refs.inputPw.focus()
-        } else {
-            this.saveId = false;
-            this.$refs.inputId.focus()
-        }
     }
 }
 

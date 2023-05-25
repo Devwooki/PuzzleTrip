@@ -39,8 +39,8 @@ public class WebMVCConfiguration implements WebMvcConfigurer {
     //게시판, 댓글, 수정, 삭제
     //유저 정보 수정
 
-    @Value("${profile.path}")
-    private String profilePath;
+    @Value("${file.path}")
+    private String filePath;
 
 //    @Override
 //    public void addInterceptors(InterceptorRegistry registry) {
@@ -70,6 +70,6 @@ public class WebMVCConfiguration implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
                 .addResourceHandler("/profilePath/**")//URL접근 경로
-                .addResourceLocations("file:///" + profilePath + "/");
+                .addResourceLocations("file:///" + filePath + "/");
     }
 }

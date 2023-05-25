@@ -7,6 +7,8 @@ const boardStore = {
         boardNo : null,
         comments : [],
         pageCount : 1,
+        uploadFile : {},
+        OnlyImage : [],
     },
     getters: { //state의 값을 vueComponent에 전달해주는 역할
         getBoardType(state){
@@ -23,6 +25,12 @@ const boardStore = {
         },
         getPageCount(state){
             return state.pageCount
+        },
+        getUploadFile(state){
+            return state.uploadFile
+        },
+        getOnlyImage(state){
+            return state.OnlyImage
         }
 
     },
@@ -48,6 +56,62 @@ const boardStore = {
         },
         SET_PAGE_COUNT(state, pageCount){
             state.pageCount =pageCount
+        },
+        SET_UPLOAD_FILE(state, files){
+            // mutation에서 mutation 호출 시 모듈명을 붙여주자
+            //console.dir(this)
+            state.uploadFile = files
+            this.commit('boardStore/SET_ONLY_IMAGE')
+            //console.log(state.OnlyImage)
+        },
+        REMOVE_UPLOAD_FILE(state, removefile){
+            // FileList 객체를 배열로 변환
+            const files = Array.from(state.uploadFile);
+
+            let indexToDelete = null;
+            for(let key in state.uploadFile){
+                if(removefile.name === state.uploadFile[key].name){
+                    indexToDelete = key;
+                }
+            }
+            // 해당 인덱스의 파일을 배열에서 제거
+            files.splice(indexToDelete, 1);
+            state.uploadFile = files;
+            this.commit('boardStore/SET_ONLY_IMAGE')
+            
+        },
+
+        //
+        SET_ONLY_IMAGE(state){
+            state.OnlyImage = [];
+            for(let idx = 0 ; idx < state.uploadFile.length ; ++idx){
+                const extension = state.uploadFile[idx].name.split('.').pop().toLowerCase();
+                if (extension === 'jpg' || extension === 'png' || extension === 'gif') {
+                    console.log()
+                    state.OnlyImage.push(URL.createObjectURL(state.uploadFile[idx]))
+                }
+            }
+            // 
+        },
+
+        REMOVE_ONLY_IMAGE(state, removeImage){
+            // FileList 객체를 배열로 변환
+            const files = Array.from(state.uploadFile);
+
+            let indexToDelete = null;
+            for(let key in state.uploadFile){
+                if(removeImage.name === state.uploadFile[key].name){
+                    indexToDelete = key;
+                }
+            }
+
+            // 해당 인덱스의 파일을 배열에서 제거
+            files.splice(indexToDelete, 1);
+
+            state.uploadFile = files;
+
+            console.log(removeImage.name + "삭제완료")
+            console.log(state.uploadFile)
         }
     },
     actions: { //비동기 작업 결과를 적용할 떄 사용한다

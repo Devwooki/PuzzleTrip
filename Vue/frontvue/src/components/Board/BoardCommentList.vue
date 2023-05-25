@@ -2,7 +2,7 @@
     <div class="comment-container">
         <div>
             <div class="comment-writer">
-                <h2>{{ comment.userId }}</h2>
+                <h4>{{ comment.userId }}</h4>
             </div>
             <div class="comment-detail">
                     {{ comment.content }}
@@ -52,6 +52,9 @@ export default {
 .comment-writer *, .comment-detail, .comment-options * {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
 }
+.comment-options{
+    text-align: end;
+}
 
 .comment-detail{
     padding: 10px 0;
@@ -63,12 +66,17 @@ export default {
     align-items: center;
     width: 90%;
     margin: 0 auto;
+    padding: 0 10px;
 }
 
 .comment-container div:nth-child(1){
-    flex : 7;
+    flex : 13;
     margin: 0 0 5px;
 }
+.comment-container div:nth-child(2){
+     flex : 1;
+     margin: 0 0 5px;
+ }
 
 .write-btn {
     width: 50px;

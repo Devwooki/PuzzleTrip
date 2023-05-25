@@ -6,7 +6,9 @@ Servers
 env.properties
 /env.properties
 **/env.properties
-application.properties
+
+
+/*.properties
 
 
 
