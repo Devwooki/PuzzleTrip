@@ -15,8 +15,11 @@
                 </div>
 
                 <div class="chat-option">
+                    <button type="button" @click="sendFile">파일전송  |  </button>
                     <button type="button" @click="reConnect">재연결</button>
+                    <input name="chatFile" type="file" id="fileInput" @change="onFileChange" style="display: none;"/>
                 </div>
+
                 <div class="chat-input-container">
                     <input ref="sendInput" class="send-input" type="text" id="message-input" v-model="message"
                            placeholder="내용" @keyup="sendEnter">
@@ -71,6 +74,16 @@ export default {
         ...mapGetters('userStore', ['getIsLogin', 'checkUserInfo'])
     },
     methods: {
+        sendFile(){
+            alert("비즈니스 로직만짜면,,,,😭")
+            return;
+            //let fileInput = document.querySelector("#fileInput");
+            //fileInput.click();
+        },
+        onFileChange(event) {
+            this.profileImg = event.target.files
+            this.imgSrc = URL.createObjectURL(event.target.files[0]);
+        },
         toggleChat() {
             if (this.checkUserInfo !== null) {
                 this.showChat = !this.showChat; // showChat 값을 토글합니다.
@@ -133,7 +146,7 @@ export default {
                     // 서버의 메시지 전송 endpoint를 구독합니다.
                     // 이런형태를 pub sub 구조라고 합니다.
                     this.stompClient.subscribe("/send", res => {
-                        console.log('구독으로 받은 메시지 입니다.', res.body);
+                        //console.log('구독으로 받은 메시지 입니다.', res.body);
 
 
                         // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.

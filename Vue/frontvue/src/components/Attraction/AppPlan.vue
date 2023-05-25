@@ -6,6 +6,7 @@
                     <span style="color: #3f9ce4">{{ this.getLeftSelectedSido }}</span> : <span
                         style="color: red">{{ this.getDay.day }}</span>
                     일 여행 </span>
+                <button type="button" class="save-my-plan-btn" @click="saveMyPlan">저장</button>
                 <draggable group="dayOnce" v-model="checklist">
                     <div v-for="(attraction, index) in checklist"
                          :key="index"
@@ -45,6 +46,7 @@
 import {mapGetters, mapMutations} from "vuex";
 /* drag */
 import draggable from 'vuedraggable'
+import axios from "@/util/axios";
 
 export default {
     name: 'AppPlan',
@@ -143,6 +145,7 @@ export default {
                 'getDragGroup',
             ]
         ),
+        ...mapGetters('userStore', ['checkUserInfo'])
     },
     watch: {
         //리스트 변화하면 감지해서 받아옴
@@ -218,6 +221,10 @@ export default {
             'DELETE_ALL_ATTRACTION',
             'DELETE_ALL_MARKERS'
         ]),
+        saveMyPlan(){
+            console(this.getDragGroup);
+            axios.post(`attraction/savePlan/${this.checkUserInfo.id}`)
+        },
         deletFindWay() {
             //선 삭제
             this.polylineArray.forEach(function (polyline) {
@@ -284,6 +291,10 @@ export default {
 * {
     font-family: 'SUITE-Regular';
     font-weight: 700;
+}
+
+.save-my-plan-btn{
+    border : 3px solid ;
 }
 
 .planRoot {

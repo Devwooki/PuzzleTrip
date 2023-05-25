@@ -198,9 +198,9 @@ export default {
         this.email = this.userInfo.email
 
         if(this.userInfo.profile.saveFolder === null){
-            this.imgSrc = `http://localhost:8989/profilePath/${this.userInfo.profile.saveFile}`
+            this.imgSrc = `${process.env.VUE_APP_API_BASE_URL}/profilePath/${this.userInfo.profile.saveFile}`
         }else{
-            this.imgSrc = `http://localhost:8989/profilePath/userProfile/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
+            this.imgSrc = `${process.env.VUE_APP_API_BASE_URL}/profilePath/userProfile/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
         }
     }
 }
