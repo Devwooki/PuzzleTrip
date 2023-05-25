@@ -16,7 +16,7 @@ import UserFindPw from "@/components/User/UserFindPw.vue";
 import UserViewMyPage from "@/components/User/UserViewMyPage.vue";
 import UserModifyMyPage from "@/components/User/UserModifyMyPage.vue";
 import store from "@/store";
-
+import AppPlan from "@/components/Attraction/AppPlan.vue";
 
 Vue.use(VueRouter);
 //페이지 네비게이션 가드
@@ -85,7 +85,12 @@ const routes = [
   {
     path: "/attraction",
     name: "attraction",
-    component: AppAttraction
+    component: AppAttraction,
+  },
+  {
+    path: "/appPlan",
+    name: "appPlan",
+    component: AppPlan
   },
   {
     path: "/myPlace",
