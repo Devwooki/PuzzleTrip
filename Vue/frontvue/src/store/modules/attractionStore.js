@@ -16,7 +16,12 @@ const attractionStore = {
         Distance: 0,
         //right bar에서 + 버튼 누르면 추가될 리스트
         attractionList: [],
-        day: 0,
+        days: {
+            day1: "",
+            day2: "",
+            day: 0
+        },
+        dragGroup: [],
 
     },
     getters: {
@@ -56,7 +61,10 @@ const attractionStore = {
             return state.attractionList
         },
         getDay(state) {
-            return state.day
+            return state.days
+        },
+        getDragGroup(state) {
+            return state.dragGroup
         }
     },
     mutations: {
@@ -103,8 +111,10 @@ const attractionStore = {
             state.Duration = 0
         },
         //여행 일자 계산 저장
-        SET_DAY(state, Day) {
-          state.day = Day
+        SET_DAY(state, Days) {
+          state.days.day1 = Days.day1
+          state.days.day2 = Days.day2
+          state.days.day = Days.day
         },
         //여행지 추기
         UPDATE_ATTRACTION_LIST(state, marker){
@@ -119,6 +129,9 @@ const attractionStore = {
         //선택 리스트 초기화
         DELETE_ALL_ATTRACTION(state) {
             state.attractionList.splice(0)
+        },
+        UPDATE_DRAG_GROUP(state, value) {
+            state.dragGroup = value
         }
     },
     actions: {

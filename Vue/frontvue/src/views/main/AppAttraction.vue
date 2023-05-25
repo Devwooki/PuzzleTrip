@@ -222,7 +222,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('attractionStore', ['SET_LEFT_START_POINT', 'SET_LEFT_END_POINT', 'SET_LEFT_WAY_POINT', 'SET_LEFT_DURATION', 'SET_LEFT_DISTANCE', 'DELETE_ALL_ATTRACTION', 'SET_START_END_RESET','SET_DIS_DUR_RESET']),
+    ...mapMutations('attractionStore', ['SET_LEFT_START_POINT', 'SET_LEFT_END_POINT', 'SET_LEFT_WAY_POINT', 'SET_LEFT_DURATION', 'SET_LEFT_DISTANCE', 'DELETE_ALL_ATTRACTION', 'SET_START_END_RESET','SET_DIS_DUR_RESET','SET_LEFT_SELECTED_SIDO']),
     initMap() {
       this.startLoc = new kakao.maps.LatLng(36.355297, 127.298126);
       this.mapTypeControl = new kakao.maps.MapTypeControl();
@@ -241,6 +241,7 @@ export default {
     },
     handleSidoChange() {
       this.selectedSido = this.sido.find((item) => item.value === this.areaCode)?.name || '';
+      this.SET_LEFT_SELECTED_SIDO(this.selectedSido)
       this.gugunCode = '0';
       axios.get("http://localhost:8989/attraction/" + this.areaCode)
         .then(response => {
