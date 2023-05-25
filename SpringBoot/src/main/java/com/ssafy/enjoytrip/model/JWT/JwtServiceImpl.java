@@ -42,7 +42,7 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public <T> String createAccessToken(String key, T data) {
-		return create(key, data, "accessToken", 1000 * 60 * ACCESS_TOKEN_EXPIRE_MINUTES);
+		return create(key, data, "accessToken", 1000 * 120 * ACCESS_TOKEN_EXPIRE_MINUTES);
 //테스트용 짧은시간		return create(key, data, "accessToken", 1000 * 10 * ACCESS_TOKEN_EXPIRE_MINUTES);
 	}
 
