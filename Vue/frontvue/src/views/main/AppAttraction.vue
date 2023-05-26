@@ -243,7 +243,7 @@ export default {
       this.selectedSido = this.sido.find((item) => item.value === this.areaCode)?.name || '';
       this.SET_LEFT_SELECTED_SIDO(this.selectedSido)
       this.gugunCode = '0';
-      axios.get("http://localhost:8989/attraction/" + this.areaCode)
+      axios.get("http://192.168.212.81:8989/attraction/" + this.areaCode)
         .then(response => {
           this.gugun = response.data;
           //선택된 areaCode와 같은 item의 배열값을 가져와 할당한다.
@@ -288,7 +288,7 @@ export default {
         contentTypes: this.contentTypes,
       }
       if (this.areaCode !== '0' && this.gugunCode !== '0') {
-        axios.post(`http://localhost:8989/attraction/lists`, sendData)
+        axios.post(`http://192.168.212.81:8989/attraction/lists`, sendData)
           .then((Response) => {
             const data = Response.data
             if (data.length === 0) {
