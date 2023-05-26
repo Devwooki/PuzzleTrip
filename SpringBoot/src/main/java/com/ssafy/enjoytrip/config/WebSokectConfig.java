@@ -23,7 +23,7 @@ public class WebSokectConfig implements WebSocketMessageBrokerConfigurer {
                 // 스프링 5.3, 스프링부트 2.4 버전 부터 allowCredentials이 true인 경우 setAllowedOrigins 메서드에서
                 // 와일드 카드 `'*'`을 사용하실 수 없습니다.
                 //  	.setAllowedOrigins("*")
-                .setAllowedOriginPatterns("http://localhost:8080", "http://192.168.212.62:8080/")
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 

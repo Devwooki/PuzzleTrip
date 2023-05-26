@@ -120,7 +120,7 @@ export default {
             }
         },
         connect() {
-            const serverURL = process.env.VUE_APP_API_BASE_URL + "/chat"
+            const serverURL = process.env.VUE_APP_API_BASE_URL2 + "/chat"
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             console.log(`소켓 연결을 시도합니다. 서버 주소: {}`, serverURL)

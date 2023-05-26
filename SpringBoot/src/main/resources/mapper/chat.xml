@@ -15,7 +15,7 @@
     <select id="selectLastChatLog" resultType="WSChat">
         select * from ws_chat
         order by writed_at asc
-        limit 0, 50
+        limit 0, 200
     </select>
 
 </mapper>
