@@ -186,3 +186,9 @@ src
 ```
 
 </details>
+
+
+## 📲 Update Log
+---
+23.05.26 v1.0.0 배포
+23.06.10 v1.0.1 API서버(Spring) EC2 배포
