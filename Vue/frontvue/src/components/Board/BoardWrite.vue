@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 import {mapGetters, mapMutations} from "vuex";
 import BoardFileListForWriteModify from "@/components/Board/BoardFileListForWriteModify.vue";
 
@@ -127,7 +127,7 @@ export default {
                     formData.append('files', this.getUploadFile[i]);
                 }
 
-                axios.post("board/write", formData, {
+                myAxios.post("board/write", formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }

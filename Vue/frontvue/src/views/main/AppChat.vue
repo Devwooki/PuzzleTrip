@@ -33,7 +33,7 @@
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
 import {mapGetters} from "vuex";
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 
 export default {
     directives: {
@@ -66,7 +66,7 @@ export default {
     created() {
         //appChat이 실해오디면 소켓 연결을 시도한다.
         this.connect();
-        axios.get('chat/init').then(response => {
+        myAxios.get('chat/init').then(response => {
             this.recvList = response.data
         })
     },
@@ -165,7 +165,7 @@ export default {
         reConnect(){
             this.connect()
             this.recvList = null
-            axios.get('chat/init').then(response => {
+            myAxios.get('chat/init').then(response => {
                 this.recvList = response.data
             })
         },

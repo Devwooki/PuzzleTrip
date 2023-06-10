@@ -42,10 +42,10 @@ public class AttractionController {
     }
 
 
-    @PostMapping("savePlan/{userId}")
-    private ResponseEntity<?> savePlan(@PathVariable("userId") String userId,
-                                        @ResponseBody Map<String, Object> map) throws Exception{
-
-    }
+//    @PostMapping("savePlan/{userId}")
+//    private ResponseEntity<?> savePlan(@PathVariable("userId") String userId,
+//                                        @ResponseBody Map<String, Object> map) throws Exception{
+//
+//    }
 
 }

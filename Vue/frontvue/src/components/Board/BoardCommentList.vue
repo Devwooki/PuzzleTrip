@@ -20,7 +20,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 
 export default {
     name: 'BoardCommentList',
@@ -34,7 +34,7 @@ export default {
         async commentDelete() {
             //추후 해당 내용 boardStore의 action에서 비동기 처리하도록 수정
             console.dir(this.comment)
-            const response = await axios.delete(`/comment/${this.getBoardType}/${this.getBoardNo}/${this.comment.no}`)
+            const response = await myAxios.delete(`/comment/${this.getBoardType}/${this.getBoardNo}/${this.comment.no}`)
             console.log(response)
             if (response !== undefined) this.$store.commit("boardStore/SET_COMMENTS", response.data)
         }

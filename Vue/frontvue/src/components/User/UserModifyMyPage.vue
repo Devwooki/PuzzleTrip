@@ -75,7 +75,7 @@
 
 <script>
 import {mapActions, mapGetters, mapState} from "vuex";
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 
 export default {
     name: "UserModifyMyPage",
@@ -148,7 +148,7 @@ export default {
                     formData.append('email', this.email);
                     formData.append('files', this.profileImg[0])
 
-                    const response = await axios.put('user/modify', formData, {
+                    const response = await myAxios.put('user/modify', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }

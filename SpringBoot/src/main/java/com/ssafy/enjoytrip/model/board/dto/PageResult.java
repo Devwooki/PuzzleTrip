@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.model.common;
+package com.ssafy.enjoytrip.model.board.dto;
 
 import lombok.Data;
 

@@ -46,7 +46,7 @@
 import {mapGetters, mapMutations} from "vuex";
 /* drag */
 import draggable from 'vuedraggable'
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 
 export default {
     name: 'AppPlan',
@@ -223,7 +223,7 @@ export default {
         ]),
         saveMyPlan(){
             console(this.getDragGroup);
-            axios.post(`attraction/savePlan/${this.checkUserInfo.id}`)
+            myAxios.post(`attraction/savePlan/${this.checkUserInfo.id}`)
         },
         deletFindWay() {
             //선 삭제

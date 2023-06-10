@@ -61,7 +61,7 @@
 import BoardFileItem from "@/components/Board/BoardFileItem.vue";
 import BoardComment from "@/components/Board/BoardComment.vue";
 import {mapGetters} from "vuex";
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 
 
 export default {
@@ -79,7 +79,7 @@ export default {
         };
     },
     async created() {
-        const response = await axios.get(`board/details/${this.getBoardType}/${this.getBoardNo}`)
+        const response = await myAxios.get(`board/details/${this.getBoardType}/${this.getBoardNo}`)
         this.board = response.data
         this.likeCnt = this.board.likeCnt
         console.log(this.board)
@@ -97,7 +97,7 @@ export default {
     methods: {
         async beforeRemove() {
             if (confirm("정말 해당 게시글을 삭제하시겠습니까?")) {
-                await axios.delete(`board/${this.getBoardType}/${this.getBoardNo}`)
+                await myAxios.delete(`board/${this.getBoardType}/${this.getBoardNo}`)
                 await this.$router.push({name: 'board'});
             }
         },
@@ -108,7 +108,7 @@ export default {
             } else {
                 this.likeCnt -= 1;
             }
-            axios.put(`board/like`, {
+            myAxios.put(`board/like`, {
                 userId: this.checkUserInfo.id,
                 boardNo: this.board.no,
                 likeSelect: this.likeSelect,

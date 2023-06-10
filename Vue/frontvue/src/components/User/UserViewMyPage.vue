@@ -10,7 +10,7 @@
             </div>
             <div class="login-content">
                 <form>
-                    <h2 class="title">{{checkUserInfo.name}}님의 정보</h2>
+                    <h2 class="title">{{ checkUserInfo.name }}님의 정보</h2>
                     <div class="input-div one">
                         <div>ID :</div>
                         <div class="div">
@@ -29,7 +29,7 @@
                             <h5>{{ checkUserInfo.email }}</h5>
                         </div>
                     </div>
-                    <router-link class="btn"  :to="{name : 'userModify'}">수정하기</router-link>
+                    <router-link class="btn" :to="{name : 'userModify'}">수정하기</router-link>
                     <a class="btn-delete">탈퇴</a>
                 </form>
             </div>
@@ -47,7 +47,7 @@ export default {
     components: {UserLike},
     data() {
         return {
-            imgSrc : ''
+            imgSrc: ''
         }
     },
     computed: {
@@ -62,28 +62,28 @@ export default {
         console.log(this.userInfo.profile)
 
 
-        if(this.userInfo.profile.saveFolder === null){
-            this.imgSrc = `${process.env.VUE_APP_API_BASE_URL}/profilePath/${this.userInfo.profile.saveFile}`
-        }else{
-             this.imgSrc = `${process.env.VUE_APP_API_BASE_URL}/profilePath/userProfile/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
+        if (this.userInfo.profile.saveFolder === null) {
+            this.imgSrc = `${process.env.VUE_APP_API_BASE_URL}/profilePath/userProfile/${this.userInfo.profile.saveFile}`
+        } else {
+            this.imgSrc = `${process.env.VUE_APP_API_BASE_URL}/profilePath/userProfile/${this.userInfo.profile.saveFolder}/${this.userInfo.profile.saveFile}`
         }
     }
 }
 </script>
 
 <style scoped>
-*{
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
 
-.container{
+.container {
     width: 100vw;
     height: 550px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap :2rem;
+    grid-gap: 2rem;
     padding: 0 2rem;
 }
 
@@ -108,7 +108,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    border : 2px solid black;
+    border: 2px solid black;
 }
 
 .img-container .img-profile img {
@@ -121,30 +121,29 @@ export default {
     width: max-content;
 }
 
-.login-content{
+.login-content {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     text-align: center;
 }
 
-.img-container img{
-    //width: 400px;
-    width: 80%;
+.img-container img {
+//width: 400px; width: 80%;
     height: 60%;
     border-radius: 70%;
     object-fit: cover;
 }
 
-form{
+form {
     width: 360px;
 }
 
-.login-content img{
+.login-content img {
     height: 100px;
 }
 
-.login-content h2{
+.login-content h2 {
     margin: 15px auto;
     color: #333;
     text-transform: uppercase;
@@ -161,12 +160,12 @@ form{
     border-bottom: 2px solid #d9d9d9;
 }
 
-.login-content .input-div.one{
+.login-content .input-div.one {
     margin: 0 auto;
 
 }
 
-.input-div > div{
+.input-div > div {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -174,7 +173,7 @@ form{
     height: 45px;
 }
 
-.input-div > div > h5{
+.input-div > div > h5 {
     position: absolute;
     left: 10px;
     top: 50%;
@@ -184,7 +183,7 @@ form{
     transition: .3s;
 }
 
-.input-div:before, .input-div:after{
+.input-div:before, .input-div:after {
     content: '';
     position: absolute;
     bottom: -2px;
@@ -194,32 +193,32 @@ form{
     transition: .4s;
 }
 
-.input-div:before{
+.input-div:before {
     right: 50%;
 }
 
-.input-div:after{
+.input-div:after {
     left: 50%;
 }
 
-.input-div.focus:before, .input-div.focus:after{
+.input-div.focus:before, .input-div.focus:after {
     width: 50%;
 }
 
-.input-div.focus > div > h5{
+.input-div.focus > div > h5 {
     top: -5px;
     font-size: 15px;
 }
 
-.input-div.focus > .i > i{
+.input-div.focus > .i > i {
     color: #38d39f;
 }
 
-.input-div.pass{
-    margin :0 auto;
+.input-div.pass {
+    margin: 0 auto;
 }
 
-a{
+a {
     display: block;
     text-align: right;
     text-decoration: none;
@@ -228,11 +227,11 @@ a{
     transition: .3s;
 }
 
-a:hover{
+a:hover {
     color: #38d39f;
 }
 
-.btn{
+.btn {
     display: flex;
     width: 100%;
     height: 50px;
@@ -250,13 +249,14 @@ a:hover{
     align-items: center;
     justify-content: center;
 }
-.btn:hover{
+
+.btn:hover {
     background-position: right;
     justify-content: center;
     color: #fff;
 }
 
-.btn-delete{
+.btn-delete {
     display: flex;
     width: 100%;
     height: 50px;
@@ -274,48 +274,49 @@ a:hover{
     align-items: center;
     justify-content: center;
 }
-.btn-delete:hover{
+
+.btn-delete:hover {
     background-position: right;
     justify-content: center;
     color: #fff;
 }
 
 
-@media screen and (max-width: 1050px){
-    .container{
+@media screen and (max-width: 1050px) {
+    .container {
         grid-gap: 5rem;
     }
 }
 
-@media screen and (max-width: 1000px){
-    form{
+@media screen and (max-width: 1000px) {
+    form {
         width: 290px;
     }
 
-    .login-content h2{
+    .login-content h2 {
         font-size: 2.4rem;
         margin: 8px 0;
     }
 
-    .img img{
+    .img img {
         width: 400px;
     }
 }
 
-@media screen and (max-width: 900px){
-    .container{
+@media screen and (max-width: 900px) {
+    .container {
         grid-template-columns: 1fr;
     }
 
-    .img{
+    .img {
         display: none;
     }
 
-    .wave{
+    .wave {
         display: none;
     }
 
-    .login-content{
+    .login-content {
         justify-content: center;
     }
 }
