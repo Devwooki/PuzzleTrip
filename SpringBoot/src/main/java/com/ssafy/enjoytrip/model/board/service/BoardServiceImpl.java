@@ -1,13 +1,9 @@
 package com.ssafy.enjoytrip.model.board.service;
 
 
-import com.ssafy.enjoytrip.model.board.dto.Board;
-import com.ssafy.enjoytrip.model.board.dto.Comment;
-import com.ssafy.enjoytrip.model.board.dto.FileInfo;
+import com.ssafy.enjoytrip.model.board.dto.*;
 import com.ssafy.enjoytrip.model.board.mapper.BoardMapper;
 import com.ssafy.enjoytrip.model.board.mapper.CommentMapper;
-import com.ssafy.enjoytrip.model.common.Page;
-import com.ssafy.enjoytrip.model.common.PageResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

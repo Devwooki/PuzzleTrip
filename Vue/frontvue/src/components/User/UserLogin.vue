@@ -72,7 +72,6 @@
 <script>
 import {mapActions, mapGetters} from "vuex";
 import axios from "@/util/axios";
-// import axios from "@/util/axios";
 
 export default {
     name: "UserLogin",

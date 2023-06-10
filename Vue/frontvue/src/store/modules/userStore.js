@@ -4,7 +4,7 @@
 //jwt토큰 decode를 위한 라이브럴
 //npm i jwt-decode
 import jwtDecode from 'jwt-decode';
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 import router from "@/router";
 
 const userStore = {
@@ -62,7 +62,7 @@ const userStore = {
         // commit : 현재 store의 뮤테이션을 호출하는 객체, 해당 뮤테이션을 통해 state변경 가능
         // state : store에 저장된 상태 객체
         async confirm({commit}, loginData) {
-            await axios.post(`user/login`, loginData)
+            await myAxios.post(`user/login`, loginData)
                 //성공
                 .then(({data}) => {
                     /*
@@ -99,8 +99,8 @@ const userStore = {
                 sub : 토큰 이름
                 userId :
             }*/
-            axios.defaults.headers["accessToken"] = sessionStorage.getItem("accessToken")
-            await axios.get(`user/info/${decodeToken.userId}`)
+            myAxios.defaults.headers["accessToken"] = sessionStorage.getItem("accessToken")
+            await myAxios.get(`user/info/${decodeToken.userId}`)
                 .then(({data}) => {
                     if (data.message === "success") {
                         commit("SET_USER_INFO", data.userInfo);
@@ -123,8 +123,8 @@ const userStore = {
             console.log("기존토큰 만료로 새로운 access토큰을 발급합니다...")
 
             //access토큰 재발급 위해 refresh토큰을 전송한다.
-            axios.defaults.headers["refreshToken"] = sessionStorage.getItem("refreshToken")
-            await axios.post('user/refresh', JSON.stringify(state.userInfo))
+            myAxios.defaults.headers["refreshToken"] = sessionStorage.getItem("refreshToken")
+            await myAxios.post('user/refresh', JSON.stringify(state.userInfo))
                 .then(({data}) => {
                     if (data.message === "success") {
                         console.log("accessToken 재발급 완료")
@@ -140,7 +140,7 @@ const userStore = {
                         //refreshToken으로 갱신이 실패하면 2가지 경우가 존재
                         // 1. refreshToken의 만료 -> 재발급을 위해 로그아웃 수행
                         // 2. 토큰의 유효성이 증명되지 않았으므로 로그아웃을 수행해야한다.
-                        await axios.get(`user/logout/${state.userInfo.id}`)
+                        await myAxios.get(`user/logout/${state.userInfo.id}`)
                             .then(({data}) => {
                                 if (data.message === "success") {
                                     console.log("리프레시 토큰 제거")
@@ -167,7 +167,7 @@ const userStore = {
         },
 
         async userLogout({commit}, userId) {
-            await axios.get(`user/logout/${userId}`)
+            await myAxios.get(`user/logout/${userId}`)
                 .then(({data}) => {
                     if (data.message === "success") {
                         commit('SET_IS_LOGIN', false);

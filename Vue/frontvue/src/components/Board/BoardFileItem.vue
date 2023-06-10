@@ -11,7 +11,7 @@
 
 <script>
 import {mapState} from "vuex";
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 
 export default {
     name: 'BoardFileItem',
@@ -25,7 +25,7 @@ export default {
     methods: {
         async downloadFile(data) {
             console.dir(data)
-            axios.get(`file/download/${data.saveFolder}/${data.originalFile}/${data.saveFile}`, {
+            myAxios.get(`file/download/${data.saveFolder}/${data.originalFile}/${data.saveFile}`, {
                 responseType: 'blob',
             }).then(response => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));

@@ -87,7 +87,7 @@
 <script>
 
 import {mapGetters, mapMutations} from "vuex";
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 import BoardFileListForWriteModify from "@/components/Board/BoardFileListForWriteModify.vue";
 
 
@@ -110,7 +110,7 @@ export default {
         console.log("@@@@@@@@@@@@ 게시글 수정으로 이동")
         this.SET_UPLOAD_FILE({})
         this.selected = this.getBoardType;
-        const response = await axios.get(`board/details/${this.getBoardType}/${this.getBoardNo}`)
+        const response = await myAxios.get(`board/details/${this.getBoardType}/${this.getBoardNo}`)
         console.log(response);
         this.title = response.data.title
         this.content = response.data.content
@@ -161,7 +161,7 @@ export default {
             }
 
             //게시글 정보 수정
-            const response = await axios.put(`board/modify`, formData, {
+            const response = await myAxios.put(`board/modify`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -178,7 +178,7 @@ export default {
         async deleteFile(fileInfo) {
             console.log("@@@@@파일 삭제@@@@@")
             if (confirm(`정말 ${fileInfo.originalFile}을 삭제하시겠습니까? \n 삭제된 파일은 복구할 수 없습니다.`)) {
-                const response = await axios.delete(`board/deleteFile/${this.getBoardNo}/${fileInfo.saveFolder}/${fileInfo.saveFile}`)
+                const response = await myAxios.delete(`board/deleteFile/${this.getBoardNo}/${fileInfo.saveFolder}/${fileInfo.saveFile}`)
                 this.fileInfos = response.data;
             }
             this.makeOnlyImage()

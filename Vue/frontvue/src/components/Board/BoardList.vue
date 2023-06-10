@@ -44,7 +44,7 @@
 <script>
 import BoardListItem from "@/components/Board/BoardListItem.vue";
 import BoardPageList from "@/components/Board/BoardPageList.vue";
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 import {mapGetters} from "vuex";
 
 export default {
@@ -74,7 +74,7 @@ export default {
             this.getBoardData()
         },
         async getBoardData() {
-            const response = await axios.get(`board/lists/${this.getBoardType}/${this.getPageNo}`)
+            const response = await myAxios.get(`board/lists/${this.getBoardType}/${this.getPageNo}`)
             this.pageResult = response.data.pageResult;
             this.boards = response.data.list;
             this.$store.commit('boardStore/SET_PAGE_COUNT', this.pageResult.endPageRange)

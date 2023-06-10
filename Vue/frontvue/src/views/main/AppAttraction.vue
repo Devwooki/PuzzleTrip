@@ -104,6 +104,7 @@
   </v-app>
 </template>
 <script>
+import myAxios from "@/util/axios";
 import axios from "axios";
 import AppLeftBar from "@/components/Attraction/AppleftBar.vue";
 import AppRightBar from "@/components/Attraction/ApprightBar.vue";
@@ -243,7 +244,7 @@ export default {
       this.selectedSido = this.sido.find((item) => item.value === this.areaCode)?.name || '';
       this.SET_LEFT_SELECTED_SIDO(this.selectedSido)
       this.gugunCode = '0';
-      axios.get("http://localhost:8989/attraction/" + this.areaCode)
+      myAxios.get(`attraction/${this.areaCode}`)
         .then(response => {
           this.gugun = response.data;
           //선택된 areaCode와 같은 item의 배열값을 가져와 할당한다.
@@ -256,7 +257,7 @@ export default {
         })
     },
     weatherInfo(engValue) {
-      axios.get("http://api.openweathermap.org/data/2.5/weather?q=" + engValue.eng + `&appid=${process.env.VUE_APP_WEATHER_KEY}`)
+      axios.get(`${process.env.VUE_APP_WEATHER_URL}` + engValue.eng + `&appid=${process.env.VUE_APP_WEATHER_KEY}`)
         .then(response => {
           const data = response.data;
           document.getElementById("name").innerText = engValue.name;
@@ -288,7 +289,7 @@ export default {
         contentTypes: this.contentTypes,
       }
       if (this.areaCode !== '0' && this.gugunCode !== '0') {
-        axios.post(`http://localhost:8989/attraction/lists`, sendData)
+        myAxios.post(`attraction/lists`, sendData)
           .then((Response) => {
             const data = Response.data
             if (data.length === 0) {

@@ -19,7 +19,7 @@
 <script>
 import BoardCommentList from "@/components/Board/BoardCommentList.vue";
 import {mapGetters} from "vuex";
-import axios from "@/util/axios";
+import myAxios from "@/util/axios";
 
 export default {
     name: 'BoardComment',
@@ -34,7 +34,7 @@ export default {
     },
     async created() {
         this.userId = this.checkUserInfo.id
-        const response = await axios.get(`/comment/${this.getBoardType}/${this.getBoardNo}`)
+        const response = await myAxios.get(`/comment/${this.getBoardType}/${this.getBoardNo}`)
         this.$store.commit('boardStore/SET_COMMENTS', response.data);
     },
     methods: {
@@ -53,7 +53,7 @@ export default {
                         boardNo: this.getBoardNo,
                     }
 
-                    const response = await axios.post(`/comment/${this.getBoardType}/${this.getBoardNo}`, sendData)
+                    const response = await myAxios.post(`/comment/${this.getBoardType}/${this.getBoardNo}`, sendData)
                     this.$store.commit('boardStore/SET_COMMENTS', response.data)
                     this.content = ''
                     this.$refs.commentArea.focus()
