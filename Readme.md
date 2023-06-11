@@ -1,6 +1,6 @@
 # EnjoyTrip
 
-![main.png](docs%2Fmain.png)
+![main.png](readmeFile%2Fmain.png)
 
 ## 프로젝트 개요
 
@@ -12,7 +12,6 @@
 <br>
 
 ## 🤝 collaborator
-
 
 <table align="center">
     <tr>
@@ -81,6 +80,7 @@
 </table>
 
 ## 웹사이트 둘러보기
+
 <details>
     <summary>메인페이지</summary>
     
@@ -118,6 +118,7 @@
 </details>
 
 ## ⚒️ 사용 언어 및 프레임워크
+
 ### 👀 Front-End
 
 - HTML 5
@@ -148,7 +149,6 @@
 - (준비중)
 
 ## 🦴프로젝트 구조
-
 
 <details>
 <summary>Spring Server</summary>
@@ -209,7 +209,7 @@ src
 
 </details>
 
-
 ## 📲 Update Log
+
 - [23.05.26] v1.0.0 배포
 - [23.06.10] v1.0.1 API서버(Spring) EC2 배포
