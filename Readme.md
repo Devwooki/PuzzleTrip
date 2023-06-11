@@ -1,5 +1,7 @@
 # EnjoyTrip
 
+![main.png](docs%2Fmain.png)
+
 ## 프로젝트 개요
 
 공공 데이터를 활용해 지역과 관광지 타입기반 조회 데이터를 활용해
@@ -11,7 +13,6 @@
 
 ## 🤝 collaborator
 
----
 
 <table align="center">
     <tr>
@@ -80,17 +81,43 @@
 </table>
 
 ## 웹사이트 둘러보기
+<details>
+    <summary>메인페이지</summary>
+    
+    준비중.. 영상 업로드 예정
+</details>
 
----
+<details>
+    <summary>여행지 검색</summary>
+    
+    준비중.. 영상 업로드 예정
+</details>
 
-```
-Update,,
-```
+<details>
+    <summary>여행 계획 작성</summary>
+    
+    준비중.. 영상 업로드 예정
+</details>
+
+<details>
+    <summary>게시판</summary>
+    
+    준비중.. 영상 업로드 예정
+</details>
+
+<details>
+    <summary>회원정보</summary>
+    
+    준비중.. 영상 업로드 예정
+</details>
+
+<details>
+    <summary>실시간 채팅</summary>
+    
+    준비중.. 영상 업로드 예정
+</details>
 
 ## ⚒️ 사용 언어 및 프레임워크
-
----
-
 ### 👀 Front-End
 
 - HTML 5
@@ -114,19 +141,14 @@ Update,,
 
 ## 💽 DB스키마
 
----
-
-- 생략
+- (준비중)
 
 ## 클래스 다이어 그램
 
----
-
-- 생략
+- (준비중)
 
 ## 🦴프로젝트 구조
 
----
 
 <details>
 <summary>Spring Server</summary>
@@ -189,6 +211,5 @@ src
 
 
 ## 📲 Update Log
----
-23.05.26 v1.0.0 배포
-23.06.10 v1.0.1 API서버(Spring) EC2 배포
+- [23.05.26] v1.0.0 배포
+- [23.06.10] v1.0.1 API서버(Spring) EC2 배포
