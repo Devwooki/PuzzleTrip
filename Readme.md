@@ -58,7 +58,7 @@
           </li>
           <li>☁️ 배포
             <br>&nbsp;✅ DB AWS EC2 배포
-            <br>&nbsp;🛠️ API 서버 AWS EC2 배포
+            <br>&nbsp;✅ API 서버 AWS EC2 배포
           </li>
         </ul>
       </td>
@@ -68,10 +68,19 @@
             <br>&nbsp;JSP -> Vue2
           </li>
           <li>🗺️ 카카오지도API 활용
-            <br>&nbsp;✅ 1. 출발/도착 경유지 출력
-            <br>&nbsp;✅ 2. 여행 계획 생성
-            <br>&nbsp;⚒️ 
+            <br>&nbsp;✅ 여행 계획 생성
+            <br>&nbsp;✅ 마커를 활용한 지역 관광지 출력
+            <br>&nbsp;✅ Vuex를 통한 상태관리(여행 일정 작성 및 마커 관리)
             <br>
+          </li>
+          <li>🚐 카카오모빌리티 API 활용
+            <br>&nbsp;✅ 길찾기 구현 : 마커 기반 출발지, 도착지 이벤트 등록
+          </li>
+          <li>☀️ OpenWeatherMap AIP 활용
+            <br>&nbsp;✅ 지역별 날씨 정보 출력
+          </li>
+          <li>☀ Dargable AIP 활용
+            <br>&nbsp;✅ 상태관리를 활용해 일정 편집, 삭제 기능 구현
           </li>
           <li>✅ 화면 디자인 및 이펙트 생성</li>
         </ul>
