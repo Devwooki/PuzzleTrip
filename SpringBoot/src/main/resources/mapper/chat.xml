@@ -13,9 +13,11 @@
     </insert>
 
     <select id="selectLastChatLog" resultType="WSChat">
-        select * from ws_chat
-        order by writed_at asc
-        limit 0, 50
+        select * from(
+                select * from ws_chat
+                order by writed_at desc
+                limit 200) as subQuery
+        order by writed_at asc;
     </select>
 
 </mapper>
