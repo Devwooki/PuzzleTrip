@@ -19,8 +19,8 @@
 
 <table align="center">
     <tr>
-      <th style="text-align: center; font-size : 14px;">이현욱🤴🏻</th>
-      <th style="text-align: center; font-size : 14px;">김동민🤝</th>
+      <th style="text-align: center; font-size : 14px;">이OO🤴🏻</th>
+      <th style="text-align: center; font-size : 14px;">김OO🤝</th>
     </tr>
     <tr>
         <td height="140px" width="300px" align="center"> 
